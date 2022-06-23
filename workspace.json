@@ -1,5 +1,9 @@
 {
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
-  "projects": {}
+  "projects": {
+    "auth": "packages/auth",
+    "core": "packages/core",
+    "webhooks": "packages/webhooks"
+  }
 }

@@ -10,11 +10,15 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@nestjs-shopify/auth": ["packages/auth/src/index.ts"],
+      "@nestjs-shopify/core": ["packages/core/src/index.ts"],
+      "@nestjs-shopify/webhooks": ["packages/webhooks/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

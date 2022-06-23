@@ -2,15 +2,40 @@
   "name": "nestjs-shopify",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build": "nx affected:build",
+    "benchmark": "nx affected:bench",
+    "format": "prettier --write \"{packages,integration,benchmarks,tools}/**/*.ts\"",
+    "lint": "eslint --ext .ts .",
+    "test": "nx affected:test",
+    "test:int": "NODE_NO_WARNINGS=1 nx e2e integration"
+  },
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
   "devDependencies": {
+    "@nestjs/common": "^8.4.7",
+    "@nestjs/core": "^8.4.7",
+    "@nestjs/testing": "^8.4.7",
     "@nrwl/cli": "14.3.5",
+    "@nrwl/eslint-plugin-nx": "14.3.5",
+    "@nrwl/jest": "14.3.5",
     "@nrwl/js": "14.3.5",
+    "@nrwl/linter": "14.3.5",
     "@nrwl/workspace": "14.3.5",
+    "@shopify/shopify-api": "^3.1.3",
+    "@types/jest": "27.4.1",
+    "@types/node": "16.11.7",
+    "@typescript-eslint/eslint-plugin": "~5.24.0",
+    "@typescript-eslint/parser": "~5.24.0",
+    "eslint": "~8.15.0",
+    "eslint-config-prettier": "8.1.0",
+    "jest": "27.5.1",
     "nx": "14.3.5",
     "prettier": "^2.6.2",
+    "ts-jest": "27.1.4",
+    "ts-node": "~10.8.0",
     "typescript": "~4.7.2"
   }
 }
