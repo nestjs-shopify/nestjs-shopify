@@ -46,6 +46,7 @@ export class ShopifyAuthCoreModule {
   ): DynamicModule {
     return {
       module: ShopifyAuthCoreModule,
+      imports: options.imports || [],
       providers: [
         ...this.createShopifyAuthModuleAsyncOptions(options),
         {
