@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
+  Scope,
   UnauthorizedException,
 } from '@nestjs/common';
 import Shopify from '@shopify/shopify-api';
@@ -12,7 +13,7 @@ import { SHOPIFY_ACCESS_MODE } from './auth.constants';
 import { ReauthHeaderException, ReauthRedirectException } from './auth.errors';
 import { AccessMode } from './auth.interfaces';
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 export class ShopifyAuthGuard implements CanActivate {
   constructor(
     @Inject(SHOPIFY_ACCESS_MODE)

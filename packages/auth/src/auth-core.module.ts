@@ -1,11 +1,14 @@
-import { DynamicModule, Module, Provider } from '@nestjs/common';
+import { DynamicModule, Module, Provider, Scope } from '@nestjs/common';
 import { PATH_METADATA } from '@nestjs/common/constants';
 import {
   SHOPIFY_ACCESS_MODE,
   SHOPIFY_AUTH_CONTROLLER_HACK,
   SHOPIFY_AUTH_OPTIONS,
 } from './auth.constants';
-import { ShopifyAuthOnlineController } from './controllers/auth.controller';
+import {
+  ShopifyAuthOfflineController,
+  ShopifyAuthOnlineController,
+} from './controllers/auth.controller';
 import { ShopifyGraphqlController } from './controllers/graphql.controller';
 import { ShopifyAuthGuard } from './auth.guard';
 import {
@@ -27,13 +30,15 @@ export class ShopifyAuthCoreModule {
         {
           provide: SHOPIFY_AUTH_OPTIONS,
           useValue: options,
+          scope: Scope.TRANSIENT,
         },
         {
           provide: SHOPIFY_ACCESS_MODE,
           useValue: mode,
+          scope: Scope.TRANSIENT,
         },
-        ShopifyAuthGuard,
         this.createShopifyAuthControllerHackProvider(),
+        ShopifyAuthGuard,
       ],
       controllers: [ShopifyAuthOnlineController, ShopifyGraphqlController],
       exports: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
@@ -52,6 +57,7 @@ export class ShopifyAuthCoreModule {
         {
           provide: SHOPIFY_ACCESS_MODE,
           useValue: mode,
+          scope: Scope.TRANSIENT,
         },
         ShopifyAuthGuard,
       ],
@@ -91,6 +97,7 @@ export class ShopifyAuthCoreModule {
         provide: SHOPIFY_AUTH_OPTIONS,
         useFactory: options.useFactory,
         inject: options.inject,
+        scope: Scope.TRANSIENT,
       };
     }
 
@@ -107,22 +114,29 @@ export class ShopifyAuthCoreModule {
       useFactory: (optionsFactory: ShopifyAuthOptionsFactory) =>
         optionsFactory.createShopifyAuthOptions(),
       inject,
+      scope: Scope.TRANSIENT,
     };
   }
 
   private static createShopifyAuthControllerHackProvider(): Provider {
     return {
       provide: SHOPIFY_AUTH_CONTROLLER_HACK,
-      useFactory: ({ basePath }: ShopifyAuthModuleOptions) => {
+      useFactory: (
+        { basePath }: ShopifyAuthModuleOptions,
+        mode: AccessMode
+      ) => {
         if (basePath) {
           Reflect.defineMetadata(
             PATH_METADATA,
             basePath,
-            ShopifyAuthOnlineController
+            mode === AccessMode.Online
+              ? ShopifyAuthOnlineController
+              : ShopifyAuthOfflineController
           );
         }
       },
-      inject: [SHOPIFY_AUTH_OPTIONS],
+      inject: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
+      scope: Scope.TRANSIENT,
     };
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SHOPIFY_ACCESS_MODE, SHOPIFY_AUTH_OPTIONS } from './auth.constants';
+import { SHOPIFY_AUTH_OPTIONS } from './auth.constants';
 import {
   AccessMode,
   ShopifyAuthModuleOptions,
@@ -35,10 +35,14 @@ describe('ShopifyAuthModule', () => {
           }).compile();
         });
 
-        it('should provide correct access mode', () => {
-          const resolvedAccessMode =
-            module.get<AccessMode>(SHOPIFY_ACCESS_MODE);
-          expect(resolvedAccessMode).toEqual(accessMode);
+        it('should provide options', async () => {
+          const options = await module.resolve<ShopifyAuthModuleOptions>(
+            SHOPIFY_AUTH_OPTIONS
+          );
+
+          expect(options).toEqual({
+            basePath: 'testing',
+          });
         });
       });
 
@@ -54,12 +58,10 @@ describe('ShopifyAuthModule', () => {
             ],
           }).compile();
 
-          const resolvedAccessMode =
-            module.get<AccessMode>(SHOPIFY_ACCESS_MODE);
-          const options =
-            module.get<ShopifyAuthModuleOptions>(SHOPIFY_AUTH_OPTIONS);
+          const options = await module.resolve<ShopifyAuthModuleOptions>(
+            SHOPIFY_AUTH_OPTIONS
+          );
 
-          expect(resolvedAccessMode).toEqual(accessMode);
           expect(options).toEqual({
             basePath: 'test',
           });
@@ -74,12 +76,10 @@ describe('ShopifyAuthModule', () => {
             ],
           }).compile();
 
-          const resolvedAccessMode =
-            module.get<AccessMode>(SHOPIFY_ACCESS_MODE);
-          const options =
-            module.get<ShopifyAuthModuleOptions>(SHOPIFY_AUTH_OPTIONS);
+          const options = await module.resolve<ShopifyAuthModuleOptions>(
+            SHOPIFY_AUTH_OPTIONS
+          );
 
-          expect(resolvedAccessMode).toEqual(accessMode);
           expect(options).toEqual({
             basePath: 'test',
             useGlobalPrefix: true,
@@ -102,12 +102,10 @@ describe('ShopifyAuthModule', () => {
             ],
           }).compile();
 
-          const resolvedAccessMode =
-            module.get<AccessMode>(SHOPIFY_ACCESS_MODE);
-          const options =
-            module.get<ShopifyAuthModuleOptions>(SHOPIFY_AUTH_OPTIONS);
+          const options = await module.resolve<ShopifyAuthModuleOptions>(
+            SHOPIFY_AUTH_OPTIONS
+          );
 
-          expect(resolvedAccessMode).toEqual(accessMode);
           expect(options).toEqual({
             basePath: 'test',
             useGlobalPrefix: true,
