@@ -62,7 +62,9 @@ export class ShopifyAuthGuard implements CanActivate {
         throw new ReauthHeaderException(shop);
       }
     } else if (!isOnline) {
-      const query = Object.fromEntries(new URLSearchParams(req.url).entries());
+      const query = Object.fromEntries(
+        new URLSearchParams(req.url?.split('?')?.[0] || '').entries()
+      );
       shop = query['shop']?.toString();
 
       if (shop) {
