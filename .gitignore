@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+*.sqlite
 
 # dependencies
 node_modules

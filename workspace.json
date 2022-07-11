@@ -4,6 +4,21 @@
   "projects": {
     "auth": "packages/auth",
     "core": "packages/core",
-    "webhooks": "packages/webhooks"
+    "webhooks": "packages/webhooks",
+    "integration": {
+      "root": "integration",
+      "type": "library",
+      "sourceRoot": "integration/src",
+      "targets": {
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "options": {
+            "coverage": false,
+            "jestConfig": "integration/jest.config.ts",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
   }
 }
