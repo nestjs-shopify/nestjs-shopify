@@ -13,6 +13,7 @@ export class ShopifyCoreModule implements OnModuleInit {
       module: ShopifyCoreModule,
       global: true,
       providers: [{ provide: SHOPIFY_CORE_OPTIONS, useValue: options }],
+      exports: [SHOPIFY_CORE_OPTIONS],
     };
   }
 
@@ -24,6 +25,7 @@ export class ShopifyCoreModule implements OnModuleInit {
       global: true,
       imports: options.imports || [],
       providers: [...createShopifyCoreAsyncOptionsProviders(options)],
+      exports: [SHOPIFY_CORE_OPTIONS],
     };
   }
 

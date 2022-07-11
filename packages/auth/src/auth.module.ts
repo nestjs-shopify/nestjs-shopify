@@ -15,6 +15,7 @@ export class ShopifyAuthModule {
     return {
       module: ShopifyAuthModule,
       imports: [ShopifyAuthCoreModule.forRoot(mode, options)],
+      exports: [ShopifyAuthCoreModule],
     };
   }
 
@@ -25,6 +26,7 @@ export class ShopifyAuthModule {
     return {
       module: ShopifyAuthModule,
       imports: [ShopifyAuthCoreModule.forRootAsync(mode, options)],
+      exports: [ShopifyAuthCoreModule],
     };
   }
 }

@@ -17,8 +17,11 @@ import {
   ShopifyAuthModuleOptions,
   ShopifyAuthOptionsFactory,
 } from './auth.interfaces';
+import { getControllersByAccessMode } from './utils/get-controllers-by-access-mode.util';
 
-@Module({})
+@Module({
+  providers: [ShopifyAuthGuard],
+})
 export class ShopifyAuthCoreModule {
   static forRoot(
     mode: AccessMode,
@@ -38,9 +41,8 @@ export class ShopifyAuthCoreModule {
           scope: Scope.TRANSIENT,
         },
         this.createShopifyAuthControllerHackProvider(),
-        ShopifyAuthGuard,
       ],
-      controllers: [ShopifyAuthOnlineController, ShopifyGraphqlController],
+      controllers: [...getControllersByAccessMode(mode)],
       exports: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
     };
   }
@@ -59,9 +61,8 @@ export class ShopifyAuthCoreModule {
           useValue: mode,
           scope: Scope.TRANSIENT,
         },
-        ShopifyAuthGuard,
       ],
-      controllers: [ShopifyAuthOnlineController, ShopifyGraphqlController],
+      controllers: [...getControllersByAccessMode(mode)],
       exports: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
     };
   }
@@ -136,7 +137,6 @@ export class ShopifyAuthCoreModule {
         }
       },
       inject: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
-      scope: Scope.TRANSIENT,
     };
   }
 }
