@@ -30,27 +30,36 @@ abstract class ShopifyAuthController {
       globalPrefix = this.appConfig.getGlobalPrefix();
     }
 
-    const redirectUrl = joinUrl(globalPrefix, basePath, 'callback');
+    const redirectPath = joinUrl(globalPrefix, basePath, 'callback');
+    const redirectUrl = new URL(redirectPath, 'http://' + req.headers.host);
 
     const oauthUrl = await Shopify.Auth.beginAuth(
       req,
       res,
       domain,
-      redirectUrl,
+      redirectUrl.href,
       isOnline
     );
 
     res
-      .writeHead(302, { Location: oauthUrl })
+      .writeHead(302, { location: oauthUrl })
       .end(`Redirecting to ${oauthUrl}`);
   }
 
   @Get('callback')
-  async callback(@Req() req: IncomingMessage, @Res() res: ServerResponse) {
-    const query = new URLSearchParams(
-      req.url
-    ).entries() as unknown as AuthQuery;
-    const session = await Shopify.Auth.validateAuthCallback(req, res, query);
+  async callback(
+    @Req() req: IncomingMessage,
+    @Res() res: ServerResponse,
+    @Query() query: Record<string, string>
+  ) {
+    const session = await Shopify.Auth.validateAuthCallback(req, res, {
+      code: query['code'],
+      shop: query['shop'],
+      host: query['host'],
+      state: query['state'],
+      timestamp: query['timestamp'],
+      hmac: query['hmac'],
+    });
 
     if (session) {
       if (this.options.afterAuthHandler) {
@@ -58,14 +67,14 @@ abstract class ShopifyAuthController {
         return;
       }
 
-      const redirectUrl = `/?shop=${query.shop}&host=${query.host}`;
+      const redirectUrl = `/?shop=${query['shop']}&host=${query['host']}`;
       res
-        .writeHead(302, { Location: redirectUrl })
+        .writeHead(302, { location: redirectUrl })
         .end(`Redirecting to ${redirectUrl}`);
       return;
     }
 
-    res.writeHead(401).end(`Invalid session`);
+    res.writeHead(401).end('Invalid session');
   }
 }
 
