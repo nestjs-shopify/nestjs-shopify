@@ -2,30 +2,31 @@ import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
-  Scope,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
-import { SHOPIFY_ACCESS_MODE } from './auth.constants';
+import { AUTH_MODE_KEY } from './auth.constants';
 import { ReauthHeaderException, ReauthRedirectException } from './auth.errors';
 import { AccessMode } from './auth.interfaces';
 
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable()
 export class ShopifyAuthGuard implements CanActivate {
-  constructor(
-    @Inject(SHOPIFY_ACCESS_MODE)
-    private readonly accessMode: AccessMode
-  ) {}
+  constructor(private readonly reflector: Reflector) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const http = ctx.switchToHttp();
     const req = http.getRequest<IncomingMessage>();
     const res = http.getResponse<ServerResponse>();
 
-    const isOnline = this.accessMode === AccessMode.Online;
+    const accessMode = this.reflector.getAllAndOverride<AccessMode>(
+      AUTH_MODE_KEY,
+      [ctx.getHandler(), ctx.getClass()]
+    );
+
+    const isOnline = accessMode === AccessMode.Online;
     const session = await Shopify.Utils.loadCurrentSession(req, res, isOnline);
 
     if (session) {
