@@ -71,11 +71,11 @@ export class ShopifyAuthGuard implements CanActivate {
         throw new ReauthRedirectException(shop);
       }
 
-      throw new BadRequestException('Missing query parameter shop');
+      throw new BadRequestException('Missing query parameter `shop`');
     }
 
     throw new UnauthorizedException(
-      'Missing or malformed Authorization header'
+      'Missing or malformed `Authorization` header'
     );
   }
 }
