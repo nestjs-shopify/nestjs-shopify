@@ -11,7 +11,7 @@ const HOST = Buffer.from(`https://${TEST_SHOP}/admin`).toString('base64url');
 const authSpy = jest.spyOn(Shopify.Auth, 'beginAuth');
 const callbackSpy = jest.spyOn(Shopify.Auth, 'validateAuthCallback');
 
-describe('Hybrid Auth (e2e)', () => {
+describe('Hybrid Auth Flow (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
