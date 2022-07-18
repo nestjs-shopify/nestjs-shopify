@@ -1,13 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import Shopify, { SessionInterface } from '@shopify/shopify-api';
+import Shopify from '@shopify/shopify-api';
 import { Session } from '@shopify/shopify-api/dist/auth/session';
 import * as jwt from 'jsonwebtoken';
 import * as request from 'supertest';
 import { AppModule } from '../../src/with-hybrid-auth/app.module';
 
 const TEST_SHOP = 'test.myshopify.io';
-const HOST = Buffer.from(`https://${TEST_SHOP}/admin`).toString('base64url');
 
 describe('Hybrid Authz (e2e)', () => {
   let app: INestApplication;
@@ -56,14 +55,33 @@ describe('Hybrid Authz (e2e)', () => {
       });
     });
 
-    it('GET /message/online', async () => {
-      const res = await request(app.getHttpServer())
+    it('GET /message/online, 200', async () => {
+      await request(app.getHttpServer())
         .get('/message/online')
         .set({
           accepts: 'application/json',
           authorization: `Bearer ${token}`,
         })
         .expect(200);
+    });
+
+    it('GET /message/online, 401 expired', async () => {
+      jest.useFakeTimers().setSystemTime((jwtPayload.exp + 10) * 1000);
+
+      const res = await request(app.getHttpServer())
+        .get('/message/online')
+        .query({ shop: TEST_SHOP })
+        .set({
+          accepts: 'application/json',
+          authorization: `Bearer ${token}`,
+        })
+        .expect(401);
+
+      expect(
+        res.headers['x-shopify-api-request-failure-reauthorize-url']
+      ).toMatch('/online/auth?shop=test.myshopify.io');
+
+      jest.useRealTimers();
     });
   });
 });

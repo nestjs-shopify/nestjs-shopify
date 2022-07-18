@@ -9,8 +9,6 @@ import {
   ShopifyAuthOfflineController,
   ShopifyAuthOnlineController,
 } from './controllers/auth.controller';
-import { ShopifyGraphqlController } from './controllers/graphql.controller';
-import { ShopifyAuthGuard } from './auth.guard';
 import {
   AccessMode,
   ShopifyAuthModuleAsyncOptions,
@@ -20,7 +18,7 @@ import {
 import { getControllersByAccessMode } from './utils/get-controllers-by-access-mode.util';
 
 @Module({
-  providers: [ShopifyAuthGuard],
+  exports: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
 })
 export class ShopifyAuthCoreModule {
   static forRoot(
@@ -43,7 +41,6 @@ export class ShopifyAuthCoreModule {
         this.createShopifyAuthControllerHackProvider(),
       ],
       controllers: [...getControllersByAccessMode(mode)],
-      exports: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
     };
   }
 
@@ -63,7 +60,6 @@ export class ShopifyAuthCoreModule {
         },
       ],
       controllers: [...getControllersByAccessMode(mode)],
-      exports: [SHOPIFY_AUTH_OPTIONS, SHOPIFY_ACCESS_MODE],
     };
   }
 

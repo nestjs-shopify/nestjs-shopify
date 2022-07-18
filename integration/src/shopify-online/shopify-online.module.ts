@@ -8,5 +8,6 @@ import { Module } from '@nestjs/common';
       useGlobalPrefix: true,
     }),
   ],
+  exports: [ShopifyAuthModule],
 })
 export class ShopifyOnlineModule {}

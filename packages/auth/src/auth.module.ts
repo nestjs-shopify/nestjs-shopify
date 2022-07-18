@@ -5,8 +5,13 @@ import {
   ShopifyAuthModuleOptions,
 } from './auth.interfaces';
 import { ShopifyAuthCoreModule } from './auth-core.module';
+import { ShopifyAuthService } from './auth.service';
+import { ShopifyAuthGuard } from './auth.guard';
 
-@Module({})
+@Module({
+  providers: [ShopifyAuthGuard, ShopifyAuthService],
+  exports: [ShopifyAuthService],
+})
 export class ShopifyAuthModule {
   static forRoot(
     mode: AccessMode,
@@ -15,7 +20,6 @@ export class ShopifyAuthModule {
     return {
       module: ShopifyAuthModule,
       imports: [ShopifyAuthCoreModule.forRoot(mode, options)],
-      exports: [ShopifyAuthCoreModule],
     };
   }
 
@@ -26,7 +30,6 @@ export class ShopifyAuthModule {
     return {
       module: ShopifyAuthModule,
       imports: [ShopifyAuthCoreModule.forRootAsync(mode, options)],
-      exports: [ShopifyAuthCoreModule],
     };
   }
 }

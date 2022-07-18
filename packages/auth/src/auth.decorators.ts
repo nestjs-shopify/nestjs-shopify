@@ -3,13 +3,11 @@ import {
   createParamDecorator,
   ExecutionContext,
   SetMetadata,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import Shopify from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
-import { ShopifyAuthExceptionFilter } from './auth.filter';
 import { ShopifyAuthGuard } from './auth.guard';
 import { AccessMode } from './auth.interfaces';
 
@@ -28,6 +26,5 @@ export const Shop = createParamDecorator<
 export const UseShopifyAuth = (accessMode?: AccessMode) =>
   applyDecorators(
     SetMetadata(AUTH_MODE_KEY, accessMode || AccessMode.Online),
-    UseGuards(ShopifyAuthGuard),
-    UseFilters(ShopifyAuthExceptionFilter)
+    UseGuards(ShopifyAuthGuard)
   );

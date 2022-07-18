@@ -1,20 +1,29 @@
 import {
-  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
+  OnModuleInit,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { ModuleRef, Reflector } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
+import { Session } from '@shopify/shopify-api/dist/auth/session';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
-import { ReauthHeaderException, ReauthRedirectException } from './auth.errors';
 import { AccessMode } from './auth.interfaces';
+import { ShopifyAuthService } from './auth.service';
 
 @Injectable()
-export class ShopifyAuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+export class ShopifyAuthGuard implements CanActivate, OnModuleInit {
+  private service!: ShopifyAuthService;
+
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly moduleRef: ModuleRef
+  ) {}
+
+  async onModuleInit() {
+    console.log(await this.moduleRef.resolve(ShopifyAuthService));
+  }
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const http = ctx.switchToHttp();
@@ -27,7 +36,13 @@ export class ShopifyAuthGuard implements CanActivate {
     );
 
     const isOnline = accessMode === AccessMode.Online;
-    const session = await Shopify.Utils.loadCurrentSession(req, res, isOnline);
+
+    let session: Session | undefined;
+    try {
+      session = await Shopify.Utils.loadCurrentSession(req, res, isOnline);
+    } catch {
+      session = undefined;
+    }
 
     if (session) {
       const scopesChanged = !Shopify.Context.SCOPES.equals(session.scope);
@@ -47,35 +62,33 @@ export class ShopifyAuthGuard implements CanActivate {
       authHeader = req.headers.authorization;
     }
 
+    const query = Object.fromEntries(
+      new URLSearchParams(req.url?.split('?')?.[1] || '').entries()
+    );
+
     if (authHeader) {
       if (session) {
         shop = session.shop;
       } else if (authHeader) {
         const matches = authHeader?.match(/Bearer (.*)/);
         if (matches) {
-          const payload = Shopify.Utils.decodeSessionToken(matches[1]);
-          shop = payload.dest.replace('https://', '');
+          try {
+            const payload = Shopify.Utils.decodeSessionToken(matches[1]);
+            shop = payload.dest.replace('https://', '');
+          } catch (error) {
+            shop = query['shop'];
+          }
         }
       }
-
-      if (shop) {
-        throw new ReauthHeaderException(shop);
-      }
     } else if (!isOnline) {
-      const query = Object.fromEntries(
-        new URLSearchParams(req.url?.split('?')?.[0] || '').entries()
-      );
-      shop = query['shop']?.toString();
-
-      if (shop) {
-        throw new ReauthRedirectException(shop);
-      }
-
-      throw new BadRequestException('Missing query parameter `shop`');
+      shop = query['shop'];
     }
 
-    throw new UnauthorizedException(
-      'Missing or malformed `Authorization` header'
-    );
+    if (shop) {
+      const serverHost = req.headers.host as string;
+      this.service.handleAuthException(res, serverHost, shop, isOnline);
+    }
+
+    return false;
   }
 }

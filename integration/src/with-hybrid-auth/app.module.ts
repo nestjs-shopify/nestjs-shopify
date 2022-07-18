@@ -7,8 +7,8 @@ import { HybridController } from './hybrid.controller';
 @Module({
   imports: [
     ShopifyInitializerModule,
-    ShopifyOnlineModule,
     ShopifyOfflineModule,
+    ShopifyOnlineModule,
   ],
   controllers: [HybridController],
 })

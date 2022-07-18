@@ -1,5 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter, Inject } from '@nestjs/common';
-import { ApplicationConfig } from '@nestjs/core';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  OnModuleInit,
+} from '@nestjs/common';
+import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { SHOPIFY_AUTH_OPTIONS } from './auth.constants';
 import {
@@ -12,15 +17,20 @@ import { joinUrl } from './utils/join-url.util';
 
 @Catch(ShopifyAuthException)
 export class ShopifyAuthExceptionFilter
-  implements ExceptionFilter<ShopifyAuthException>
+  implements ExceptionFilter<ShopifyAuthException>, OnModuleInit
 {
+  private options!: ShopifyAuthModuleOptions;
+
   constructor(
-    @Inject(SHOPIFY_AUTH_OPTIONS)
-    private readonly options: ShopifyAuthModuleOptions,
+    private readonly moduleRef: ModuleRef,
     private readonly appConfig: ApplicationConfig
   ) {}
 
-  catch(exception: ShopifyAuthException, host: ArgumentsHost) {
+  async onModuleInit() {
+    this.options = await this.moduleRef.resolve(SHOPIFY_AUTH_OPTIONS);
+  }
+
+  async catch(exception: ShopifyAuthException, host: ArgumentsHost) {
     const context = host.switchToHttp();
 
     const req = context.getRequest<IncomingMessage>();
