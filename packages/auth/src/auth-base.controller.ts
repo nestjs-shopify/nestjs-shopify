@@ -1,19 +1,16 @@
-import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
-import Shopify, { AuthQuery } from '@shopify/shopify-api';
+import Shopify from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
-import { SHOPIFY_ACCESS_MODE, SHOPIFY_AUTH_OPTIONS } from '../auth.constants';
-import { AccessMode, ShopifyAuthModuleOptions } from '../auth.interfaces';
-import { joinUrl } from '../utils/join-url.util';
+import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
+import { joinUrl } from './utils/join-url.util';
 
-@Controller()
-abstract class ShopifyAuthController {
+@Controller('shopify')
+export abstract class ShopifyAuthBaseController {
   constructor(
-    @Inject(SHOPIFY_ACCESS_MODE)
-    private readonly accessMode: AccessMode,
-    @Inject(SHOPIFY_AUTH_OPTIONS)
-    private readonly options: ShopifyAuthModuleOptions,
-    private readonly appConfig: ApplicationConfig
+    protected readonly accessMode: AccessMode,
+    protected readonly options: ShopifyAuthModuleOptions,
+    protected readonly appConfig: ApplicationConfig
   ) {}
 
   @Get('auth')
@@ -77,9 +74,3 @@ abstract class ShopifyAuthController {
     res.writeHead(401).end('Invalid session');
   }
 }
-
-@Controller('shopify/online')
-export class ShopifyAuthOnlineController extends ShopifyAuthController {}
-
-@Controller('shopify/offline')
-export class ShopifyAuthOfflineController extends ShopifyAuthController {}

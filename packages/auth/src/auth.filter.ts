@@ -1,49 +1,34 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  OnModuleInit,
-} from '@nestjs/common';
-import { ApplicationConfig, ModuleRef } from '@nestjs/core';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ApplicationConfig } from '@nestjs/core';
 import type { IncomingMessage, ServerResponse } from 'http';
-import { SHOPIFY_AUTH_OPTIONS } from './auth.constants';
 import {
   ReauthHeaderException,
   ReauthRedirectException,
   ShopifyAuthException,
 } from './auth.errors';
-import { ShopifyAuthModuleOptions } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
 @Catch(ShopifyAuthException)
 export class ShopifyAuthExceptionFilter
-  implements ExceptionFilter<ShopifyAuthException>, OnModuleInit
+  implements ExceptionFilter<ShopifyAuthException>
 {
-  private options!: ShopifyAuthModuleOptions;
-
-  constructor(
-    private readonly moduleRef: ModuleRef,
-    private readonly appConfig: ApplicationConfig
-  ) {}
-
-  async onModuleInit() {
-    this.options = await this.moduleRef.resolve(SHOPIFY_AUTH_OPTIONS);
-  }
+  constructor(private readonly appConfig: ApplicationConfig) {}
 
   async catch(exception: ShopifyAuthException, host: ArgumentsHost) {
+    const { options } = exception;
     const context = host.switchToHttp();
 
     const req = context.getRequest<IncomingMessage>();
     const res = context.getResponse<ServerResponse>();
 
     let prefix = '';
-    if (this.options.useGlobalPrefix) {
+    if (options.useGlobalPrefix) {
       prefix = this.appConfig.getGlobalPrefix();
     }
 
     const domain = `https://${req.headers.host}`;
     const status = exception.getStatus();
-    const basePath = this.options.basePath || '';
+    const basePath = options.basePath || '';
 
     if (exception instanceof ReauthHeaderException) {
       const authPath = `auth?shop=${exception.shop}`;

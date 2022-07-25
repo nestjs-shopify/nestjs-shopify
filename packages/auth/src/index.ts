@@ -1,11 +1,15 @@
-export { SHOPIFY_ACCESS_MODE, SHOPIFY_AUTH_OPTIONS } from './auth.constants';
-
 export * from './auth.decorators';
 export * from './auth.errors';
 export * from './auth.filter';
-export * from './auth.guard';
 export * from './auth.interfaces';
-export * from './auth.module';
 
-export * from './controllers/auth.controller';
-export * from './controllers/graphql.controller';
+export * from './online-auth/graphql.controller';
+export * from './online-auth/online-auth.controller';
+export * from './online-auth/online-auth.decorators';
+export * from './online-auth/online-auth.guard';
+export * from './online-auth/online-auth.module';
+
+export * from './offline-auth/offline-auth.controller';
+export * from './offline-auth/offline-auth.decorators';
+export * from './offline-auth/offline-auth.guard';
+export * from './offline-auth/offline-auth.module';

@@ -1,29 +1,17 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  OnModuleInit,
-} from '@nestjs/common';
-import { ModuleRef, Reflector } from '@nestjs/core';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
 import { Session } from '@shopify/shopify-api/dist/auth/session';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
-import { AccessMode } from './auth.interfaces';
-import { ShopifyAuthService } from './auth.service';
+import { ReauthHeaderException, ReauthRedirectException } from './auth.errors';
+import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
 
-@Injectable()
-export class ShopifyAuthGuard implements CanActivate, OnModuleInit {
-  private service!: ShopifyAuthService;
-
+export abstract class ShopifyAuthBaseGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
-    private readonly moduleRef: ModuleRef
+    protected readonly reflector: Reflector,
+    protected readonly options: ShopifyAuthModuleOptions
   ) {}
-
-  async onModuleInit() {
-    console.log(await this.moduleRef.resolve(ShopifyAuthService));
-  }
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const http = ctx.switchToHttp();
@@ -85,8 +73,11 @@ export class ShopifyAuthGuard implements CanActivate, OnModuleInit {
     }
 
     if (shop) {
-      const serverHost = req.headers.host as string;
-      this.service.handleAuthException(res, serverHost, shop, isOnline);
+      if (isOnline) {
+        throw new ReauthHeaderException(shop, this.options);
+      }
+
+      throw new ReauthRedirectException(shop, this.options);
     }
 
     return false;
