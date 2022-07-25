@@ -79,7 +79,7 @@ describe('Hybrid Authz (e2e)', () => {
 
       expect(
         res.headers['x-shopify-api-request-failure-reauthorize-url']
-      ).toMatch('/online/auth?shop=test.myshopify.io');
+      ).toMatch(`/online/auth?shop=${TEST_SHOP}`);
 
       jest.useRealTimers();
     });
