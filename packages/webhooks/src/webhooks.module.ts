@@ -22,6 +22,7 @@ export class ShopifyWebhooksModule implements OnModuleInit {
   static forRoot(options: ShopifyWebhooksOptions): DynamicModule {
     return {
       module: ShopifyWebhooksModule,
+      global: true,
       providers: [
         {
           provide: SHOPIFY_WEBHOOKS_OPTIONS,
@@ -36,6 +37,7 @@ export class ShopifyWebhooksModule implements OnModuleInit {
   static forRootAsync(options: ShopifyWebhooksAsyncOptions): DynamicModule {
     return {
       module: ShopifyWebhooksModule,
+      global: true,
       imports: options.imports || [],
       providers: [...createShopifyWebhooksAsyncOptionsProviders(options)],
       exports: [SHOPIFY_WEBHOOKS_OPTIONS],
