@@ -81,7 +81,7 @@ describe('Webhooks (e2e)', () => {
         .expect(400);
     });
 
-    it('throws bad request if hmac signed with invalid key', async () => {
+    it('throws unauthorized if hmac signed with invalid key', async () => {
       const rawBody = '{"amount": 4.0}';
       await request(app.getHttpServer())
         .post('/webhooks')
@@ -92,10 +92,10 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Domain]: TEST_SHOP,
         })
         .send(rawBody)
-        .expect(400);
+        .expect(401);
     });
 
-    it('throws bad request if hmac signed with wrong body', async () => {
+    it('throws unauthorized if hmac signed with wrong body', async () => {
       const rawBody = '{"amount": 5.0}';
       await request(app.getHttpServer())
         .post('/webhooks')
@@ -106,10 +106,10 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Domain]: TEST_SHOP,
         })
         .send(rawBody)
-        .expect(400);
+        .expect(401);
     });
 
-    it('throws bad request if graphql topic not registered', async () => {
+    it('throws not found if graphql topic not registered', async () => {
       const rawBody = '{"amount": 6.0}';
       await request(app.getHttpServer())
         .post('/webhooks')
@@ -120,7 +120,7 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Domain]: TEST_SHOP,
         })
         .send(rawBody)
-        .expect(400);
+        .expect(404);
     });
   });
 });

@@ -3,9 +3,11 @@ import {
   Controller,
   HttpCode,
   InternalServerErrorException,
+  NotFoundException,
   Post,
   RawBodyRequest,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import type { IncomingMessage } from 'http';
 import Shopify, { ShopifyHeader } from '@shopify/shopify-api';
@@ -36,7 +38,7 @@ export class ShopifyWebhooksController {
         rawBody.toString()
       );
     } else {
-      throw new BadRequestException(
+      throw new NotFoundException(
         `No webhook is registered for topic ${topic}`
       );
     }
@@ -51,11 +53,11 @@ export class ShopifyWebhooksController {
     const hmacBuffer = Buffer.from(hmac);
 
     if (generatedHashBuffer.length !== hmacBuffer.length) {
-      throw new BadRequestException('Webhook HMAC validation failed.');
+      throw new UnauthorizedException('Webhook HMAC validation failed.');
     }
 
     if (!timingSafeEqual(generatedHashBuffer, hmacBuffer)) {
-      throw new BadRequestException('Webhook HMAC validation failed.');
+      throw new UnauthorizedException('Webhook HMAC validation failed.');
     }
   }
 
