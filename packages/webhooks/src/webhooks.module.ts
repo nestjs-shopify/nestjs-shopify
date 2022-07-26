@@ -13,7 +13,11 @@ import {
 } from './webhooks.providers';
 import { ShopifyWebhooksService } from './webhooks.service';
 
-@Module({})
+@Module({
+  controllers: [ShopifyWebhooksController],
+  providers: [ShopifyWebhooksService],
+  exports: [ShopifyWebhooksService],
+})
 export class ShopifyWebhooksModule implements OnModuleInit {
   static forRoot(options: ShopifyWebhooksOptions): DynamicModule {
     return {
@@ -24,10 +28,8 @@ export class ShopifyWebhooksModule implements OnModuleInit {
           useValue: options,
         },
         shopifyWebhooksControllerPathHackProvider,
-        ShopifyWebhooksService,
       ],
-      controllers: [ShopifyWebhooksController],
-      exports: [SHOPIFY_WEBHOOKS_OPTIONS, ShopifyWebhooksService],
+      exports: [SHOPIFY_WEBHOOKS_OPTIONS],
     };
   }
 
@@ -35,12 +37,8 @@ export class ShopifyWebhooksModule implements OnModuleInit {
     return {
       module: ShopifyWebhooksModule,
       imports: options.imports || [],
-      providers: [
-        ...createShopifyWebhooksAsyncOptionsProviders(options),
-        ShopifyWebhooksService,
-      ],
-      controllers: [ShopifyWebhooksController],
-      exports: [SHOPIFY_WEBHOOKS_OPTIONS, ShopifyWebhooksService],
+      providers: [...createShopifyWebhooksAsyncOptionsProviders(options)],
+      exports: [SHOPIFY_WEBHOOKS_OPTIONS],
     };
   }
 
