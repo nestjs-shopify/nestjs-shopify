@@ -1,7 +1,10 @@
 import { DynamicModule, Module, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
-import { SHOPIFY_WEBHOOKS_OPTIONS } from './webhooks.constants';
+import {
+  SHOPIFY_WEBHOOKS_DEFAULT_PATH,
+  SHOPIFY_WEBHOOKS_OPTIONS,
+} from './webhooks.constants';
 import { ShopifyWebhooksController } from './webhooks.controller';
 import {
   ShopifyWebhooksAsyncOptions,
@@ -56,7 +59,7 @@ export class ShopifyWebhooksModule implements OnModuleInit {
 
     options.topics.forEach((topic: string) => {
       Shopify.Webhooks.Registry.addHandler(topic, {
-        path: options.path,
+        path: options.path || SHOPIFY_WEBHOOKS_DEFAULT_PATH,
         webhookHandler: (topic, shop, body) =>
           options.handler.process(topic, shop, body),
       });

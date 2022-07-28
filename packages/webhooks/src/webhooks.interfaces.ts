@@ -1,7 +1,7 @@
 import { ModuleMetadata, Type } from '@nestjs/common';
 
 export interface ShopifyWebhooksOptions {
-  path: string;
+  path?: string;
   topics: string[];
   handler: ShopifyWebhooksHandler;
 }

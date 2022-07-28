@@ -12,8 +12,9 @@ import {
 import type { IncomingMessage } from 'http';
 import Shopify, { ShopifyHeader } from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
+import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
 
-@Controller('shopify/webhooks')
+@Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
   @Post()
   @HttpCode(200)
