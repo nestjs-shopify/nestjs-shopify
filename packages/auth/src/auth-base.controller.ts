@@ -28,13 +28,12 @@ export abstract class ShopifyAuthBaseController {
     }
 
     const redirectPath = joinUrl(globalPrefix, basePath, 'callback');
-    const redirectUrl = new URL(redirectPath, 'http://' + req.headers.host);
 
     const oauthUrl = await Shopify.Auth.beginAuth(
       req,
       res,
       domain,
-      redirectUrl.href,
+      redirectPath,
       isOnline
     );
 
