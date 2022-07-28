@@ -8,7 +8,7 @@
     "format": "prettier --write \"{packages,integration,benchmarks,tools}/**/*.ts\"",
     "lint": "eslint --ext .ts .",
     "test": "nx affected:test",
-    "test:int": "NODE_NO_WARNINGS=1 nx e2e integration"
+    "test:integration": "NODE_NO_WARNINGS=1 nx test integration"
   },
   "private": true,
   "dependencies": {
