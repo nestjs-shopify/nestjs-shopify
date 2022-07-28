@@ -1,11 +1,10 @@
-import { DynamicModule, Global, Module, OnModuleInit } from '@nestjs/common';
+import { DynamicModule, Module, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
 import { SHOPIFY_CORE_OPTIONS } from './core.constants';
 import { ShopifyCoreAsyncOptions, ShopifyCoreOptions } from './core.interfaces';
 import { createShopifyCoreAsyncOptionsProviders } from './core.providers';
 
-@Global()
 @Module({})
 export class ShopifyCoreModule implements OnModuleInit {
   static async forRoot(options: ShopifyCoreOptions): Promise<DynamicModule> {
