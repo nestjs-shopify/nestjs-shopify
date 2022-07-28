@@ -94,3 +94,32 @@ import { MyHandler } from './my.handler.ts';
 })
 export class AppModule {}
 ```
+
+## Registering webhooks in Shopify API
+
+This module exports the `ShopifyWebhooksService`. Call this service with an **offline** access token to register your webhooks:
+
+```ts
+// auth-handler/my-auth.handler.ts
+import { ShopifyWebhooksService } from '@nestjs-shopify/webhooks';
+
+@Injectable()
+export class MyAuthHandler implements ShopifyAuthAfterHandler {
+  constructor(private readonly webhooksService: ShopifyWebhooksService) {}
+  async afterAuth(req: Request, res: Response, session: SessionInterface) {
+    if (session.isOnline) {
+      // redirect to homepage of your app etc...
+      return;
+    }
+
+    // Otherwise, we have an offline access token
+    const { shop, accessToken } = session;
+    await this.webhooksService.registerWebhooks({
+      shop,
+      accessToken,
+    });
+
+    // Your other logic for offline auth...
+  }
+}
+```
