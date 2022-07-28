@@ -52,9 +52,7 @@ export class ShopifyWebhooksModule implements OnModuleInit {
   onModuleInit() {
     const options = this.moduleRef.get<ShopifyWebhooksOptions>(
       SHOPIFY_WEBHOOKS_OPTIONS,
-      {
-        strict: true,
-      }
+      { strict: false }
     );
 
     options.topics.forEach((topic: string) => {
