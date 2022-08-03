@@ -1,13 +1,13 @@
-import { AccessMode, ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { ShopifyAuthOnlineModule } from '@nestjs-shopify/auth';
 import { Module } from '@nestjs/common';
 
 @Module({
   imports: [
-    ShopifyAuthModule.register(AccessMode.Online, {
+    ShopifyAuthOnlineModule.forRoot({
       basePath: 'online',
       useGlobalPrefix: true,
     }),
   ],
-  exports: [ShopifyAuthModule],
+  exports: [ShopifyAuthOnlineModule],
 })
 export class ShopifyOnlineModule {}

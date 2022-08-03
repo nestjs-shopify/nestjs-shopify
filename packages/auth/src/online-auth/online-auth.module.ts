@@ -19,9 +19,10 @@ import { ShopifyAuthOnlineGuard } from './online-auth.guard';
   exports: [SHOPIFY_ONLINE_AUTH_OPTIONS],
 })
 export class ShopifyAuthOnlineModule {
-  static register(options: ShopifyAuthModuleOptions): DynamicModule {
+  static forRoot(options: ShopifyAuthModuleOptions): DynamicModule {
     return {
       module: ShopifyAuthOnlineModule,
+      global: true,
       providers: [
         {
           provide: SHOPIFY_ONLINE_AUTH_OPTIONS,
@@ -36,9 +37,10 @@ export class ShopifyAuthOnlineModule {
     };
   }
 
-  static registerAsync(options: ShopifyAuthModuleAsyncOptions): DynamicModule {
+  static forRootAsync(options: ShopifyAuthModuleAsyncOptions): DynamicModule {
     return {
       module: ShopifyAuthOnlineModule,
+      global: true,
       imports: options.imports || [],
       providers: [
         ...buildProviderForToken(options, SHOPIFY_ONLINE_AUTH_OPTIONS),

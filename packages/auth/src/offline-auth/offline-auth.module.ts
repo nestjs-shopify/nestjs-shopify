@@ -18,9 +18,10 @@ import { ShopifyAuthOfflineGuard } from './offline-auth.guard';
   exports: [SHOPIFY_OFFLINE_AUTH_OPTIONS],
 })
 export class ShopifyAuthOfflineModule {
-  static register(options: ShopifyAuthModuleOptions): DynamicModule {
+  static forRoot(options: ShopifyAuthModuleOptions): DynamicModule {
     return {
       module: ShopifyAuthOfflineModule,
+      global: true,
       providers: [
         {
           provide: SHOPIFY_OFFLINE_AUTH_OPTIONS,
@@ -35,9 +36,10 @@ export class ShopifyAuthOfflineModule {
     };
   }
 
-  static registerAsync(options: ShopifyAuthModuleAsyncOptions): DynamicModule {
+  static forRootAsync(options: ShopifyAuthModuleAsyncOptions): DynamicModule {
     return {
       module: ShopifyAuthOfflineModule,
+      global: true,
       imports: options.imports || [],
       providers: [
         ...buildProviderForToken(options, SHOPIFY_OFFLINE_AUTH_OPTIONS),
