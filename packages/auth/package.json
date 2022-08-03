@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-shopify/auth",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "type": "commonjs",
   "peerDependencies": {
     "@nestjs/common": "^9.0.0",
