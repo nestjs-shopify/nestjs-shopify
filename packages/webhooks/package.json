@@ -3,9 +3,9 @@
   "version": "0.0.2",
   "type": "commonjs",
   "peerDependencies": {
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/core": "^9.0.0",
-    "@shopify/shopify-api": "^4.2.0"
+    "@nestjs/common": ">= 9.0.0",
+    "@nestjs/core": "^>= 9.0.0",
+    "@shopify/shopify-api": ">= 2.0.0"
   },
   "peerDependenciesMeta": {
     "@nestjs/common": {
