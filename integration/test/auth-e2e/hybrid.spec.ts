@@ -65,7 +65,7 @@ describe('Hybrid Authz (e2e)', () => {
         .expect(200);
     });
 
-    it('GET /message/online, 401 expired', async () => {
+    it('GET /message/online, 403 expired', async () => {
       jest.useFakeTimers().setSystemTime((jwtPayload.exp + 10) * 1000);
 
       const res = await request(app.getHttpServer())
@@ -75,7 +75,7 @@ describe('Hybrid Authz (e2e)', () => {
           accepts: 'application/json',
           authorization: `Bearer ${token}`,
         })
-        .expect(401);
+        .expect(403);
 
       expect(
         res.headers['x-shopify-api-request-failure-reauthorize-url']

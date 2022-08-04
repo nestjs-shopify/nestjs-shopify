@@ -1,12 +1,23 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { ShopifyAuthModuleOptions } from './auth.interfaces';
 
-export class ShopifyAuthException extends HttpException {
+export class ShopifyAuthException extends Error {
+  private status: number;
+
   constructor(
     message = 'Unauthorized',
     public readonly options: ShopifyAuthModuleOptions
   ) {
-    super(message, HttpStatus.UNAUTHORIZED);
+    super(message);
+    this.status = 403;
+  }
+
+  setStatus(status: number): this {
+    this.status = status;
+    return this;
+  }
+
+  getStatus(): number {
+    return this.status;
   }
 }
 
