@@ -8,7 +8,7 @@ import {
 } from './auth.errors';
 import { joinUrl } from './utils/join-url.util';
 
-@Catch(ShopifyAuthException)
+@Catch(ReauthHeaderException, ReauthRedirectException)
 export class ShopifyAuthExceptionFilter
   implements ExceptionFilter<ShopifyAuthException>
 {
