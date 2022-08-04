@@ -36,8 +36,6 @@ export class ShopifyAuthExceptionFilter
       const authUrl = new URL(redirectPath, domain).toString();
 
       res
-        .setHeader('X-Shopify-Api-Request-Failure-Reauthorize', '1')
-        .setHeader('X-Shopify-API-Request-Failure-Reauthorize-Url', authUrl)
         .writeHead(status, {
           'X-Shopify-Api-Request-Failure-Reauthorize': '1',
           'X-Shopify-API-Request-Failure-Reauthorize-Url': authUrl,
