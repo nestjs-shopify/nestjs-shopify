@@ -26,15 +26,15 @@ See `@nestjs-shopify/core` usage: https://github.com/nestjs-shopify/nestjs-shopi
 
 ## Usage
 
-From any module, import the `ShopifyAuthModule` using `register` or `registerAsync`:
+From any module, import the `ShopifyAuthOnlineModule`/`ShopifyAuthOfflineModule` using `register` or `registerAsync`:
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule, AccessMode } from '@nestjs-shopify/auth';
+import { ShopifyAuthOnlineModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.register(AccessMode.Online, {
+    ShopifyAuthOnlineModule.register({
       basePath: 'user',
     }),
   ],
@@ -46,11 +46,11 @@ Or using `useFactory`/`useClass`/`useExisting`:
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule, AccessMode } from '@nestjs-shopify/auth';
+import { ShopifyAuthOnlineModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.registerAsync(AccessMode.Online, {
+    ShopifyAuthOnlineModule.registerAsync({
       useFactory: () => ({
         basePath: 'user',
       }),
@@ -84,7 +84,7 @@ export class MyAuthHandler implements ShopifyAuthAfterHandler {
 }
 ```
 
-and provide and inject it to your `ShopifyAuthModule`:
+and provide and inject it to your `ShopifyAuthOnlineModule`/`ShopifyAuthOfflineModule`:
 
 ```ts
 // app.module.ts
@@ -93,7 +93,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
 
 @Module({
   imports: [
-    ShopifyAuthModule.registerAsync(AccessMode.Online, {
+    ShopifyAuthOnlineModule.registerAsync({
       imports: [AuthHandlerModule],
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'user',
@@ -106,7 +106,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
 export class AppModule {}
 ```
 
-You can also use `useClass` and `useExisting` to register the `ShopifyAuthModule`.
+You can also use `useClass` and `useExisting` to register the `ShopifyAuthOnlineModule`/`ShopifyAuthOfflineModule`.
 
 You can also register both auth modes using the same Module:
 
@@ -117,7 +117,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
 
 @Module({
   imports: [
-    ShopifyAuthModule.registerAsync(AccessMode.Online, {
+    ShopifyAuthOnlineModule.registerAsync({
       imports: [AuthHandlerModule],
       useFactory: (afterAuthHandler: MyShopifyAuthHandler) => ({
         basePath: 'user',
@@ -125,7 +125,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
       }),
       inject: [MyAuthHandler],
     }),
-    ShopifyAuthModule.registerAsync(AccessMode.Offline, {
+    ShopifyAuthOfflineModule.registerAsync({
       imports: [AuthHandlerModule],
       useFactory: (afterAuthHandler: MyShopifyAuthHandler) => ({
         basePath: 'shop',
@@ -142,7 +142,7 @@ Now, with this `AppModule` configured, if you want to install an App and store t
 
 ### Authorization
 
-When `ShopifyAuthModule` is setup, you can use `@ShopifyOnlineAuth()` or `@ShopifyOfflineAuth` to require online or offline session in Controllers or specific routes. Example:
+When `ShopifyAuthOnlineModule`/`ShopifyAuthOfflineModule` is setup, you can use `@ShopifyOnlineAuth()` or `@ShopifyOfflineAuth` to require online or offline session in Controllers or specific routes. Example:
 
 ```ts
 import { ShopifyOnlineAuth, ShopifyOfflineAuth } from '@nestjs-shopify/auth';
