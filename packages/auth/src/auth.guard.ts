@@ -1,16 +1,17 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { ModuleRef, Reflector } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
 import { Session } from '@shopify/shopify-api/dist/auth/session';
 import type { IncomingMessage, ServerResponse } from 'http';
-import { AUTH_MODE_KEY } from './auth.constants';
+import { AUTH_MODE_KEY, getOptionsToken } from './auth.constants';
 import { ReauthHeaderException, ReauthRedirectException } from './auth.errors';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
 
-export abstract class ShopifyAuthBaseGuard implements CanActivate {
+@Injectable()
+export class ShopifyAuthGuard implements CanActivate {
   constructor(
-    protected readonly reflector: Reflector,
-    protected readonly options: ShopifyAuthModuleOptions
+    private readonly reflector: Reflector,
+    private readonly moduleRef: ModuleRef
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -22,9 +23,12 @@ export abstract class ShopifyAuthBaseGuard implements CanActivate {
       AUTH_MODE_KEY,
       [ctx.getHandler(), ctx.getClass()]
     );
+    const options = this.moduleRef.get<ShopifyAuthModuleOptions>(
+      getOptionsToken(accessMode),
+      { strict: false }
+    );
 
     const isOnline = accessMode === AccessMode.Online;
-
     let session: Session | undefined;
     try {
       session = await Shopify.Utils.loadCurrentSession(req, res, isOnline);
@@ -74,10 +78,10 @@ export abstract class ShopifyAuthBaseGuard implements CanActivate {
 
     if (shop) {
       if (isOnline) {
-        throw new ReauthHeaderException(shop, this.options);
+        throw new ReauthHeaderException(shop, options);
       }
 
-      throw new ReauthRedirectException(shop, this.options);
+      throw new ReauthRedirectException(shop, options);
     }
 
     return false;

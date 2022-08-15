@@ -1,10 +1,11 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
 import Shopify from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
-import { ShopifyOnlineAuth } from './online-auth.decorators';
+import { UseShopifyAuth } from '../auth.decorators';
+import { AccessMode } from '../auth.interfaces';
 
 @Controller('graphql')
-@ShopifyOnlineAuth()
+@UseShopifyAuth(AccessMode.Online)
 export class ShopifyGraphqlController {
   @Post()
   async proxy(@Req() req: IncomingMessage, @Res() res: ServerResponse) {

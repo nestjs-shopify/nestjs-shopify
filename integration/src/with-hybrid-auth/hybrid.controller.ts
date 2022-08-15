@@ -1,10 +1,10 @@
-import { ShopifyOfflineAuth, ShopifyOnlineAuth } from '@nestjs-shopify/auth';
+import { AccessMode, UseShopifyAuth } from '@nestjs-shopify/auth';
 import { Controller, Get } from '@nestjs/common';
 
 @Controller('message')
 export class HybridController {
   @Get('online')
-  @ShopifyOnlineAuth()
+  @UseShopifyAuth(AccessMode.Online)
   getOnlineMessage() {
     return {
       message: 'Online auth',
@@ -12,7 +12,7 @@ export class HybridController {
   }
 
   @Get('offline')
-  @ShopifyOfflineAuth()
+  @UseShopifyAuth(AccessMode.Offline)
   getOfflineMessage() {
     return {
       message: 'Offline auth',
