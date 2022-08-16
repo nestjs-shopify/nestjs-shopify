@@ -4,7 +4,7 @@ import {
   ShopifyAuthOptionsFactory,
 } from '../auth.interfaces';
 
-export function buildProviderForToken(
+export function buildProvidersForToken(
   asyncOptions: ShopifyAuthModuleAsyncOptions,
   token: string
 ): Provider[] {
