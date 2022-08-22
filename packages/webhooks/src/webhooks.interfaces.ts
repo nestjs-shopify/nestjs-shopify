@@ -1,13 +1,16 @@
-import { ModuleMetadata, Type } from '@nestjs/common';
+import { ModuleMetadata, Scope, Type } from '@nestjs/common';
 
 export interface ShopifyWebhooksOptions {
   path?: string;
-  topics: string[];
-  handler: ShopifyWebhooksHandler;
 }
 
-export interface ShopifyWebhooksHandler {
-  process: (topic: string, shop_domain: string, body: string) => Promise<void>;
+export interface ShopifyWebhookHandlerOptions {
+  topic: string;
+  scope?: Scope;
+}
+
+export abstract class ShopifyWebhookHandler<T = unknown> {
+  abstract handle(shop: string, data: T): Promise<void>;
 }
 
 export interface ShopifyWebhooksOptionsFactory {

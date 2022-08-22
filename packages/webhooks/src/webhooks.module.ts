@@ -1,11 +1,9 @@
-import { DynamicModule, Module, OnModuleInit } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
-import Shopify from '@shopify/shopify-api';
-import {
-  SHOPIFY_WEBHOOKS_DEFAULT_PATH,
-  SHOPIFY_WEBHOOKS_OPTIONS,
-} from './webhooks.constants';
+import { DynamicModule, Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
+import { ShopifyWebhooksMetadataAccessor } from './webhooks-metadata.accessor';
+import { SHOPIFY_WEBHOOKS_OPTIONS } from './webhooks.constants';
 import { ShopifyWebhooksController } from './webhooks.controller';
+import { ShopifyWebhooksExplorer } from './webhooks.explorer';
 import {
   ShopifyWebhooksAsyncOptions,
   ShopifyWebhooksOptions,
@@ -18,14 +16,19 @@ import { ShopifyWebhooksService } from './webhooks.service';
 
 @Module({
   controllers: [ShopifyWebhooksController],
-  providers: [ShopifyWebhooksService],
+  providers: [
+    ShopifyWebhooksService,
+    ShopifyWebhooksExplorer,
+    ShopifyWebhooksMetadataAccessor,
+  ],
   exports: [ShopifyWebhooksService],
 })
-export class ShopifyWebhooksModule implements OnModuleInit {
+export class ShopifyWebhooksModule {
   static forRoot(options: ShopifyWebhooksOptions): DynamicModule {
     return {
       module: ShopifyWebhooksModule,
       global: true,
+      imports: [DiscoveryModule],
       providers: [
         {
           provide: SHOPIFY_WEBHOOKS_OPTIONS,
@@ -41,26 +44,9 @@ export class ShopifyWebhooksModule implements OnModuleInit {
     return {
       module: ShopifyWebhooksModule,
       global: true,
-      imports: options.imports || [],
+      imports: [...(options.imports || []), DiscoveryModule],
       providers: [...createShopifyWebhooksAsyncOptionsProviders(options)],
       exports: [SHOPIFY_WEBHOOKS_OPTIONS],
     };
-  }
-
-  constructor(private readonly moduleRef: ModuleRef) {}
-
-  onModuleInit() {
-    const options = this.moduleRef.get<ShopifyWebhooksOptions>(
-      SHOPIFY_WEBHOOKS_OPTIONS,
-      { strict: false }
-    );
-
-    options.topics.forEach((topic: string) => {
-      Shopify.Webhooks.Registry.addHandler(topic, {
-        path: options.path || SHOPIFY_WEBHOOKS_DEFAULT_PATH,
-        webhookHandler: (topic, shop, body) =>
-          options.handler.process(topic, shop, body),
-      });
-    });
   }
 }
