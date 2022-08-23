@@ -1,21 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ShopifyWebhooksModule } from '@nestjs-shopify/webhooks';
-import { ShopifyWebhooksHandlerService } from './handler/shopify-webhooks-handler.service';
-import { HandlerModule } from './handler/handler.module';
 import { ShopifyInitializerModule } from '../shopify-initializer/shopify-initializer.module';
+import { handlers } from './handlers';
 
 @Module({
   imports: [
     ShopifyInitializerModule,
     ShopifyWebhooksModule.forRootAsync({
-      imports: [HandlerModule],
-      useFactory: (handler) => ({
-        handler,
+      useFactory: () => ({
         path: 'webhooks',
-        topics: ['PRODUCTS_CREATE'],
       }),
-      inject: [ShopifyWebhooksHandlerService],
     }),
   ],
+  providers: [...handlers],
 })
 export class AppModule {}

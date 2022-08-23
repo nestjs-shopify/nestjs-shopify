@@ -1,31 +1,20 @@
-import { Injectable, Module } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import Shopify from '@shopify/shopify-api';
-import { ShopifyWebhooksHandler } from './webhooks.interfaces';
+import { WebhookHandler } from './webhooks.decorators';
+import { ShopifyWebhookHandler } from './webhooks.interfaces';
 import { ShopifyWebhooksModule } from './webhooks.module';
 
-const processMock = jest.fn().mockResolvedValue(undefined);
-const handlerMock = { process: processMock } as ShopifyWebhooksHandler;
+const mockHandle = jest.fn();
 
-@Injectable()
-class MyHandler implements ShopifyWebhooksHandler {
-  async process(topic: string, shop: string, body: string): Promise<void> {
-    await processMock(topic, shop, body);
+@WebhookHandler('CUSTOMERS_CREATE')
+class CustomersCreate extends ShopifyWebhookHandler {
+  async handle(shop: string, data: unknown): Promise<void> {
+    mockHandle(shop, data);
   }
 }
 
-@Module({
-  providers: [MyHandler],
-  exports: [MyHandler],
-})
-class MyHandlerModule {}
-
 describe('ShopifyWebhookModule', () => {
   let moduleRef: TestingModule;
-
-  afterEach(() => {
-    processMock.mockReset();
-  });
 
   describe('#forRoot', () => {
     beforeEach(async () => {
@@ -33,10 +22,9 @@ describe('ShopifyWebhookModule', () => {
         imports: [
           ShopifyWebhooksModule.forRoot({
             path: '/mywebhooks',
-            topics: ['PRODUCTS_CREATE'],
-            handler: handlerMock,
           }),
         ],
+        providers: [CustomersCreate],
       }).compile();
 
       await moduleRef.init();
@@ -48,7 +36,7 @@ describe('ShopifyWebhookModule', () => {
 
     it('should add webhook to registry', async () => {
       expect(
-        Shopify.Webhooks.Registry.webhookRegistry['PRODUCTS_CREATE']
+        Shopify.Webhooks.Registry.webhookRegistry['CUSTOMERS_CREATE']
       ).toHaveProperty('path', '/mywebhooks');
     });
   });
@@ -58,15 +46,12 @@ describe('ShopifyWebhookModule', () => {
       moduleRef = await Test.createTestingModule({
         imports: [
           ShopifyWebhooksModule.forRootAsync({
-            imports: [MyHandlerModule],
-            useFactory: (handler: ShopifyWebhooksHandler) => ({
+            useFactory: () => ({
               path: '/mywebhooks2',
-              topics: ['PRODUCTS_UPDATE', 'CUSTOMERS_UPDATE'],
-              handler,
             }),
-            inject: [MyHandler],
           }),
         ],
+        providers: [CustomersCreate],
       }).compile();
 
       await moduleRef.init();
@@ -78,11 +63,7 @@ describe('ShopifyWebhookModule', () => {
 
     it('should add webhook to registry', async () => {
       expect(
-        Shopify.Webhooks.Registry.webhookRegistry['PRODUCTS_UPDATE']
-      ).toHaveProperty('path', '/mywebhooks2');
-
-      expect(
-        Shopify.Webhooks.Registry.webhookRegistry['CUSTOMERS_UPDATE']
+        Shopify.Webhooks.Registry.webhookRegistry['CUSTOMERS_CREATE']
       ).toHaveProperty('path', '/mywebhooks2');
     });
   });

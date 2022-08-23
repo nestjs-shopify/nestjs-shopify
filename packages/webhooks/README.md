@@ -1,10 +1,10 @@
 # @nestjs-shopify/webhooks
 
-Enable Shopify webhook support for your NestJS application using `ShopifyWebhooskModule`. Import this module at the root level after `ShopifyCoreModule`:
+Enable Shopify webhook support for your NestJS application using `ShopifyWebhooksModule`. Import this module at the root level after `ShopifyCoreModule`:
 
 ```ts
 // app.module.ts
-import { MyHandler } from './my.handler.ts';
+import { CustomersCreateWebhookHandler } from './customers-create.webhook-handler.ts';
 
 @Module({
   imports: [
@@ -18,36 +18,31 @@ import { MyHandler } from './my.handler.ts';
     }),
     ShopifyWebhooksModule.forRoot({
       path: '/shopify-webhooks',
-      topics: ['PRODUCTS_CREATE', 'CUSTOMERS_UPDATE'],
-      handler: new MyHandler(),
     }),
   ],
-  providers: [MyHandler],
+  providers: [CustomersCreateWebhookHandler],
 })
 export class AppModule {}
 ```
 
-This module requires a handler that will be invoked with a `.process()` function for _every_ incoming webhook:
+The `ShopifyWebhooksModule` automatically configures webhook handlers based on the usage of the `@WebhookHandler` class decorator. These webhook handlers require you to extend the `ShopifyWebhookHandler` class and define a `handle` method:
 
 ```ts
-// my.handler.ts
-import { ShopifyWebhookHandler } from 'shopify-nestjs-api';
-import { Injectable } from '@nestjs/common';
+// customers-create.webhook-handler.ts
+import {
+  ShopifyWebhookHandler,
+  WebhookHandler,
+} from '@nestjs-shopify/webhooks';
 
-@Injectable()
-export class MyHandler implements ShopifyWebhookHandler {
-  async process(topic: string, shop: string, body: string): Promise<void> {
-    switch (topic) {
-      case 'PRODUCTS_CREATE':
-        // handle product creation logic
-        break;
-      case 'CUSTOMERS_UPDATE':
-        // handle customer update logic
-        break;
-    }
+@WebhookHandler('PRODUCTS_CREATE')
+export class CustomersCreateWebhookHandler implements ShopifyWebhookHandler {
+  async handle(shop: string, product: unknown): Promise<void> {
+    console.log(shop, product);
   }
 }
 ```
+
+Make sure you add all `ShopifyWebhookHandler` classes to the `providers` definition of the `AppModule` as shown in all examples.
 
 **NOTE: this package relies on Nest >8.4.5 `rawBody` option.**
 
@@ -69,7 +64,7 @@ You can also import the `ShopifyWebhooksModule` with `useFactory`, `useClass` or
 
 ```ts
 // app.module.ts
-import { MyHandler } from './my.handler.ts';
+import { CustomersCreateWebhookHandler } from './customers-create.webhook-handler.ts';
 
 @Module({
   imports: [
@@ -82,15 +77,12 @@ import { MyHandler } from './my.handler.ts';
       scopes: ['test_scope'],
     }),
     ShopifyWebhooksModule.forRootAsync({
-      useFactory: (handler: MyHandler) => ({
+      useFactory: () => ({
         path: '/shopify-webhooks',
-        topics: ['PRODUCTS_CREATE', 'CUSTOMERS_UPDATE'],
-        handler,
       }),
-      inject: [MyHandler],
     }),
   ],
-  providers: [MyHandler],
+  providers: [CustomersCreateWebhookHandler],
 })
 export class AppModule {}
 ```
@@ -100,7 +92,8 @@ export class AppModule {}
 This module exports the `ShopifyWebhooksService`. Call this service with an **offline** access token to register your webhooks:
 
 ```ts
-// auth-handler/my-auth.handler.ts
+// my-auth.handler.ts
+import { ShopifyAuthAfterHandler } from '@nestjs-shopify/auth';
 import { ShopifyWebhooksService } from '@nestjs-shopify/webhooks';
 
 @Injectable()
