@@ -7,9 +7,9 @@ import { ShopifyWebhooksModule } from './webhooks.module';
 const mockHandle = jest.fn();
 
 @WebhookHandler('CUSTOMERS_CREATE')
-class CustomersCreate implements ShopifyWebhookHandler {
-  async handle(shop: string, body: unknown): Promise<void> {
-    mockHandle(shop, body);
+class CustomersCreate extends ShopifyWebhookHandler {
+  async handle(shop: string, data: unknown): Promise<void> {
+    mockHandle(shop, data);
   }
 }
 

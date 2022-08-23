@@ -84,7 +84,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
     let handle;
 
     if (isRequestScoped) {
-      handle = async (_topic: string, shop: string, body: unknown) => {
+      handle = async (_topic: string, shop: string, body: string) => {
         const contextId = ContextIdFactory.create();
 
         const contextInstance = await this.injector.loadPerContext(
@@ -93,11 +93,14 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
           moduleRef.providers,
           contextId
         );
-        return contextInstance[methodKey].call(contextInstance, shop, body);
+        const data = JSON.parse(body);
+        return contextInstance[methodKey].call(contextInstance, shop, data);
       };
     } else {
-      handle = async (_topic: string, shop: string, body: unknown) =>
-        instance[methodKey].call(instance, shop, body);
+      handle = (_topic: string, shop: string, body: string) => {
+        const data = JSON.parse(body);
+        return instance[methodKey].call(instance, shop, data);
+      };
     }
 
     return handle;
