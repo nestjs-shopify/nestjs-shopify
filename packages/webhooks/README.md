@@ -35,7 +35,7 @@ import {
 } from '@nestjs-shopify/webhooks';
 
 @WebhookHandler('PRODUCTS_CREATE')
-export class CustomersCreateWebhookHandler implements ShopifyWebhookHandler {
+export class CustomersCreateWebhookHandler extends ShopifyWebhookHandler {
   async handle(shop: string, product: unknown): Promise<void> {
     console.log(shop, product);
   }
