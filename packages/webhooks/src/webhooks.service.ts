@@ -15,7 +15,7 @@ export class ShopifyWebhooksService {
 
     Object.keys(response).forEach((topic: string) => {
       if (response[topic].success) {
-        this.logger.debug(`Registered webhook ${topic} successfully.`);
+        this.logger.log(`Registered webhook ${topic} successfully.`);
       } else {
         this.logger.warn(
           `Failed to register webhook ${topic}: ${response['result']}`

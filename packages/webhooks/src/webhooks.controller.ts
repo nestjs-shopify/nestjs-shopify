@@ -3,6 +3,7 @@ import {
   Controller,
   HttpCode,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   Post,
   RawBodyRequest,
@@ -16,6 +17,8 @@ import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
+  private readonly logger = new Logger('Webhook');
+
   @Post()
   @HttpCode(200)
   async handle(@Req() req: RawBodyRequest<IncomingMessage>) {
@@ -33,6 +36,8 @@ export class ShopifyWebhooksController {
     const webhookEntry = Shopify.Webhooks.Registry.getHandler(graphqlTopic);
 
     if (webhookEntry) {
+      this.logger.log(`Received webhook "${graphqlTopic}"`);
+
       await webhookEntry.webhookHandler(
         graphqlTopic,
         domain as string,
