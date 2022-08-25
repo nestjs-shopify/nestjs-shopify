@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-shopify/core",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "commonjs",
   "peerDependencies": {
     "@nestjs/common": "*",
