@@ -28,12 +28,15 @@ export class ShopifyGraphqlController {
 
     try {
       const response = await client.query(options);
-      res.writeHead(200).end(JSON.stringify(response.body));
+      res
+        .writeHead(200, undefined, response.headers.raw())
+        .end(JSON.stringify(response.body));
     } catch (error) {
       if (error instanceof GraphqlQueryError) {
         return res
-          .writeHead(400)
-          .setHeader('Content-Type', 'application/json')
+          .writeHead(400, error.message, {
+            'Content-Type': 'application/json',
+          })
           .end(JSON.stringify(error.response));
       }
 
