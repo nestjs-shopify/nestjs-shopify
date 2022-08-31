@@ -8,6 +8,7 @@ import { Injector } from '@nestjs/core/injector/injector';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module } from '@nestjs/core/injector/module';
 import Shopify from '@shopify/shopify-api';
+import { addLeadingSlash } from './utils/add-leading-slash.util';
 import { ShopifyWebhooksMetadataAccessor } from './webhooks-metadata.accessor';
 import {
   SHOPIFY_WEBHOOKS_DEFAULT_PATH,
@@ -74,7 +75,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
       );
 
       const globalPrefix = this.appConfig.getGlobalPrefix();
-      const path = [
+      const webhookPath = [
         globalPrefix,
         this.options.path || SHOPIFY_WEBHOOKS_DEFAULT_PATH,
       ]
@@ -82,7 +83,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         .replace('//', '/');
 
       Shopify.Webhooks.Registry.addHandler(topic, {
-        path,
+        path: addLeadingSlash(webhookPath),
         webhookHandler,
       });
     });
