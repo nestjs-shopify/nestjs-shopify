@@ -8,7 +8,7 @@ export interface RequestLike {
 
 @Injectable()
 export class ShopifyAuthSessionService {
-  public getShop(req: RequestLike, session: SessionInterface | undefined) {
+  public getShop(req: RequestLike, session?: SessionInterface | undefined) {
     if (this.isEmbeddedApp) {
       return session?.shop || this.getShopFromAuthHeader(req);
     }
