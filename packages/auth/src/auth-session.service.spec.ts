@@ -2,6 +2,12 @@ import Shopify, { SessionInterface } from '@shopify/shopify-api';
 import { ContextInterface } from '@shopify/shopify-api/dist/context';
 import { JwtPayload } from '@shopify/shopify-api/dist/utils/decode-session-token';
 import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
+import * as decodeUtil from './utils/decode-session-token.util';
+
+jest.mock('./utils/decode-session-token.util', () => ({
+  __esModule: true,
+  decodeSessionToken: jest.fn(),
+}));
 
 describe('ShopifyAuthSessionService', () => {
   let service: ShopifyAuthSessionService;
@@ -9,6 +15,10 @@ describe('ShopifyAuthSessionService', () => {
   beforeEach(() => {
     service = new ShopifyAuthSessionService();
     Shopify.Context = {} as ContextInterface;
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   describe('when standalone app', () => {
@@ -54,31 +64,27 @@ describe('ShopifyAuthSessionService', () => {
     });
 
     it('should return shop from auth header', () => {
-      const spy = jest
-        .spyOn(Shopify.Utils, 'decodeSessionToken')
-        .mockReturnValueOnce({
-          dest: 'https://test3.myshopify.io',
-        } as JwtPayload);
+      jest.mocked(decodeUtil).decodeSessionToken.mockReturnValueOnce({
+        dest: 'https://test3.myshopify.io',
+      } as JwtPayload);
 
       const shop = service.getShop(req);
 
       expect(shop).toEqual('test3.myshopify.io');
 
-      expect(spy).toHaveBeenCalledWith('token');
+      expect(decodeUtil.decodeSessionToken).toHaveBeenCalledWith('token');
     });
 
     it('should return undefined if decoding fails', () => {
-      const spy = jest
-        .spyOn(Shopify.Utils, 'decodeSessionToken')
-        .mockImplementationOnce(() => {
-          throw new Error();
-        });
+      jest.mocked(decodeUtil).decodeSessionToken.mockImplementationOnce(() => {
+        throw new Error();
+      });
 
       const shop = service.getShop(req);
 
       expect(shop).toBeUndefined();
 
-      expect(spy).toHaveBeenCalledWith('token');
+      expect(decodeUtil.decodeSessionToken).toHaveBeenCalledWith('token');
     });
   });
 });

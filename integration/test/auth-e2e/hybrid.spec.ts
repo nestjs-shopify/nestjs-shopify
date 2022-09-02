@@ -43,6 +43,7 @@ describe('Hybrid Authz (e2e)', () => {
     );
     session.scope = 'write_products';
     session.accessToken = 'asdf';
+    session.expires = new Date(jwtPayload.exp * 1000);
 
     let token: string;
 
@@ -66,7 +67,9 @@ describe('Hybrid Authz (e2e)', () => {
     });
 
     it('GET /message/online, 403 expired', async () => {
-      jest.useFakeTimers().setSystemTime((jwtPayload.exp + 10) * 1000);
+      jest
+        .useFakeTimers()
+        .setSystemTime(new Date((jwtPayload.exp + 10) * 1000));
 
       const res = await request(app.getHttpServer())
         .get('/message/online')

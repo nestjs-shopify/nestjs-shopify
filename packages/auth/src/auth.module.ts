@@ -32,6 +32,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOnlineController, ShopifyGraphqlController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 
@@ -53,6 +54,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOfflineController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 
@@ -74,6 +76,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOnlineController, ShopifyGraphqlController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 
@@ -95,6 +98,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOfflineController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 }

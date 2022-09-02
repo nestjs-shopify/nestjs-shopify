@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import Shopify, { SessionInterface } from '@shopify/shopify-api';
+import { decodeSessionToken } from './utils/decode-session-token.util';
 
 export interface RequestLike {
   headers: Record<string, string | undefined>;
@@ -8,6 +9,8 @@ export interface RequestLike {
 
 @Injectable()
 export class ShopifyAuthSessionService {
+  private readonly logger = new Logger('ShopifyAuth');
+
   public getShop(req: RequestLike, session?: SessionInterface | undefined) {
     if (this.isEmbeddedApp) {
       return session?.shop || this.getShopFromAuthHeader(req);
@@ -36,9 +39,10 @@ export class ShopifyAuthSessionService {
     const matches = authHeader?.match(/Bearer (.*)/);
     if (matches) {
       try {
-        const payload = Shopify.Utils.decodeSessionToken(matches[1]);
+        const payload = decodeSessionToken(matches[1]);
         return payload.dest.replace('https://', '');
       } catch (error) {
+        this.logger.error(error);
         // do nothing
       }
     }
