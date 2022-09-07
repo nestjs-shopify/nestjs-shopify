@@ -8,45 +8,41 @@ import {
   ShopifyWebhooksAsyncOptions,
   ShopifyWebhooksOptions,
 } from './webhooks.interfaces';
-import {
-  createShopifyWebhooksAsyncOptionsProviders,
-  shopifyWebhooksControllerPathHackProvider,
-} from './webhooks.providers';
+import { ConfigurableModuleClass } from './webhooks.module-builder';
+import { shopifyWebhooksControllerPathHackProvider } from './webhooks.providers';
 import { ShopifyWebhooksService } from './webhooks.service';
 
 @Module({
+  imports: [DiscoveryModule],
   controllers: [ShopifyWebhooksController],
   providers: [
     ShopifyWebhooksService,
     ShopifyWebhooksExplorer,
     ShopifyWebhooksMetadataAccessor,
   ],
-  exports: [ShopifyWebhooksService],
+  exports: [ShopifyWebhooksService, SHOPIFY_WEBHOOKS_OPTIONS],
 })
-export class ShopifyWebhooksModule {
+export class ShopifyWebhooksModule extends ConfigurableModuleClass {
   static forRoot(options: ShopifyWebhooksOptions): DynamicModule {
+    const module = super.forRoot(options);
     return {
-      module: ShopifyWebhooksModule,
-      global: true,
-      imports: [DiscoveryModule],
+      ...module,
       providers: [
-        {
-          provide: SHOPIFY_WEBHOOKS_OPTIONS,
-          useValue: options,
-        },
+        ...(module.providers || []),
         shopifyWebhooksControllerPathHackProvider,
       ],
-      exports: [SHOPIFY_WEBHOOKS_OPTIONS],
     };
   }
 
   static forRootAsync(options: ShopifyWebhooksAsyncOptions): DynamicModule {
+    const module = super.forRootAsync(options);
+
     return {
-      module: ShopifyWebhooksModule,
-      global: true,
-      imports: [...(options.imports || []), DiscoveryModule],
-      providers: [...createShopifyWebhooksAsyncOptionsProviders(options)],
-      exports: [SHOPIFY_WEBHOOKS_OPTIONS],
+      ...module,
+      providers: [
+        ...(module.providers || []),
+        shopifyWebhooksControllerPathHackProvider,
+      ],
     };
   }
 }
