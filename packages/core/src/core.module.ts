@@ -1,34 +1,22 @@
-import { DynamicModule, Module, OnModuleInit } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
-import { SHOPIFY_CORE_OPTIONS } from './core.constants';
-import { ShopifyCoreAsyncOptions, ShopifyCoreOptions } from './core.interfaces';
-import { createShopifyCoreAsyncOptionsProviders } from './core.providers';
+import { ShopifyCoreOptions } from './core.interfaces';
+import {
+  ConfigurableModuleClass,
+  SHOPIFY_CORE_OPTIONS,
+} from './core.module-builder';
 
-@Module({})
-export class ShopifyCoreModule implements OnModuleInit {
-  static async forRoot(options: ShopifyCoreOptions): Promise<DynamicModule> {
-    return {
-      module: ShopifyCoreModule,
-      global: true,
-      providers: [{ provide: SHOPIFY_CORE_OPTIONS, useValue: options }],
-      exports: [SHOPIFY_CORE_OPTIONS],
-    };
+@Module({
+  exports: [SHOPIFY_CORE_OPTIONS],
+})
+export class ShopifyCoreModule
+  extends ConfigurableModuleClass
+  implements OnModuleInit
+{
+  constructor(private moduleRef: ModuleRef) {
+    super();
   }
-
-  static async forRootAsync(
-    options: ShopifyCoreAsyncOptions
-  ): Promise<DynamicModule> {
-    return {
-      module: ShopifyCoreModule,
-      global: true,
-      imports: options.imports || [],
-      providers: [...createShopifyCoreAsyncOptionsProviders(options)],
-      exports: [SHOPIFY_CORE_OPTIONS],
-    };
-  }
-
-  constructor(private moduleRef: ModuleRef) {}
 
   onModuleInit() {
     const options = this.moduleRef.get<string, ShopifyCoreOptions>(
