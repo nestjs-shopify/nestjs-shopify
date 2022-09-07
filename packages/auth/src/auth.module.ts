@@ -1,4 +1,5 @@
 import { DynamicModule } from '@nestjs/common';
+import { ShopifyAuthSessionService } from './auth-session.service';
 import { getControllerHackToken, getOptionsToken } from './auth.constants';
 import { ShopifyAuthGuard } from './auth.guard';
 import {
@@ -23,6 +24,7 @@ export class ShopifyAuthModule {
           useValue: options,
         },
         ShopifyAuthGuard,
+        ShopifyAuthSessionService,
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Online),
           getControllerHackToken(AccessMode.Online),
@@ -30,6 +32,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOnlineController, ShopifyGraphqlController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 
@@ -43,6 +46,7 @@ export class ShopifyAuthModule {
           useValue: options,
         },
         ShopifyAuthGuard,
+        ShopifyAuthSessionService,
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Offline),
           getControllerHackToken(AccessMode.Offline),
@@ -50,6 +54,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOfflineController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 
@@ -63,6 +68,7 @@ export class ShopifyAuthModule {
       providers: [
         ...buildProvidersForToken(options, getOptionsToken(AccessMode.Online)),
         ShopifyAuthGuard,
+        ShopifyAuthSessionService,
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Online),
           getControllerHackToken(AccessMode.Online),
@@ -70,6 +76,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOnlineController, ShopifyGraphqlController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 
@@ -83,6 +90,7 @@ export class ShopifyAuthModule {
       providers: [
         ...buildProvidersForToken(options, getOptionsToken(AccessMode.Offline)),
         ShopifyAuthGuard,
+        ShopifyAuthSessionService,
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Offline),
           getControllerHackToken(AccessMode.Offline),
@@ -90,6 +98,7 @@ export class ShopifyAuthModule {
         ),
       ],
       controllers: [ShopifyAuthOfflineController],
+      exports: [ShopifyAuthSessionService],
     };
   }
 }
