@@ -5,6 +5,7 @@ export class ShopifyAuthException extends Error {
 
   constructor(
     message = 'Unauthorized',
+    public readonly shop: string,
     public readonly accessMode: AccessMode
   ) {
     super(message);
@@ -18,16 +19,5 @@ export class ShopifyAuthException extends Error {
 
   getStatus(): number {
     return this.status;
-  }
-}
-
-export class ReauthHeaderException extends ShopifyAuthException {
-  constructor(public shop: string, accessMode = AccessMode.Online) {
-    super('Reauthorization Required (See Headers)', accessMode);
-  }
-}
-export class ReauthRedirectException extends ShopifyAuthException {
-  constructor(public shop: string, accessMode = AccessMode.Offline) {
-    super('Reauthorization Required (See Redirect)', accessMode);
   }
 }

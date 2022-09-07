@@ -5,7 +5,7 @@ import { Session } from '@shopify/shopify-api/dist/auth/session';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
 import { AUTH_MODE_KEY } from './auth.constants';
-import { ReauthHeaderException, ReauthRedirectException } from './auth.errors';
+import { ShopifyAuthException } from './auth.errors';
 import { AccessMode } from './auth.interfaces';
 import { isSessionValid } from './utils/is-session-valid.util';
 
@@ -26,13 +26,12 @@ export class ShopifyAuthGuard implements CanActivate {
     const req = ctx.switchToHttp().getRequest<IncomingMessage>();
     const shop = this.authSessionService.getShop(req as RequestLike, session);
 
-    const isOnline = accessMode === AccessMode.Online;
     if (shop) {
-      if (isOnline) {
-        throw new ReauthHeaderException(shop, accessMode);
-      }
-
-      throw new ReauthRedirectException(shop, accessMode);
+      throw new ShopifyAuthException(
+        'Reauthorization Required',
+        shop,
+        accessMode
+      );
     }
 
     return false;

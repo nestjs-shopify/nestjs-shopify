@@ -9,6 +9,7 @@ export enum AccessMode {
 
 export interface ShopifyAuthModuleOptions {
   basePath?: string;
+  returnHeaders?: boolean;
   useGlobalPrefix?: boolean;
   afterAuthHandler?: ShopifyAuthAfterHandler;
 }
