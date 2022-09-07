@@ -1,16 +1,18 @@
 import Shopify, { ApiVersion, SessionInterface } from '@shopify/shopify-api';
+import { AuthScopes } from '@shopify/shopify-api/dist/auth/scopes';
+import { ContextInterface } from '@shopify/shopify-api/dist/context';
 import { isSessionValid } from './is-session-valid.util';
 
 describe('isSessionValid', () => {
   beforeEach(() => {
-    Shopify.Context.initialize({
+    Shopify.Context = {
       API_KEY: 'foo',
       API_SECRET_KEY: 'bar',
       API_VERSION: ApiVersion.Unstable,
       HOST_NAME: 'localhost:3000',
       IS_EMBEDDED_APP: true,
-      SCOPES: ['read_products'],
-    });
+      SCOPES: new AuthScopes(['read_products']),
+    } as ContextInterface;
   });
 
   it('returns false if scopes have changed', () => {
