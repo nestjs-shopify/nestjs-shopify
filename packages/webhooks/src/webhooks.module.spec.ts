@@ -1,20 +1,16 @@
+import { PATH_METADATA } from '@nestjs/common/constants';
+import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
-import Shopify from '@shopify/shopify-api';
-import { WebhookHandler } from './webhooks.decorators';
-import { ShopifyWebhookHandler } from './webhooks.interfaces';
+import { ShopifyWebhooksController } from './webhooks.controller';
 import { ShopifyWebhooksModule } from './webhooks.module';
-
-const mockHandle = jest.fn();
-
-@WebhookHandler('CUSTOMERS_CREATE')
-class CustomersCreate extends ShopifyWebhookHandler {
-  async handle(shop: string, data: unknown): Promise<void> {
-    mockHandle(shop, data);
-  }
-}
 
 describe('ShopifyWebhookModule', () => {
   let moduleRef: TestingModule;
+  const reflector = new Reflector();
+
+  afterEach(async () => {
+    await moduleRef.close();
+  });
 
   describe('#forRoot', () => {
     beforeEach(async () => {
@@ -24,20 +20,15 @@ describe('ShopifyWebhookModule', () => {
             path: '/mywebhooks',
           }),
         ],
-        providers: [CustomersCreate],
       }).compile();
 
       await moduleRef.init();
     });
 
-    afterEach(async () => {
-      await moduleRef.close();
-    });
-
-    it('should add webhook to registry', async () => {
-      expect(
-        Shopify.Webhooks.Registry.webhookRegistry['CUSTOMERS_CREATE']
-      ).toHaveProperty('path', '/mywebhooks');
+    it('should override webhook controller path', async () => {
+      expect(reflector.get(PATH_METADATA, ShopifyWebhooksController)).toEqual(
+        '/mywebhooks'
+      );
     });
   });
 
@@ -46,25 +37,24 @@ describe('ShopifyWebhookModule', () => {
       moduleRef = await Test.createTestingModule({
         imports: [
           ShopifyWebhooksModule.forRootAsync({
-            useFactory: () => ({
-              path: '/mywebhooks2',
-            }),
+            useClass: class Testing {
+              createShopifyWebhookOptions() {
+                return {
+                  path: '/mywebhooks2',
+                };
+              }
+            },
           }),
         ],
-        providers: [CustomersCreate],
       }).compile();
 
       await moduleRef.init();
     });
 
-    afterEach(async () => {
-      await moduleRef.close();
-    });
-
     it('should add webhook to registry', async () => {
-      expect(
-        Shopify.Webhooks.Registry.webhookRegistry['CUSTOMERS_CREATE']
-      ).toHaveProperty('path', '/mywebhooks2');
+      expect(reflector.get(PATH_METADATA, ShopifyWebhooksController)).toEqual(
+        '/mywebhooks2'
+      );
     });
   });
 });
