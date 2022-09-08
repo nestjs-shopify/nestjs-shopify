@@ -1,11 +1,12 @@
-import { ShopifyAuthModuleOptions } from './auth.interfaces';
+import { AccessMode } from './auth.interfaces';
 
 export class ShopifyAuthException extends Error {
   private status: number;
 
   constructor(
     message = 'Unauthorized',
-    public readonly options: ShopifyAuthModuleOptions
+    public readonly shop: string,
+    public readonly accessMode: AccessMode
   ) {
     super(message);
     this.status = 403;
@@ -18,16 +19,5 @@ export class ShopifyAuthException extends Error {
 
   getStatus(): number {
     return this.status;
-  }
-}
-
-export class ReauthHeaderException extends ShopifyAuthException {
-  constructor(public shop: string, options: ShopifyAuthModuleOptions) {
-    super('Reauthorization Required (See Headers)', options);
-  }
-}
-export class ReauthRedirectException extends ShopifyAuthException {
-  constructor(public shop: string, options: ShopifyAuthModuleOptions) {
-    super('Reauthorization Required (See Redirect)', options);
   }
 }

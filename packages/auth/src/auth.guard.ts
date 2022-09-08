@@ -1,25 +1,23 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { ModuleRef, Reflector } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import Shopify from '@shopify/shopify-api';
 import { Session } from '@shopify/shopify-api/dist/auth/session';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
-import { AUTH_MODE_KEY, getOptionsToken } from './auth.constants';
-import { ReauthHeaderException, ReauthRedirectException } from './auth.errors';
-import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
+import { AUTH_MODE_KEY } from './auth.constants';
+import { ShopifyAuthException } from './auth.errors';
+import { AccessMode } from './auth.interfaces';
 import { isSessionValid } from './utils/is-session-valid.util';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly moduleRef: ModuleRef,
     private readonly authSessionService: ShopifyAuthSessionService
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
-    const { accessMode, session, options } =
-      await this.getSessionDataFromContext(ctx);
+    const { accessMode, session } = await this.getSessionDataFromContext(ctx);
 
     if (session && isSessionValid(session)) {
       return true;
@@ -28,13 +26,12 @@ export class ShopifyAuthGuard implements CanActivate {
     const req = ctx.switchToHttp().getRequest<IncomingMessage>();
     const shop = this.authSessionService.getShop(req as RequestLike, session);
 
-    const isOnline = accessMode === AccessMode.Online;
     if (shop) {
-      if (isOnline) {
-        throw new ReauthHeaderException(shop, options);
-      }
-
-      throw new ReauthRedirectException(shop, options);
+      throw new ShopifyAuthException(
+        'Reauthorization Required',
+        shop,
+        accessMode
+      );
     }
 
     return false;
@@ -42,7 +39,6 @@ export class ShopifyAuthGuard implements CanActivate {
 
   private async getSessionDataFromContext(ctx: ExecutionContext) {
     const accessMode = this.getAccessModeFromContext(ctx);
-    const options = this.getShopifyOptionsFor(accessMode);
 
     const http = ctx.switchToHttp();
     const req = http.getRequest<IncomingMessage>();
@@ -58,16 +54,8 @@ export class ShopifyAuthGuard implements CanActivate {
 
     return {
       accessMode,
-      options,
       session,
     };
-  }
-
-  private getShopifyOptionsFor(accessMode: AccessMode) {
-    return this.moduleRef.get<ShopifyAuthModuleOptions>(
-      getOptionsToken(accessMode),
-      { strict: false }
-    );
   }
 
   private getAccessModeFromContext(ctx: ExecutionContext) {

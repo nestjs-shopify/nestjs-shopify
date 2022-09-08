@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common';
   imports: [
     ShopifyAuthModule.forRootOnline({
       basePath: 'online',
+      returnHeaders: true,
       useGlobalPrefix: true,
     }),
   ],

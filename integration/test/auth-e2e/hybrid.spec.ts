@@ -73,7 +73,6 @@ describe('Hybrid Authz (e2e)', () => {
 
       const res = await request(app.getHttpServer())
         .get('/message/online')
-        .query({ shop: TEST_SHOP })
         .set({
           accepts: 'application/json',
           authorization: `Bearer ${token}`,
