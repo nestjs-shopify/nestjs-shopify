@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-shopify/webhooks",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "commonjs",
   "peerDependencies": {
     "@nestjs/common": "*",
