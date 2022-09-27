@@ -1,17 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import Shopify, { ApiVersion, ContextParams } from '@shopify/shopify-api';
+import { ApiVersion, Shopify } from '@shopify/shopify-api';
+import { MemorySessionStorage } from '@shopify/shopify-api/dist/session-storage/memory';
 import { AuthScopes } from '@shopify/shopify-api/dist/auth/scopes';
-import { UninitializedContextError } from '@shopify/shopify-api/dist/error';
 import { ShopifyCoreOptions } from './core.interfaces';
 import { ShopifyCoreModule } from './core.module';
+import { SHOPIFY_API_CONTEXT } from './core.constants';
 
 const requiredOptions: ShopifyCoreOptions = {
   apiKey: 'foo',
-  apiSecret: 'bar',
+  apiSecretKey: 'bar',
   apiVersion: ApiVersion.Unstable,
   hostName: 'localhost:8081',
   isEmbeddedApp: true,
-  scopes: ['test_scope'],
+  hostScheme: 'http',
+  isPrivateApp: false,
+  scopes: new AuthScopes('test_scope'),
+  sessionStorage: new MemorySessionStorage(),
 };
 
 describe('ShopifyCoreModule', () => {
@@ -20,33 +24,32 @@ describe('ShopifyCoreModule', () => {
   describe('#forRoot', () => {
     beforeEach(async () => {
       moduleRef = await Test.createTestingModule({
+        imports: [ShopifyCoreModule.forRoot(requiredOptions)],
+      }).compile();
+    });
+
+    it('should provide Shopify context', async () => {
+      const shopify = moduleRef.get<Shopify>(SHOPIFY_API_CONTEXT);
+
+      expect(shopify).toBeDefined();
+    });
+  });
+
+  describe('#forRootAsync', () => {
+    beforeEach(async () => {
+      moduleRef = await Test.createTestingModule({
         imports: [
-          ShopifyCoreModule.forRoot({
-            ...requiredOptions,
+          ShopifyCoreModule.forRootAsync({
+            useFactory: () => requiredOptions,
           }),
         ],
       }).compile();
-
-      await moduleRef.init();
     });
 
-    it('should initialize Shopify.Context', async () => {
-      expect(() => Shopify.Context.throwIfUninitialized()).not.toThrowError(
-        UninitializedContextError
-      );
-    });
+    it('should provide Shopify context', async () => {
+      const shopify = moduleRef.get<Shopify>(SHOPIFY_API_CONTEXT);
 
-    it('should set the parameters to Shopify.Context', async () => {
-      expect(Shopify.Context).toEqual(
-        expect.objectContaining<ContextParams>({
-          API_KEY: 'foo',
-          API_SECRET_KEY: 'bar',
-          API_VERSION: ApiVersion.Unstable,
-          HOST_NAME: 'localhost:8081',
-          IS_EMBEDDED_APP: true,
-          SCOPES: new AuthScopes(['test_scope']),
-        })
-      );
+      expect(shopify).toBeDefined();
     });
   });
 });
