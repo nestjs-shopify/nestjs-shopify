@@ -1,3 +1,4 @@
+import '@shopify/shopify-api/dist/adapters/node';
 import {
   BadRequestException,
   ExecutionContext,
@@ -6,8 +7,10 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import Shopify, { AuthQuery, ShopifyHeader } from '@shopify/shopify-api';
-import { ContextInterface } from '@shopify/shopify-api/dist/context';
+import { ConfigInterface, ShopifyHeader } from '@shopify/shopify-api';
+import { AuthQuery } from '@shopify/shopify-api/dist/auth/types';
+import { createValidateHmac } from '@shopify/shopify-api/dist/utils/hmac-validator';
+import { SHOPIFY_API_CONTEXT } from '../core.constants';
 import { ShopifyHmacType } from './hmac.enums';
 import { ShopifyHmacGuard } from './hmac.guard';
 import { ShopifyHmacModule } from './hmac.module';
@@ -24,11 +27,18 @@ describe('ShopifyHmacGuard', () => {
       .useValue({
         getAllAndOverride: jest.fn(),
       })
+      .overrideProvider(SHOPIFY_API_CONTEXT)
+      .useValue({
+        config: {
+          apiSecretKey: 'foobar',
+        },
+        utils: {
+          validateHmac: createValidateHmac({
+            apiSecretKey: 'foobar',
+          } as ConfigInterface),
+        },
+      })
       .compile();
-
-    Shopify.Context = {
-      API_SECRET_KEY: 'foobar',
-    } as ContextInterface;
 
     guard = module.get(ShopifyHmacGuard);
     reflector = module.get(Reflector);
@@ -39,9 +49,10 @@ describe('ShopifyHmacGuard', () => {
       reflector.getAllAndOverride.mockReturnValueOnce(undefined);
     });
 
-    it('should return true', () => {
+    it('should return true', async () => {
       const ctx = createExecutionContext();
-      expect(guard.canActivate(ctx)).toBe(true);
+
+      await expect(guard.canActivate(ctx)).resolves.toBe(true);
     });
   });
 
@@ -50,7 +61,7 @@ describe('ShopifyHmacGuard', () => {
       reflector.getAllAndOverride.mockReturnValueOnce(ShopifyHmacType.Query);
     });
 
-    it('should throw bad request if hmac missing', () => {
+    it('should throw bad request if hmac missing', async () => {
       const ctx = createExecutionContext({
         query: {
           hmac: undefined,
@@ -61,10 +72,12 @@ describe('ShopifyHmacGuard', () => {
         },
       });
 
-      expect(() => guard.canActivate(ctx)).toThrow(UnauthorizedException);
+      await expect(guard.canActivate(ctx)).rejects.toThrow(
+        UnauthorizedException
+      );
     });
 
-    it('should throw bad request if hmac is wrong', () => {
+    it('should throw bad request if hmac is wrong', async () => {
       const ctx = createExecutionContext({
         query: {
           hmac: 'wrong',
@@ -75,14 +88,16 @@ describe('ShopifyHmacGuard', () => {
         },
       });
 
-      expect(() => guard.canActivate(ctx)).toThrow(UnauthorizedException);
+      await expect(guard.canActivate(ctx)).rejects.toThrow(
+        UnauthorizedException
+      );
     });
 
-    it('should return true if hmac is correct', () => {
+    it('should return true if hmac is correct', async () => {
       const ctx = createExecutionContext({
         query: {
           code: 'foo',
-          hmac: '58e42546fa36deb542ab297d2c5e133412470f39ada4b3c6dc974b9f54b04184',
+          hmac: 'd107fbb939f091809c79d04b0fc0e0a12e0a4d08c7608897301a383a24354fce',
           host: 'https://test.myshopify.io',
           shop: 'test.myshopify.io',
           state: '12345678',
@@ -90,7 +105,7 @@ describe('ShopifyHmacGuard', () => {
         },
       });
 
-      expect(guard.canActivate(ctx)).toBe(true);
+      await expect(guard.canActivate(ctx)).resolves.toBe(true);
     });
   });
 
@@ -99,25 +114,25 @@ describe('ShopifyHmacGuard', () => {
       reflector.getAllAndOverride.mockReturnValueOnce(ShopifyHmacType.Header);
     });
 
-    it('should throw bad request if hmac missing', () => {
+    it('should throw bad request if hmac missing', async () => {
       const ctx = createExecutionContext({ headers: {} });
 
-      expect(() => guard.canActivate(ctx)).toThrow(BadRequestException);
+      await expect(guard.canActivate(ctx)).rejects.toThrow(BadRequestException);
     });
 
-    it('should throw internal server error if raw body empty', () => {
+    it('should throw internal server error if raw body empty', async () => {
       const ctx = createExecutionContext({
         headers: {
           [ShopifyHeader.Hmac]: 'wrong',
         },
       });
 
-      expect(() => guard.canActivate(ctx)).toThrow(
+      await expect(guard.canActivate(ctx)).rejects.toThrow(
         InternalServerErrorException
       );
     });
 
-    it('should throw unauthorized if hmac is wrong', () => {
+    it('should throw unauthorized if hmac is wrong', async () => {
       const body = '{"amount":0.0}';
       const ctx = createExecutionContext({
         headers: {
@@ -126,10 +141,12 @@ describe('ShopifyHmacGuard', () => {
         rawBody: Buffer.from(body),
       });
 
-      expect(() => guard.canActivate(ctx)).toThrow(UnauthorizedException);
+      await expect(guard.canActivate(ctx)).rejects.toThrow(
+        UnauthorizedException
+      );
     });
 
-    it('should return true if hmac is correct', () => {
+    it('should return true if hmac is correct', async () => {
       const body = '{"amount":0.0}';
       const ctx = createExecutionContext({
         headers: {
@@ -138,7 +155,7 @@ describe('ShopifyHmacGuard', () => {
         rawBody: Buffer.from(body),
       });
 
-      expect(guard.canActivate(ctx)).toBe(true);
+      await expect(guard.canActivate(ctx)).resolves.toBe(true);
     });
   });
 });
