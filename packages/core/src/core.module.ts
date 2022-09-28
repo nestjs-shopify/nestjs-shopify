@@ -1,9 +1,9 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigParams, shopifyApi } from '@shopify/shopify-api';
 import { SHOPIFY_API_CONTEXT } from './core.constants';
 import {
   ConfigurableModuleClass,
-  MODULE_OPTIONS_TOKEN,
+  SHOPIFY_CORE_OPTIONS,
 } from './core.module-builder';
 
 @Module({
@@ -11,11 +11,9 @@ import {
     {
       provide: SHOPIFY_API_CONTEXT,
       useFactory: (options: ConfigParams) => shopifyApi(options),
-      inject: [MODULE_OPTIONS_TOKEN],
+      inject: [SHOPIFY_CORE_OPTIONS],
     },
   ],
-  exports: [SHOPIFY_API_CONTEXT],
+  exports: [SHOPIFY_API_CONTEXT, SHOPIFY_CORE_OPTIONS],
 })
-export class ShopifyCoreModule
-  extends ConfigurableModuleClass
-  implements OnModuleInit {}
+export class ShopifyCoreModule extends ConfigurableModuleClass {}
