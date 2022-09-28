@@ -1,13 +1,13 @@
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { ApplicationConfig } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import { ShopifyWebhooksExplorer } from './webhooks.explorer';
-import { ShopifyWebhooksModule } from './webhooks.module';
-import { ShopifyWebhookHandler } from './webhooks.interfaces';
-import { WebhookHandler } from './webhooks.decorators';
-import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { shopifyWebhooks } from '@shopify/shopify-api/dist/webhooks';
 import { ConfigInterface, Shopify } from '@shopify/shopify-api';
-import { MockShopfiyCoreModule } from '../tests/helpers/mock-shopify-core-module';
+import { ShopifyWebhooksExplorer } from '../../src/webhooks.explorer';
+import { ShopifyWebhooksModule } from '../../src/webhooks.module';
+import { ShopifyWebhookHandler } from '../../src/webhooks.interfaces';
+import { WebhookHandler } from '../../src/webhooks.decorators';
+import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
 
 @WebhookHandler('PRODUCTS_CREATE')
 class ProductsCreate extends ShopifyWebhookHandler {
@@ -33,7 +33,7 @@ describe('ShopifyWebhooksExplorer', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        MockShopfiyCoreModule,
+        MockShopifyCoreModule,
         ShopifyWebhooksModule.forRoot({ path: '/my-path/' }),
       ],
       providers: [...webhookHandlers],

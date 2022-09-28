@@ -3,7 +3,7 @@ import { ApiVersion } from '@shopify/shopify-api';
 import { AuthScopes } from '@shopify/shopify-api/dist/auth/scopes';
 import { MemorySessionStorage } from '@shopify/shopify-api/dist/session-storage/memory';
 
-export const MockShopfiyCoreModule = ShopifyCoreModule.forRoot({
+export const MockShopifyCoreModule = ShopifyCoreModule.forRoot({
   apiKey: 'foo',
   apiSecretKey: 'bar',
   apiVersion: ApiVersion.Unstable,
