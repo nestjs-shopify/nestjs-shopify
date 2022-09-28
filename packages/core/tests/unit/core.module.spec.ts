@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiVersion, Shopify } from '@shopify/shopify-api';
-import { MemorySessionStorage } from '@shopify/shopify-api/dist/session-storage/memory';
 import { AuthScopes } from '@shopify/shopify-api/dist/auth/scopes';
-import { ShopifyCoreOptions } from './core.interfaces';
-import { ShopifyCoreModule } from './core.module';
-import { SHOPIFY_API_CONTEXT } from './core.constants';
+import { MemorySessionStorage } from '@shopify/shopify-api/dist/session-storage/memory';
+import { ShopifyCoreOptions } from '../../src/core.interfaces';
+import { ShopifyCoreModule } from '../../src/core.module';
+import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
 
 const requiredOptions: ShopifyCoreOptions = {
   apiKey: 'foo',
