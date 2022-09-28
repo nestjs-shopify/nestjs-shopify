@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { SessionInterface, Shopify } from '@shopify/shopify-api';
@@ -15,6 +16,8 @@ import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
+  private readonly logger = new Logger(ShopifyAuthGuard.name);
+
   constructor(
     @Inject(SHOPIFY_API_CONTEXT)
     private readonly shopifyApi: Shopify,
@@ -72,7 +75,8 @@ export class ShopifyAuthGuard implements CanActivate {
         rawResponse: res,
         isOnline,
       });
-    } catch {
+    } catch (err) {
+      this.logger.error(err);
       session = undefined;
     }
 
