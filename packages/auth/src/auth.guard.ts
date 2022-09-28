@@ -11,7 +11,7 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
-import { AccessMode } from './auth.interfaces';
+import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -26,6 +26,10 @@ export class ShopifyAuthGuard implements CanActivate {
     const { accessMode, session } = await this.getSessionDataFromContext(ctx);
 
     if (session && this.authSessionService.isValid(session)) {
+      // We assign the session to the request for further usage in
+      // our controllers/decorators
+      this.assignSessionToRequest(ctx, session);
+
       return true;
     }
 
@@ -41,6 +45,16 @@ export class ShopifyAuthGuard implements CanActivate {
     }
 
     return false;
+  }
+
+  private assignSessionToRequest(
+    ctx: ExecutionContext,
+    session: SessionInterface | undefined
+  ) {
+    const req = ctx
+      .switchToHttp()
+      .getRequest<ShopifySessionRequest<IncomingMessage>>();
+    req.shopifySession = session;
   }
 
   private async getSessionDataFromContext(ctx: ExecutionContext) {

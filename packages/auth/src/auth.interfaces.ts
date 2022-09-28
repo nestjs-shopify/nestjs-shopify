@@ -20,6 +20,10 @@ export interface ShopifyAuthOptionsFactory {
     | ShopifyAuthModuleOptions;
 }
 
+export type ShopifySessionRequest<T> = T & {
+  shopifySession?: SessionInterface | undefined;
+};
+
 export interface ShopifyAuthAfterHandler<
   T extends IncomingMessage = IncomingMessage,
   R extends ServerResponse = ServerResponse
