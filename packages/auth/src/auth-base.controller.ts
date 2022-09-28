@@ -46,7 +46,7 @@ export abstract class ShopifyAuthBaseController {
     @Res() res: ServerResponse
   ) {
     const isOnline = this.accessMode === AccessMode.Online;
-    const { session } = await this.shopifyApi.auth.callback({
+    const { headers = {}, session } = await this.shopifyApi.auth.callback({
       isOnline,
       rawRequest: req,
       rawResponse: res,
@@ -62,7 +62,10 @@ export abstract class ShopifyAuthBaseController {
 
       const redirectUrl = `/?shop=${shop}&host=${host}`;
       res
-        .writeHead(307, { location: redirectUrl })
+        .writeHead(302, {
+          ...headers,
+          location: redirectUrl,
+        })
         .end(`Redirecting to ${redirectUrl}`);
       return;
     }
