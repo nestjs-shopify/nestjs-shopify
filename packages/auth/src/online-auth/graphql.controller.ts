@@ -1,41 +1,36 @@
-import { Controller, Post, Req, Res } from '@nestjs/common';
-import Shopify, { SessionInterface } from '@shopify/shopify-api';
-import { GraphqlQueryError } from '@shopify/shopify-api/dist/error';
-import type { ServerResponse } from 'http';
-import { CurrentSession, UseShopifyAuth } from '../auth.decorators';
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import {
+  Controller,
+  Inject,
+  Post,
+  RawBodyRequest,
+  Req,
+  Res,
+} from '@nestjs/common';
+import { Shopify } from '@shopify/shopify-api';
+import type { IncomingMessage, ServerResponse } from 'http';
+import { UseShopifyAuth } from '../auth.decorators';
 import { AccessMode } from '../auth.interfaces';
 
 @Controller('graphql')
 @UseShopifyAuth(AccessMode.Online)
 export class ShopifyGraphqlController {
+  constructor(
+    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
+  ) {}
+
   @Post()
   async proxy(
-    @Req() req: { body: { [key: string]: unknown } },
-    @Res() res: ServerResponse,
-    @CurrentSession() session: SessionInterface
+    @Req() req: RawBodyRequest<IncomingMessage>,
+    @Res() res: ServerResponse
   ) {
-    const client = new Shopify.Clients.Graphql(
-      session.shop,
-      session.accessToken
-    );
+    const { body, headers } = await this.shopifyApi.clients.graphqlProxy({
+      body: req.rawBody?.toString() || '',
+      rawRequest: req,
+      rawResponse: res,
+    });
 
-    try {
-      const response = await client.query({
-        data: req.body,
-      });
-      res
-        .writeHead(200, undefined, response.headers.raw())
-        .end(JSON.stringify(response.body));
-    } catch (error) {
-      if (error instanceof GraphqlQueryError) {
-        return res
-          .writeHead(400, error.message, {
-            'Content-Type': 'application/json',
-          })
-          .end(JSON.stringify(error.response));
-      }
-
-      throw error;
-    }
+    res.writeHead(200, headers);
+    res.end(body);
   }
 }
