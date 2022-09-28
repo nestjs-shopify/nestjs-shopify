@@ -1,4 +1,4 @@
-import { joinUrl } from './join-url.util';
+import { joinUrl } from '../../src/utils/join-url.util';
 
 describe('joinUrl', () => {
   it('joins urls with a leading slash', () => {

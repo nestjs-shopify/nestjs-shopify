@@ -1,9 +1,12 @@
 import { JwtPayload, SessionInterface, Shopify } from '@shopify/shopify-api';
 import { AuthScopes } from '@shopify/shopify-api/dist/auth/scopes';
-import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
-import * as decodeUtil from './utils/decode-session-token.util';
+import {
+  RequestLike,
+  ShopifyAuthSessionService,
+} from '../../src/auth-session.service';
+import * as decodeUtil from '../../src/utils/decode-session-token.util';
 
-jest.mock('./utils/decode-session-token.util', () => ({
+jest.mock('../../src/utils/decode-session-token.util', () => ({
   __esModule: true,
   decodeSessionToken: jest.fn(),
 }));
@@ -145,7 +148,7 @@ describe('ShopifyAuthSessionService', () => {
     describe('when embedded app', () => {
       const shopifyApi = {
         config: {
-          isEmbeddedApp: false,
+          isEmbeddedApp: true,
         },
       } as Shopify;
       const req: RequestLike = {
