@@ -10,10 +10,11 @@ import { Test } from '@nestjs/testing';
 import { ConfigInterface, ShopifyHeader } from '@shopify/shopify-api';
 import { AuthQuery } from '@shopify/shopify-api/dist/auth/types';
 import { createValidateHmac } from '@shopify/shopify-api/dist/utils/hmac-validator';
-import { SHOPIFY_API_CONTEXT } from '../core.constants';
-import { ShopifyHmacType } from './hmac.enums';
-import { ShopifyHmacGuard } from './hmac.guard';
-import { ShopifyHmacModule } from './hmac.module';
+import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
+import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
+import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';
+import { ShopifyHmacModule } from '../../src/hmac/hmac.module';
+import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
 
 describe('ShopifyHmacGuard', () => {
   let guard: ShopifyHmacGuard;
@@ -21,7 +22,7 @@ describe('ShopifyHmacGuard', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [ShopifyHmacModule],
+      imports: [MockShopifyCoreModule, ShopifyHmacModule],
     })
       .overrideProvider(Reflector)
       .useValue({
