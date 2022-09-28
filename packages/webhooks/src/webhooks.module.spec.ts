@@ -3,10 +3,11 @@ import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ShopifyWebhooksController } from './webhooks.controller';
 import { ShopifyWebhooksModule } from './webhooks.module';
+import { MockShopfiyCoreModule } from '../tests/helpers/mock-shopify-core-module';
 
 describe('ShopifyWebhookModule', () => {
-  let moduleRef: TestingModule;
   const reflector = new Reflector();
+  let moduleRef: TestingModule;
 
   afterEach(async () => {
     await moduleRef.close();
@@ -16,6 +17,7 @@ describe('ShopifyWebhookModule', () => {
     beforeEach(async () => {
       moduleRef = await Test.createTestingModule({
         imports: [
+          MockShopfiyCoreModule,
           ShopifyWebhooksModule.forRoot({
             path: '/mywebhooks',
           }),
@@ -36,6 +38,7 @@ describe('ShopifyWebhookModule', () => {
     beforeEach(async () => {
       moduleRef = await Test.createTestingModule({
         imports: [
+          MockShopfiyCoreModule,
           ShopifyWebhooksModule.forRootAsync({
             useClass: class Testing {
               createShopifyWebhookOptions() {
