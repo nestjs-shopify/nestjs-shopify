@@ -41,7 +41,7 @@ export abstract class ShopifyAuthBaseController {
 
   @Get('callback')
   async callback(
-    @Query('host') hostParam: string,
+    @Query('host') host: string,
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse
   ) {
@@ -59,7 +59,6 @@ export abstract class ShopifyAuthBaseController {
       }
 
       const { shop } = session;
-      const host = this.shopifyApi.utils.sanitizeHost(hostParam);
 
       const redirectUrl = `/?shop=${shop}&host=${host}`;
       res
