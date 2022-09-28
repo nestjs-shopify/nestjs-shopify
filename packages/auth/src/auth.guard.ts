@@ -1,17 +1,23 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import Shopify from '@shopify/shopify-api';
-import { Session } from '@shopify/shopify-api/dist/auth/session';
+import { SessionInterface, Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode } from './auth.interfaces';
-import { isSessionValid } from './utils/is-session-valid.util';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
   constructor(
+    @Inject(SHOPIFY_API_CONTEXT)
+    private readonly shopifyApi: Shopify,
     private readonly reflector: Reflector,
     private readonly authSessionService: ShopifyAuthSessionService
   ) {}
@@ -19,7 +25,7 @@ export class ShopifyAuthGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const { accessMode, session } = await this.getSessionDataFromContext(ctx);
 
-    if (session && isSessionValid(session)) {
+    if (session && this.authSessionService.isValid(session)) {
       return true;
     }
 
@@ -45,9 +51,13 @@ export class ShopifyAuthGuard implements CanActivate {
     const res = http.getResponse<ServerResponse>();
 
     const isOnline = accessMode === AccessMode.Online;
-    let session: Session | undefined;
+    let session: SessionInterface | undefined;
     try {
-      session = await Shopify.Utils.loadCurrentSession(req, res, isOnline);
+      session = await this.shopifyApi.session.getCurrent({
+        rawRequest: req,
+        rawResponse: res,
+        isOnline,
+      });
     } catch {
       session = undefined;
     }

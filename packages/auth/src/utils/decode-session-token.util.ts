@@ -1,5 +1,5 @@
+import { JwtPayload } from '@shopify/shopify-api';
 import { InvalidJwtError } from '@shopify/shopify-api/dist/error';
-import { JwtPayload } from '@shopify/shopify-api/dist/utils/decode-session-token';
 import * as jwt from 'jsonwebtoken';
 
 export const decodeSessionToken = (token: string): JwtPayload => {
