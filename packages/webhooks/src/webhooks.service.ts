@@ -1,13 +1,20 @@
-import { Injectable, Logger } from '@nestjs/common';
-import Shopify, { ShortenedRegisterOptions } from '@shopify/shopify-api';
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Shopify } from '@shopify/shopify-api';
+import { ShortenedRegisterParams } from '@shopify/shopify-api/dist/webhooks/types';
 
 @Injectable()
 export class ShopifyWebhooksService {
   private readonly logger = new Logger(ShopifyWebhooksService.name);
 
-  async registerWebhooks(options: ShortenedRegisterOptions) {
+  constructor(
+    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
+  ) {}
+
+  async registerWebhooks(options: ShortenedRegisterParams) {
     const { accessToken, shop, deliveryMethod } = options;
-    const response = await Shopify.Webhooks.Registry.registerAll({
+
+    const response = await this.shopifyApi.webhooks.registerAll({
       accessToken,
       shop,
       deliveryMethod,

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   HttpCode,
+  Inject,
   InternalServerErrorException,
   Logger,
   NotFoundException,
@@ -9,14 +10,22 @@ import {
   RawBodyRequest,
   Req,
 } from '@nestjs/common';
-import { ShopifyHmac, ShopifyHmacType } from '@nestjs-shopify/core';
-import Shopify, { ShopifyHeader } from '@shopify/shopify-api';
+import {
+  ShopifyHmac,
+  ShopifyHmacType,
+  SHOPIFY_API_CONTEXT,
+} from '@nestjs-shopify/core';
+import { Shopify, ShopifyHeader } from '@shopify/shopify-api';
 import type { IncomingMessage } from 'http';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
   private readonly logger = new Logger('Webhook');
+
+  constructor(
+    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
+  ) {}
 
   @Post()
   @HttpCode(200)
@@ -31,7 +40,9 @@ export class ShopifyWebhooksController {
 
     const { domain, topic } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
-    const webhookEntry = Shopify.Webhooks.Registry.getHandler(graphqlTopic);
+    const webhookEntry = this.shopifyApi.webhooks.getHandler({
+      topic: graphqlTopic,
+    });
 
     if (webhookEntry) {
       this.logger.log(`Received webhook "${graphqlTopic}"`);

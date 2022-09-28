@@ -1,3 +1,4 @@
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
   ApplicationConfig,
@@ -7,7 +8,7 @@ import {
 import { Injector } from '@nestjs/core/injector/injector';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module } from '@nestjs/core/injector/module';
-import Shopify from '@shopify/shopify-api';
+import { Shopify } from '@shopify/shopify-api';
 import { addLeadingSlash } from './utils/add-leading-slash.util';
 import { ShopifyWebhooksMetadataAccessor } from './webhooks-metadata.accessor';
 import {
@@ -25,6 +26,8 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
   private readonly injector = new Injector();
 
   constructor(
+    @Inject(SHOPIFY_API_CONTEXT)
+    private readonly shopifyApi: Shopify,
     @Inject(SHOPIFY_WEBHOOKS_OPTIONS)
     private readonly options: ShopifyWebhooksOptions,
     private readonly appConfig: ApplicationConfig,
@@ -82,8 +85,9 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         .join('/')
         .replace('//', '/');
 
-      Shopify.Webhooks.Registry.addHandler(topic, {
+      this.shopifyApi.webhooks.addHandler({
         path: addLeadingSlash(webhookPath),
+        topic,
         webhookHandler,
       });
     });

@@ -4,7 +4,10 @@ import { ShopifyWebhooksExplorer } from './webhooks.explorer';
 import { ShopifyWebhooksModule } from './webhooks.module';
 import { ShopifyWebhookHandler } from './webhooks.interfaces';
 import { WebhookHandler } from './webhooks.decorators';
-import Shopify from '@shopify/shopify-api';
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import { shopifyWebhooks } from '@shopify/shopify-api/dist/webhooks';
+import { ConfigInterface, Shopify } from '@shopify/shopify-api';
+import { MockShopfiyCoreModule } from '../tests/helpers/mock-shopify-core-module';
 
 @WebhookHandler('PRODUCTS_CREATE')
 class ProductsCreate extends ShopifyWebhookHandler {
@@ -23,22 +26,31 @@ class OrdersCreate extends ShopifyWebhookHandler {
 const webhookHandlers = [ProductsCreate, OrdersCreate];
 
 describe('ShopifyWebhooksExplorer', () => {
+  let shopifyApi: Shopify;
   let service: ShopifyWebhooksExplorer;
   let appConfig: jest.Mocked<ApplicationConfig>;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [ShopifyWebhooksModule.forRoot({ path: '/my-path/' })],
+      imports: [
+        MockShopfiyCoreModule,
+        ShopifyWebhooksModule.forRoot({ path: '/my-path/' }),
+      ],
       providers: [...webhookHandlers],
     })
       .overrideProvider(ApplicationConfig)
       .useValue({
         getGlobalPrefix: jest.fn(),
       })
+      .overrideProvider(SHOPIFY_API_CONTEXT)
+      .useValue({
+        webhooks: shopifyWebhooks({} as ConfigInterface),
+      })
       .compile();
 
     service = module.get(ShopifyWebhooksExplorer);
     appConfig = module.get(ApplicationConfig);
+    shopifyApi = module.get<Shopify>(SHOPIFY_API_CONTEXT);
   });
 
   afterEach(() => {
@@ -53,15 +65,18 @@ describe('ShopifyWebhooksExplorer', () => {
     });
 
     it('should register both webhook handlers', () => {
-      expect(Shopify.Webhooks.Registry.webhookRegistry).toMatchObject({
-        PRODUCTS_CREATE: expect.objectContaining({ path: '/my-path/' }),
-        ORDERS_CREATE: expect.objectContaining({ path: '/my-path/' }),
-      });
+      expect(
+        shopifyApi.webhooks.getHandler({ topic: 'PRODUCTS_CREATE' })
+      ).toMatchObject({ path: '/my-path/' });
+
+      expect(
+        shopifyApi.webhooks.getHandler({ topic: 'ORDERS_CREATE' })
+      ).toMatchObject({ path: '/my-path/' });
     });
   });
 
   describe('with global prefix', () => {
-    describe('with slash', () => {
+    describe('without slash', () => {
       beforeEach(() => {
         appConfig.getGlobalPrefix.mockReturnValue('test');
 
@@ -69,10 +84,13 @@ describe('ShopifyWebhooksExplorer', () => {
       });
 
       it('should include prefix in webhook path', () => {
-        expect(Shopify.Webhooks.Registry.webhookRegistry).toMatchObject({
-          PRODUCTS_CREATE: expect.objectContaining({ path: '/test/my-path/' }),
-          ORDERS_CREATE: expect.objectContaining({ path: '/test/my-path/' }),
-        });
+        expect(
+          shopifyApi.webhooks.getHandler({ topic: 'PRODUCTS_CREATE' })
+        ).toMatchObject({ path: '/test/my-path/' });
+
+        expect(
+          shopifyApi.webhooks.getHandler({ topic: 'ORDERS_CREATE' })
+        ).toMatchObject({ path: '/test/my-path/' });
       });
     });
 
@@ -84,10 +102,13 @@ describe('ShopifyWebhooksExplorer', () => {
       });
 
       it('should include prefix in webhook path', () => {
-        expect(Shopify.Webhooks.Registry.webhookRegistry).toMatchObject({
-          PRODUCTS_CREATE: expect.objectContaining({ path: '/cool/my-path/' }),
-          ORDERS_CREATE: expect.objectContaining({ path: '/cool/my-path/' }),
-        });
+        expect(
+          shopifyApi.webhooks.getHandler({ topic: 'PRODUCTS_CREATE' })
+        ).toMatchObject({ path: '/cool/my-path/' });
+
+        expect(
+          shopifyApi.webhooks.getHandler({ topic: 'ORDERS_CREATE' })
+        ).toMatchObject({ path: '/cool/my-path/' });
       });
     });
   });
