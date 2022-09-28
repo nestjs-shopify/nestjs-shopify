@@ -31,6 +31,7 @@
     "@nrwl/workspace": "14.3.5",
     "@shopify/shopify-api": "6.0.0-rc1",
     "@types/jest": "27.4.1",
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "16.11.7",
     "@types/supertest": "2.0.12",
     "@typescript-eslint/eslint-plugin": "5.24.0",
