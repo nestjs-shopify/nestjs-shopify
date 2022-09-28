@@ -30,17 +30,13 @@ export abstract class ShopifyAuthBaseController {
 
     const callbackPath = joinUrl(globalPrefix, basePath, 'callback');
 
-    const oauthUrl = await this.shopifyApi.auth.begin({
+    await this.shopifyApi.auth.begin({
       callbackPath,
       isOnline,
       rawRequest: req,
       rawResponse: res,
       shop: domain,
     });
-
-    res
-      .writeHead(302, { location: oauthUrl })
-      .end(`Redirecting to ${oauthUrl}`);
   }
 
   @Get('callback')
