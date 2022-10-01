@@ -17,6 +17,7 @@
     "paths": {
       "@nestjs-shopify/auth": ["packages/auth/src/index.ts"],
       "@nestjs-shopify/core": ["packages/core/src/index.ts"],
+      "@nestjs-shopify/graphql": ["packages/graphql/src/index.ts"],
       "@nestjs-shopify/webhooks": ["packages/webhooks/src/index.ts"]
     }
   },

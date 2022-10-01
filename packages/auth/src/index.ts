@@ -8,6 +8,5 @@ export * from './auth.interfaces';
 export * from './auth.module';
 
 export * from './online-auth/online-auth.controller';
-export * from './online-auth/graphql.controller';
 
 export * from './offline-auth/offline-auth.controller';
