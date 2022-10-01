@@ -1,3 +1,4 @@
+import { AccessMode, UseShopifyAuth } from '@nestjs-shopify/auth';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import {
   Controller,
@@ -9,12 +10,10 @@ import {
 } from '@nestjs/common';
 import { Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
-import { UseShopifyAuth } from '../auth.decorators';
-import { AccessMode } from '../auth.interfaces';
 
 @Controller('graphql')
 @UseShopifyAuth(AccessMode.Online)
-export class ShopifyGraphqlController {
+export class ShopifyGraphqlProxyController {
   constructor(
     @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
   ) {}

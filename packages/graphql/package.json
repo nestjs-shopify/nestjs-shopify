@@ -1,0 +1,25 @@
+{
+  "name": "@nestjs-shopify/graphql",
+  "version": "0.0.15",
+  "type": "commonjs",
+  "peerDependencies": {
+    "@nestjs/common": "*",
+    "@nestjs/auth": "*",
+    "@nestjs/core": "*",
+    "@shopify/shopify-api": "*"
+  },
+  "peerDependenciesMeta": {
+    "@nestjs/auth": {
+      "optional": false
+    },
+    "@nestjs/common": {
+      "optional": false
+    },
+    "@nestjs/core": {
+      "optional": false
+    },
+    "@shopify/shopify-api": {
+      "optional": false
+    }
+  }
+}

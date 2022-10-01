@@ -4,7 +4,29 @@
   "projects": {
     "auth": "packages/auth",
     "core": "packages/core",
-    "webhooks": "packages/webhooks",
+    "graphql": {
+      "root": "packages/graphql",
+      "sourceRoot": "packages/graphql/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["packages/graphql/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/packages/graphql"],
+          "options": {
+            "jestConfig": "packages/graphql/jest.config.ts",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "integration": {
       "root": "integration",
       "type": "library",
@@ -19,6 +41,7 @@
           }
         }
       }
-    }
+    },
+    "webhooks": "packages/webhooks"
   }
 }

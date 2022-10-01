@@ -3,7 +3,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-packages=("core" "webhooks" "auth")
+packages=("core" "webhooks" "auth" "graphql")
 
 for i in ${!packages[@]};
 do

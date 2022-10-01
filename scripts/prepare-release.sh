@@ -51,7 +51,7 @@ then
   exit 1
 fi
 
-packages=("core" "webhooks" "auth")
+packages=("core" "webhooks" "auth" "graphql")
 
 for i in ${!packages[@]};
 do
