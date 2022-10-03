@@ -1,6 +1,6 @@
 # @nestjs-shopify/auth
 
-An OAuth setup for NestJS using Shopify's [@shopify/shopify-node-api](https://github.com/Shopify/shopify-node-api) package. Allows for online and offline auth using this module. Also adds a GraphQL proxy so you can use online tokens to proxy your GraphQL requests to Shopify, without exposing your Shopify Admin access token to the frontend.
+An OAuth setup for NestJS using Shopify's [@shopify/shopify-node-api](https://github.com/Shopify/shopify-node-api) package. Allows for online and offline auth using this module.
 
 ## Installation
 
@@ -164,7 +164,3 @@ export class AppController {
   }
 }
 ```
-
-## GraphQL proxy
-
-This module automatically attaches a GraphQL endpoint to `/graphql` if you register online auth. You will need valid online auth tokens to make use of it.
