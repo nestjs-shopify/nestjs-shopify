@@ -3,15 +3,18 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "preversion": "npm run format && npm run lint && npm run build",
     "build": "nx affected:build",
     "benchmark": "nx affected:bench",
     "format": "prettier --write \"{packages,integration,benchmarks,tools}/**/*.ts\"",
     "lint": "eslint --ext .ts .",
+    "release": "npx changeset publish",
     "test": "nx affected:test",
     "test:integration": "NODE_NO_WARNINGS=1 nx test integration"
   },
   "private": true,
   "dependencies": {
+    "@changesets/cli": "^2.25.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
@@ -42,5 +45,10 @@
     "ts-jest": "27.1.4",
     "ts-node": "~10.8.0",
     "typescript": "~4.7.2"
-  }
+  },
+  "workspaces": [
+    "packages/core",
+    "packages/auth",
+    "packages/webhooks"
+  ]
 }
