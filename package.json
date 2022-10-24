@@ -23,7 +23,7 @@
     "@nestjs/core": "9.0.4",
     "@nestjs/platform-express": "9.0.4",
     "@nestjs/testing": "9.1.4",
-    "@nrwl/cli": "14.3.5",
+    "@nrwl/cli": "15.0.1",
     "@nrwl/eslint-plugin-nx": "14.3.6",
     "@nrwl/jest": "14.3.5",
     "@nrwl/js": "14.3.5",
