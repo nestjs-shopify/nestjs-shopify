@@ -8,7 +8,12 @@ import {
 import { Injector } from '@nestjs/core/injector/injector';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module } from '@nestjs/core/injector/module';
-import { Shopify } from '@shopify/shopify-api';
+import {
+  AddHandlersParams,
+  DeliveryMethod,
+  Shopify,
+  WebhookHandler,
+} from '@shopify/shopify-api';
 import { addLeadingSlash } from './utils/add-leading-slash.util';
 import { ShopifyWebhooksMetadataAccessor } from './webhooks-metadata.accessor';
 import {
@@ -35,11 +40,11 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
     private readonly metadataAccessor: ShopifyWebhooksMetadataAccessor
   ) {}
 
-  onModuleInit() {
-    this.registerHandlers();
+  async onModuleInit() {
+    await this.registerHandlers();
   }
 
-  registerHandlers() {
+  async registerHandlers() {
     const handlers: InstanceWrapper[] = this.discoveryService
       .getProviders()
       .filter((wrapper: InstanceWrapper) =>
@@ -49,6 +54,8 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
             : wrapper.metatype
         )
       );
+
+    const handlerParams: AddHandlersParams = {};
 
     handlers.forEach((wrapper: InstanceWrapper) => {
       const { instance, metatype } = wrapper;
@@ -85,12 +92,15 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         .join('/')
         .replace('//', '/');
 
-      this.shopifyApi.webhooks.addHandler({
-        path: addLeadingSlash(webhookPath),
-        topic,
-        webhookHandler,
+      handlerParams[topic] ??= [];
+      (handlerParams[topic] as WebhookHandler[]).push({
+        deliveryMethod: DeliveryMethod.Http,
+        callback: webhookHandler,
+        callbackUrl: addLeadingSlash(webhookPath),
       });
     });
+
+    await this.shopifyApi.webhooks.addHandlers(handlerParams);
   }
 
   private buildWebhookHandler(

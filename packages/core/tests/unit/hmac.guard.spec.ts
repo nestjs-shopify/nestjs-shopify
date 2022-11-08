@@ -1,4 +1,4 @@
-import '@shopify/shopify-api/dist/adapters/node';
+import '@shopify/shopify-api/adapters/node';
 import {
   BadRequestException,
   ExecutionContext,
@@ -7,9 +7,12 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import { ConfigInterface, ShopifyHeader } from '@shopify/shopify-api';
-import { AuthQuery } from '@shopify/shopify-api/dist/auth/types';
-import { createValidateHmac } from '@shopify/shopify-api/dist/utils/hmac-validator';
+import {
+  AuthQuery,
+  ConfigInterface,
+  ShopifyHeader,
+} from '@shopify/shopify-api';
+import { createValidateHmac } from '@shopify/shopify-api/lib/utils/hmac-validator';
 import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
 import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
 import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';

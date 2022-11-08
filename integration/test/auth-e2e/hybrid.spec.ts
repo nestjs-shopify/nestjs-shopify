@@ -1,25 +1,36 @@
-import '@shopify/shopify-api/dist/adapters/node';
-import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import '@shopify/shopify-api/adapters/node';
+import {
+  SHOPIFY_API_CONTEXT,
+  SHOPIFY_API_SESSION_STORAGE,
+} from '@nestjs-shopify/core';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Session, Shopify } from '@shopify/shopify-api';
 import * as jwt from 'jsonwebtoken';
 import * as request from 'supertest';
 import { AppModule } from '../../src/with-hybrid-auth/app.module';
+import { MemorySessionStorage } from '../../src/shopify-initializer/session-storage/memory.session-storage';
 
 const TEST_SHOP = 'test.myshopify.io';
 
 describe('Hybrid Authz (e2e)', () => {
   let app: INestApplication;
   let shopifyApi: Shopify;
+  let sessionStorage: jest.Mocked<MemorySessionStorage>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(MemorySessionStorage)
+      .useValue({
+        getSessionById: jest.fn(),
+      })
+      .compile();
 
     app = await module.createNestApplication().init();
     shopifyApi = module.get(SHOPIFY_API_CONTEXT);
+    sessionStorage = module.get(SHOPIFY_API_SESSION_STORAGE);
   });
 
   afterEach(() => {
@@ -55,7 +66,7 @@ describe('Hybrid Authz (e2e)', () => {
     let token: string;
 
     beforeEach(async () => {
-      await shopifyApi.config.sessionStorage.storeSession(session);
+      sessionStorage.getSessionById.mockResolvedValueOnce(session);
 
       token = jwt.sign(jwtPayload, shopifyApi.config.apiSecretKey, {
         algorithm: 'HS256',

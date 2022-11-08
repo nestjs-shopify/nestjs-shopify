@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigParams, shopifyApi } from '@shopify/shopify-api';
-import { SHOPIFY_API_CONTEXT } from './core.constants';
+import { ConfigInterface, shopifyApi } from '@shopify/shopify-api';
+import {
+  SHOPIFY_API_CONTEXT,
+  SHOPIFY_API_SESSION_STORAGE,
+} from './core.constants';
+import { ShopifyCoreOptions } from './core.interfaces';
 import {
   ConfigurableModuleClass,
   SHOPIFY_CORE_OPTIONS,
@@ -10,10 +14,19 @@ import {
   providers: [
     {
       provide: SHOPIFY_API_CONTEXT,
-      useFactory: (options: ConfigParams) => shopifyApi(options),
+      useFactory: (options: ConfigInterface) => shopifyApi(options),
+      inject: [SHOPIFY_CORE_OPTIONS],
+    },
+    {
+      provide: SHOPIFY_API_SESSION_STORAGE,
+      useFactory: (options: ShopifyCoreOptions) => options.sessionStorage,
       inject: [SHOPIFY_CORE_OPTIONS],
     },
   ],
-  exports: [SHOPIFY_API_CONTEXT, SHOPIFY_CORE_OPTIONS],
+  exports: [
+    SHOPIFY_API_CONTEXT,
+    SHOPIFY_CORE_OPTIONS,
+    SHOPIFY_API_SESSION_STORAGE,
+  ],
 })
 export class ShopifyCoreModule extends ConfigurableModuleClass {}

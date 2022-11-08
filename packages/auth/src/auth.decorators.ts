@@ -6,7 +6,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { SessionInterface } from '@shopify/shopify-api';
+import { Session } from '@shopify/shopify-api';
 import type { IncomingMessage } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthExceptionFilter } from './auth.filter';
@@ -23,7 +23,7 @@ export const UseShopifyAuth = (mode = AccessMode.Online) =>
 export const CurrentSession = createParamDecorator<
   unknown,
   ExecutionContext,
-  SessionInterface | undefined
+  Session | undefined
 >((_data: unknown, ctx: ExecutionContext) => {
   const req = ctx
     .switchToHttp()

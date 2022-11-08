@@ -1,7 +1,7 @@
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { ApplicationConfig } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import { shopifyWebhooks } from '@shopify/shopify-api/dist/webhooks';
+import { shopifyWebhooks } from '@shopify/shopify-api/lib/webhooks';
 import { ConfigInterface, Shopify } from '@shopify/shopify-api';
 import { ShopifyWebhooksExplorer } from '../../src/webhooks.explorer';
 import { ShopifyWebhooksModule } from '../../src/webhooks.module';
@@ -65,13 +65,13 @@ describe('ShopifyWebhooksExplorer', () => {
     });
 
     it('should register both webhook handlers', () => {
-      expect(
-        shopifyApi.webhooks.getHandler({ topic: 'PRODUCTS_CREATE' })
-      ).toMatchObject({ path: '/my-path/' });
+      expect(shopifyApi.webhooks.getHandlers('PRODUCTS_CREATE')).toEqual([
+        expectedWebhook('/my-path/'),
+      ]);
 
-      expect(
-        shopifyApi.webhooks.getHandler({ topic: 'ORDERS_CREATE' })
-      ).toMatchObject({ path: '/my-path/' });
+      expect(shopifyApi.webhooks.getHandlers('ORDERS_CREATE')).toEqual([
+        expectedWebhook('/my-path/'),
+      ]);
     });
   });
 
@@ -84,13 +84,13 @@ describe('ShopifyWebhooksExplorer', () => {
       });
 
       it('should include prefix in webhook path', () => {
-        expect(
-          shopifyApi.webhooks.getHandler({ topic: 'PRODUCTS_CREATE' })
-        ).toMatchObject({ path: '/test/my-path/' });
+        expect(shopifyApi.webhooks.getHandlers('PRODUCTS_CREATE')).toEqual([
+          expectedWebhook('/test/my-path/'),
+        ]);
 
-        expect(
-          shopifyApi.webhooks.getHandler({ topic: 'ORDERS_CREATE' })
-        ).toMatchObject({ path: '/test/my-path/' });
+        expect(shopifyApi.webhooks.getHandlers('ORDERS_CREATE')).toEqual([
+          expectedWebhook('/test/my-path/'),
+        ]);
       });
     });
 
@@ -102,14 +102,22 @@ describe('ShopifyWebhooksExplorer', () => {
       });
 
       it('should include prefix in webhook path', () => {
-        expect(
-          shopifyApi.webhooks.getHandler({ topic: 'PRODUCTS_CREATE' })
-        ).toMatchObject({ path: '/cool/my-path/' });
+        expect(shopifyApi.webhooks.getHandlers('PRODUCTS_CREATE')).toEqual([
+          expectedWebhook('/cool/my-path/'),
+        ]);
 
-        expect(
-          shopifyApi.webhooks.getHandler({ topic: 'ORDERS_CREATE' })
-        ).toMatchObject({ path: '/cool/my-path/' });
+        expect(shopifyApi.webhooks.getHandlers('ORDERS_CREATE')).toEqual([
+          expectedWebhook('/cool/my-path/'),
+        ]);
       });
     });
   });
 });
+
+function expectedWebhook(callbackUrl: string) {
+  return {
+    callback: expect.any(Function),
+    callbackUrl,
+    deliveryMethod: 'http' as const,
+  };
+}

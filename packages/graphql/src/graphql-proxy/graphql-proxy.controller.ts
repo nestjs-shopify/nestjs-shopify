@@ -1,7 +1,12 @@
-import { AccessMode, UseShopifyAuth } from '@nestjs-shopify/auth';
+import {
+  AccessMode,
+  ShopifySessionRequest,
+  UseShopifyAuth,
+} from '@nestjs-shopify/auth';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import {
   Controller,
+  ForbiddenException,
   Inject,
   Post,
   RawBodyRequest,
@@ -20,13 +25,17 @@ export class ShopifyGraphqlProxyController {
 
   @Post()
   async proxy(
-    @Req() req: RawBodyRequest<IncomingMessage>,
+    @Req() req: ShopifySessionRequest<RawBodyRequest<IncomingMessage>>,
     @Res() res: ServerResponse
   ) {
+    const session = req.shopifySession;
+    if (!session) {
+      throw new ForbiddenException('No session found');
+    }
+
     const { body, headers } = await this.shopifyApi.clients.graphqlProxy({
-      body: req.rawBody?.toString() || '',
-      rawRequest: req,
-      rawResponse: res,
+      rawBody: req.rawBody?.toString() || '',
+      session,
     });
 
     res.writeHead(200, headers);

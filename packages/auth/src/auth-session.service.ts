@@ -1,6 +1,6 @@
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { SessionInterface, Shopify } from '@shopify/shopify-api';
+import { Session, Shopify } from '@shopify/shopify-api';
 import { decodeSessionToken } from './utils/decode-session-token.util';
 
 export interface RequestLike {
@@ -17,7 +17,7 @@ export class ShopifyAuthSessionService {
     private readonly shopifyApi: Shopify
   ) {}
 
-  public isValid(session: SessionInterface): boolean {
+  public isValid(session: Session): boolean {
     const isSessionExpired =
       !session.expires || new Date(session.expires) < new Date();
 
@@ -26,7 +26,7 @@ export class ShopifyAuthSessionService {
     return scopesEqual && !!session.accessToken && !isSessionExpired;
   }
 
-  public getShop(req: RequestLike, session?: SessionInterface | undefined) {
+  public getShop(req: RequestLike, session?: Session | undefined) {
     if (this.isEmbeddedApp) {
       return session?.shop || this.getShopFromAuthHeader(req);
     }

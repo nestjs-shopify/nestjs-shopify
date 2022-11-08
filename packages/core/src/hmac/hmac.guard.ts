@@ -9,8 +9,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { InvalidHmacError, Shopify, ShopifyHeader } from '@shopify/shopify-api';
-import { AuthQuery } from '@shopify/shopify-api/dist/auth/types';
+import {
+  AuthQuery,
+  InvalidHmacError,
+  Shopify,
+  ShopifyHeader,
+} from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { IncomingMessage } from 'http';
 import { SHOPIFY_API_CONTEXT } from '../core.constants';

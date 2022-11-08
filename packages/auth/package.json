@@ -5,6 +5,7 @@
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
+    "@nestjs-shopify/core": "*",
     "@shopify/shopify-api": "*"
   },
   "peerDependenciesMeta": {
@@ -12,6 +13,9 @@
       "optional": false
     },
     "@nestjs/core": {
+      "optional": false
+    },
+    "@nestjs-shopify/core": {
       "optional": false
     },
     "@shopify/shopify-api": {

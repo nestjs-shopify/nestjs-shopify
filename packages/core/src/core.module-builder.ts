@@ -1,12 +1,12 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
-import { ConfigInterface } from '@shopify/shopify-api';
+import { ShopifyCoreOptions } from './core.interfaces';
 
 export const {
   ASYNC_OPTIONS_TYPE,
   OPTIONS_TYPE,
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN: SHOPIFY_CORE_OPTIONS,
-} = new ConfigurableModuleBuilder<ConfigInterface, 'forRoot'>()
+} = new ConfigurableModuleBuilder<ShopifyCoreOptions, 'forRoot'>()
   .setClassMethodName('forRoot')
   .setExtras({}, (definition) => ({
     ...definition,

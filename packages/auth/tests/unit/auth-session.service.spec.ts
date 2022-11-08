@@ -1,5 +1,5 @@
-import { JwtPayload, SessionInterface, Shopify } from '@shopify/shopify-api';
-import { AuthScopes } from '@shopify/shopify-api/dist/auth/scopes';
+import { JwtPayload, Session, Shopify } from '@shopify/shopify-api';
+import { AuthScopes } from '@shopify/shopify-api/lib/auth/scopes';
 import {
   RequestLike,
   ShopifyAuthSessionService,
@@ -37,7 +37,7 @@ describe('ShopifyAuthSessionService', () => {
         service.isValid({
           id: 'session-id',
           scope: 'read_products,write_products',
-        } as SessionInterface)
+        } as Session)
       ).toBe(false);
     });
 
@@ -46,7 +46,7 @@ describe('ShopifyAuthSessionService', () => {
         service.isValid({
           id: 'session-id',
           scope: 'read_products',
-        } as SessionInterface)
+        } as Session)
       ).toBe(false);
     });
 
@@ -56,7 +56,7 @@ describe('ShopifyAuthSessionService', () => {
           id: 'session-id',
           scope: 'read_products',
           accessToken: 'token',
-        } as SessionInterface)
+        } as Session)
       ).toBe(false);
     });
 
@@ -67,7 +67,7 @@ describe('ShopifyAuthSessionService', () => {
           scope: 'read_products',
           accessToken: 'token',
           expires: '2022-09-01T12:00:00Z' as unknown as Date,
-        } as SessionInterface)
+        } as Session)
       ).toBe(false);
     });
 
@@ -78,7 +78,7 @@ describe('ShopifyAuthSessionService', () => {
           scope: 'read_products',
           accessToken: 'token',
           expires: new Date('2022-09-01T12:00:00Z'),
-        } as SessionInterface)
+        } as Session)
       ).toBe(false);
     });
 
@@ -99,7 +99,7 @@ describe('ShopifyAuthSessionService', () => {
             scope: 'read_products',
             accessToken: 'token',
             expires: '2022-09-01T12:00:01Z' as unknown as Date,
-          } as SessionInterface)
+          } as Session)
         ).toBe(true);
       });
 
@@ -110,7 +110,7 @@ describe('ShopifyAuthSessionService', () => {
             scope: 'read_products',
             accessToken: 'token',
             expires: new Date('2022-09-01T12:00:01Z'),
-          } as SessionInterface)
+          } as Session)
         ).toBe(true);
       });
     });
@@ -165,7 +165,7 @@ describe('ShopifyAuthSessionService', () => {
       it('should return shop from session if given', () => {
         const shop = service.getShop(req, {
           shop: 'test2.myshopify.io',
-        } as SessionInterface);
+        } as Session);
 
         expect(shop).toEqual('test2.myshopify.io');
       });

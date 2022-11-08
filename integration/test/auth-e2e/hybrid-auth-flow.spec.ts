@@ -1,15 +1,14 @@
-import '@shopify/shopify-api/dist/adapters/node';
+import '@shopify/shopify-api/adapters/node';
+import '@shopify/shopify-api/lib/auth/oauth/nonce';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { Shopify } from '@shopify/shopify-api';
-import { AuthQuery } from '@shopify/shopify-api/dist/auth/types';
+import { AuthQuery, Shopify } from '@shopify/shopify-api';
 import { IncomingMessage, ServerResponse } from 'http';
 import * as request from 'supertest';
 import { AppModule } from '../../src/with-hybrid-auth/app.module';
-import '@shopify/shopify-api/dist/auth/oauth/nonce';
 
-jest.mock('@shopify/shopify-api/dist/auth/oauth/nonce', () => ({
+jest.mock('@shopify/shopify-api/lib/auth/oauth/nonce', () => ({
   __esModule: true,
   nonce: jest.fn(() => 'random-nonce'),
 }));

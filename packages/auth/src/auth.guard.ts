@@ -1,4 +1,8 @@
-import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import {
+  SessionStorage,
+  SHOPIFY_API_CONTEXT,
+  SHOPIFY_API_SESSION_STORAGE,
+} from '@nestjs-shopify/core';
 import {
   CanActivate,
   ExecutionContext,
@@ -7,7 +11,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { SessionInterface, Shopify } from '@shopify/shopify-api';
+import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
 import { AUTH_MODE_KEY } from './auth.constants';
@@ -21,6 +25,8 @@ export class ShopifyAuthGuard implements CanActivate {
   constructor(
     @Inject(SHOPIFY_API_CONTEXT)
     private readonly shopifyApi: Shopify,
+    @Inject(SHOPIFY_API_SESSION_STORAGE)
+    private readonly sessionStorage: SessionStorage,
     private readonly reflector: Reflector,
     private readonly authSessionService: ShopifyAuthSessionService
   ) {}
@@ -52,7 +58,7 @@ export class ShopifyAuthGuard implements CanActivate {
 
   private assignSessionToRequest(
     ctx: ExecutionContext,
-    session: SessionInterface | undefined
+    session: Session | undefined
   ) {
     const req = ctx
       .switchToHttp()
@@ -68,13 +74,20 @@ export class ShopifyAuthGuard implements CanActivate {
     const res = http.getResponse<ServerResponse>();
 
     const isOnline = accessMode === AccessMode.Online;
-    let session: SessionInterface | undefined;
+    let session: Session | undefined;
+
+    const sessionId = await this.shopifyApi.session.getCurrentId({
+      rawRequest: req,
+      rawResponse: res,
+      isOnline,
+    });
+
     try {
-      session = await this.shopifyApi.session.getCurrent({
-        rawRequest: req,
-        rawResponse: res,
-        isOnline,
-      });
+      if (!sessionId) {
+        throw new InvalidSession('No session found');
+      }
+
+      session = await this.sessionStorage.getSessionById(sessionId);
     } catch (err) {
       this.logger.error(err);
       session = undefined;

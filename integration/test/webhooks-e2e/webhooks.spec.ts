@@ -1,4 +1,4 @@
-import '@shopify/shopify-api/dist/adapters/node';
+import '@shopify/shopify-api/adapters/node';
 import { INestApplication } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
 import { Test } from '@nestjs/testing';

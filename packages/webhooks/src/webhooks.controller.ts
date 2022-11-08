@@ -15,7 +15,11 @@ import {
   ShopifyHmacType,
   SHOPIFY_API_CONTEXT,
 } from '@nestjs-shopify/core';
-import { Shopify, ShopifyHeader } from '@shopify/shopify-api';
+import {
+  HttpWebhookHandler,
+  Shopify,
+  ShopifyHeader,
+} from '@shopify/shopify-api';
 import type { IncomingMessage } from 'http';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
 
@@ -40,23 +44,27 @@ export class ShopifyWebhooksController {
 
     const { domain, topic } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
-    const webhookEntry = this.shopifyApi.webhooks.getHandler({
-      topic: graphqlTopic,
-    });
+    const webhookEntries = this.shopifyApi.webhooks.getHandlers(
+      graphqlTopic
+    ) as HttpWebhookHandler[];
 
-    if (webhookEntry) {
-      this.logger.log(`Received webhook "${graphqlTopic}"`);
-
-      await webhookEntry.webhookHandler(
-        graphqlTopic,
-        domain as string,
-        rawBody.toString()
-      );
-    } else {
+    if (webhookEntries.length === 0) {
       throw new NotFoundException(
         `No webhook is registered for topic ${topic}`
       );
     }
+
+    this.logger.log(`Received webhook "${graphqlTopic}"`);
+
+    await Promise.all(
+      webhookEntries.map((webhookEntry) =>
+        webhookEntry.callback(
+          graphqlTopic,
+          domain as string,
+          rawBody.toString()
+        )
+      )
+    );
   }
 
   private getHeaders(req: IncomingMessage) {

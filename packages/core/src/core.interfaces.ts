@@ -1,5 +1,12 @@
-import { ASYNC_OPTIONS_TYPE, OPTIONS_TYPE } from './core.module-builder';
+import { ConfigInterface, Session } from '@shopify/shopify-api';
+import { ASYNC_OPTIONS_TYPE } from './core.module-builder';
 
-export type ShopifyCoreOptions = typeof OPTIONS_TYPE;
+export interface SessionStorage {
+  getSessionById(id: string): Promise<Session | undefined>;
+}
+
+export interface ShopifyCoreOptions extends ConfigInterface {
+  sessionStorage: SessionStorage;
+}
 
 export type ShopifyCoreAsyncOptions = typeof ASYNC_OPTIONS_TYPE;

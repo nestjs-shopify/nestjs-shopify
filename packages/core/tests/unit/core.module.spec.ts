@@ -1,22 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApiVersion, Shopify } from '@shopify/shopify-api';
-import { AuthScopes } from '@shopify/shopify-api/dist/auth/scopes';
-import { MemorySessionStorage } from '@shopify/shopify-api/dist/session-storage/memory';
-import { ShopifyCoreOptions } from '../../src/core.interfaces';
+import { Shopify } from '@shopify/shopify-api';
 import { ShopifyCoreModule } from '../../src/core.module';
-import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
-
-const requiredOptions: ShopifyCoreOptions = {
-  apiKey: 'foo',
-  apiSecretKey: 'bar',
-  apiVersion: ApiVersion.Unstable,
-  hostName: 'localhost:8081',
-  isEmbeddedApp: true,
-  hostScheme: 'http',
-  isPrivateApp: false,
-  scopes: new AuthScopes('test_scope'),
-  sessionStorage: new MemorySessionStorage(),
-};
+import {
+  SHOPIFY_API_CONTEXT,
+  SHOPIFY_API_SESSION_STORAGE,
+} from '../../src/core.constants';
+import { SessionStorage } from '../../src/core.interfaces';
+import {
+  mockedShopifyCoreOptions,
+  MockShopifyCoreModule,
+} from '../helpers/mock-shopify-core-module';
 
 describe('ShopifyCoreModule', () => {
   let moduleRef: TestingModule;
@@ -24,14 +17,22 @@ describe('ShopifyCoreModule', () => {
   describe('#forRoot', () => {
     beforeEach(async () => {
       moduleRef = await Test.createTestingModule({
-        imports: [ShopifyCoreModule.forRoot(requiredOptions)],
+        imports: [MockShopifyCoreModule],
       }).compile();
     });
 
-    it('should provide Shopify context', async () => {
+    it('should provide Shopify context', () => {
       const shopify = moduleRef.get<Shopify>(SHOPIFY_API_CONTEXT);
 
       expect(shopify).toBeDefined();
+    });
+
+    it('should provide session storage', () => {
+      const sessionStorage = moduleRef.get<SessionStorage>(
+        SHOPIFY_API_SESSION_STORAGE
+      );
+
+      expect(sessionStorage).toBeDefined();
     });
   });
 
@@ -40,16 +41,24 @@ describe('ShopifyCoreModule', () => {
       moduleRef = await Test.createTestingModule({
         imports: [
           ShopifyCoreModule.forRootAsync({
-            useFactory: () => requiredOptions,
+            useFactory: () => mockedShopifyCoreOptions,
           }),
         ],
       }).compile();
     });
 
-    it('should provide Shopify context', async () => {
+    it('should provide Shopify context', () => {
       const shopify = moduleRef.get<Shopify>(SHOPIFY_API_CONTEXT);
 
       expect(shopify).toBeDefined();
+    });
+
+    it('should provide session storage', () => {
+      const sessionStorage = moduleRef.get<SessionStorage>(
+        SHOPIFY_API_SESSION_STORAGE
+      );
+
+      expect(sessionStorage).toBeDefined();
     });
   });
 });
