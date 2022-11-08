@@ -4,12 +4,12 @@
   "type": "commonjs",
   "peerDependencies": {
     "@nestjs/common": "*",
-    "@nestjs/auth": "*",
     "@nestjs/core": "*",
+    "@nestjs-shopify/auth": "*",
     "@shopify/shopify-api": "*"
   },
   "peerDependenciesMeta": {
-    "@nestjs/auth": {
+    "@nestjs-shopify/auth": {
       "optional": false
     },
     "@nestjs/common": {
