@@ -12,7 +12,7 @@ import {
   ConfigInterface,
   ShopifyHeader,
 } from '@shopify/shopify-api';
-import { createValidateHmac } from '@shopify/shopify-api/lib/utils/hmac-validator';
+import { validateHmac } from '@shopify/shopify-api/lib/utils/hmac-validator';
 import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
 import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
 import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';
@@ -37,7 +37,7 @@ describe('ShopifyHmacGuard', () => {
           apiSecretKey: 'foobar',
         },
         utils: {
-          validateHmac: createValidateHmac({
+          validateHmac: validateHmac({
             apiSecretKey: 'foobar',
           } as ConfigInterface),
         },

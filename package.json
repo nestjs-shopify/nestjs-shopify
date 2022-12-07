@@ -29,7 +29,7 @@
     "@nrwl/js": "14.3.5",
     "@nrwl/linter": "14.3.5",
     "@nrwl/workspace": "14.3.5",
-    "@shopify/shopify-api": "6.0.0-rc9",
+    "@shopify/shopify-api": "6.0.0",
     "@types/jest": "27.4.1",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "16.11.7",

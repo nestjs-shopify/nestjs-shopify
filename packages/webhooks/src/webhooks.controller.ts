@@ -42,7 +42,7 @@ export class ShopifyWebhooksController {
       );
     }
 
-    const { domain, topic } = this.getHeaders(req);
+    const { domain, topic, webhookId } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
     const webhookEntries = this.shopifyApi.webhooks.getHandlers(
       graphqlTopic
@@ -61,7 +61,8 @@ export class ShopifyWebhooksController {
         webhookEntry.callback(
           graphqlTopic,
           domain as string,
-          rawBody.toString()
+          rawBody.toString(),
+          webhookId as string
         )
       )
     );
@@ -70,6 +71,7 @@ export class ShopifyWebhooksController {
   private getHeaders(req: IncomingMessage) {
     let topic: string | string[] | undefined;
     let domain: string | string[] | undefined;
+    let webhookId: string | string[] | undefined;
     Object.entries(req.headers).map(([header, value]) => {
       switch (header.toLowerCase()) {
         case ShopifyHeader.Topic.toLowerCase():
@@ -77,6 +79,9 @@ export class ShopifyWebhooksController {
           break;
         case ShopifyHeader.Domain.toLowerCase():
           domain = value;
+          break;
+        case ShopifyHeader.WebhookId.toLowerCase():
+          webhookId = value;
           break;
       }
     });
@@ -87,6 +92,9 @@ export class ShopifyWebhooksController {
     }
     if (!domain) {
       missingHeaders.push(ShopifyHeader.Domain);
+    }
+    if (!webhookId) {
+      missingHeaders.push(ShopifyHeader.WebhookId);
     }
 
     if (missingHeaders.length) {
@@ -100,6 +108,7 @@ export class ShopifyWebhooksController {
     return {
       topic,
       domain,
+      webhookId,
     };
   }
 }
