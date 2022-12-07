@@ -1,16 +1,34 @@
 import { ShopifyCoreModule } from '@nestjs-shopify/core';
-import { Module } from '@nestjs/common';
-import { ApiVersion } from '@shopify/shopify-api';
+import { Logger, Module } from '@nestjs/common';
+import { ApiVersion, LogSeverity } from '@shopify/shopify-api';
+import { AuthScopes } from '@shopify/shopify-api/lib/auth/scopes';
+import { MemorySessionStorageModule } from './session-storage/memory-session-storage.module';
+import { MemorySessionStorage } from './session-storage/memory.session-storage';
+
+const logger = new Logger('Shopify API');
 
 @Module({
   imports: [
-    ShopifyCoreModule.forRoot({
-      apiKey: 'foo',
-      apiSecret: 'bar',
-      apiVersion: ApiVersion.Unstable,
-      hostName: 'test.myshopify.io',
-      isEmbeddedApp: true,
-      scopes: ['write_products'],
+    ShopifyCoreModule.forRootAsync({
+      imports: [MemorySessionStorageModule],
+      useFactory: (sessionStorage: MemorySessionStorage) => ({
+        apiKey: 'foo',
+        apiSecretKey: 'bar',
+        apiVersion: ApiVersion.Unstable,
+        hostName: 'localhost:8082',
+        hostScheme: 'https' as const,
+        isEmbeddedApp: true,
+        isPrivateApp: false,
+        scopes: new AuthScopes(['write_products']),
+        sessionStorage,
+        logger: {
+          log: async (_severity, msg) => logger.log(msg),
+          httpRequests: false,
+          level: LogSeverity.Error,
+          timestamps: false,
+        },
+      }),
+      inject: [MemorySessionStorage],
     }),
   ],
   exports: [ShopifyCoreModule],

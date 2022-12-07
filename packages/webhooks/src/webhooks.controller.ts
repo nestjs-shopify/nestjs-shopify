@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   HttpCode,
+  Inject,
   InternalServerErrorException,
   Logger,
   NotFoundException,
@@ -9,14 +10,26 @@ import {
   RawBodyRequest,
   Req,
 } from '@nestjs/common';
-import { ShopifyHmac, ShopifyHmacType } from '@nestjs-shopify/core';
-import Shopify, { ShopifyHeader } from '@shopify/shopify-api';
+import {
+  ShopifyHmac,
+  ShopifyHmacType,
+  SHOPIFY_API_CONTEXT,
+} from '@nestjs-shopify/core';
+import {
+  HttpWebhookHandler,
+  Shopify,
+  ShopifyHeader,
+} from '@shopify/shopify-api';
 import type { IncomingMessage } from 'http';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
   private readonly logger = new Logger('Webhook');
+
+  constructor(
+    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
+  ) {}
 
   @Post()
   @HttpCode(200)
@@ -29,28 +42,36 @@ export class ShopifyWebhooksController {
       );
     }
 
-    const { domain, topic } = this.getHeaders(req);
+    const { domain, topic, webhookId } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
-    const webhookEntry = Shopify.Webhooks.Registry.getHandler(graphqlTopic);
+    const webhookEntries = this.shopifyApi.webhooks.getHandlers(
+      graphqlTopic
+    ) as HttpWebhookHandler[];
 
-    if (webhookEntry) {
-      this.logger.log(`Received webhook "${graphqlTopic}"`);
-
-      await webhookEntry.webhookHandler(
-        graphqlTopic,
-        domain as string,
-        rawBody.toString()
-      );
-    } else {
+    if (webhookEntries.length === 0) {
       throw new NotFoundException(
         `No webhook is registered for topic ${topic}`
       );
     }
+
+    this.logger.log(`Received webhook "${graphqlTopic}"`);
+
+    await Promise.all(
+      webhookEntries.map((webhookEntry) =>
+        webhookEntry.callback(
+          graphqlTopic,
+          domain as string,
+          rawBody.toString(),
+          webhookId as string
+        )
+      )
+    );
   }
 
   private getHeaders(req: IncomingMessage) {
     let topic: string | string[] | undefined;
     let domain: string | string[] | undefined;
+    let webhookId: string | string[] | undefined;
     Object.entries(req.headers).map(([header, value]) => {
       switch (header.toLowerCase()) {
         case ShopifyHeader.Topic.toLowerCase():
@@ -58,6 +79,9 @@ export class ShopifyWebhooksController {
           break;
         case ShopifyHeader.Domain.toLowerCase():
           domain = value;
+          break;
+        case ShopifyHeader.WebhookId.toLowerCase():
+          webhookId = value;
           break;
       }
     });
@@ -68,6 +92,9 @@ export class ShopifyWebhooksController {
     }
     if (!domain) {
       missingHeaders.push(ShopifyHeader.Domain);
+    }
+    if (!webhookId) {
+      missingHeaders.push(ShopifyHeader.WebhookId);
     }
 
     if (missingHeaders.length) {
@@ -81,6 +108,7 @@ export class ShopifyWebhooksController {
     return {
       topic,
       domain,
+      webhookId,
     };
   }
 }

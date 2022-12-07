@@ -4,7 +4,7 @@
   "projects": {
     "auth": "packages/auth",
     "core": "packages/core",
-    "webhooks": "packages/webhooks",
+    "graphql": "packages/graphql",
     "integration": {
       "root": "integration",
       "type": "library",
@@ -19,6 +19,7 @@
           }
         }
       }
-    }
+    },
+    "webhooks": "packages/webhooks"
   }
 }

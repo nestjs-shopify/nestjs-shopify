@@ -1,6 +1,6 @@
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
-import Shopify from '@shopify/shopify-api';
+import { Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
@@ -8,6 +8,7 @@ import { joinUrl } from './utils/join-url.util';
 @Controller('shopify')
 export abstract class ShopifyAuthBaseController {
   constructor(
+    protected readonly shopifyApi: Shopify,
     protected readonly accessMode: AccessMode,
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig
@@ -27,34 +28,28 @@ export abstract class ShopifyAuthBaseController {
       globalPrefix = this.appConfig.getGlobalPrefix();
     }
 
-    const redirectPath = joinUrl(globalPrefix, basePath, 'callback');
+    const callbackPath = joinUrl(globalPrefix, basePath, 'callback');
 
-    const oauthUrl = await Shopify.Auth.beginAuth(
-      req,
-      res,
-      domain,
-      redirectPath,
-      isOnline
-    );
-
-    res
-      .writeHead(302, { location: oauthUrl })
-      .end(`Redirecting to ${oauthUrl}`);
+    await this.shopifyApi.auth.begin({
+      callbackPath,
+      isOnline,
+      rawRequest: req,
+      rawResponse: res,
+      shop: domain,
+    });
   }
 
   @Get('callback')
   async callback(
+    @Query('host') host: string,
     @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
-    @Query() query: Record<string, string>
+    @Res() res: ServerResponse
   ) {
-    const session = await Shopify.Auth.validateAuthCallback(req, res, {
-      code: query['code'],
-      shop: query['shop'],
-      host: query['host'],
-      state: query['state'],
-      timestamp: query['timestamp'],
-      hmac: query['hmac'],
+    const isOnline = this.accessMode === AccessMode.Online;
+    const { headers = {}, session } = await this.shopifyApi.auth.callback({
+      isOnline,
+      rawRequest: req,
+      rawResponse: res,
     });
 
     if (session) {
@@ -63,9 +58,14 @@ export abstract class ShopifyAuthBaseController {
         return;
       }
 
-      const redirectUrl = `/?shop=${query['shop']}&host=${query['host']}`;
+      const { shop } = session;
+
+      const redirectUrl = `/?shop=${shop}&host=${host}`;
       res
-        .writeHead(302, { location: redirectUrl })
+        .writeHead(302, {
+          ...headers,
+          location: redirectUrl,
+        })
         .end(`Redirecting to ${redirectUrl}`);
       return;
     }

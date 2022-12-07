@@ -2,24 +2,33 @@ import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   InternalServerErrorException,
   RawBodyRequest,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import Shopify, { AuthQuery, ShopifyHeader } from '@shopify/shopify-api';
-import validateHmac from '@shopify/shopify-api/dist/utils/hmac-validator';
+import {
+  AuthQuery,
+  InvalidHmacError,
+  Shopify,
+  ShopifyHeader,
+} from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { IncomingMessage } from 'http';
+import { SHOPIFY_API_CONTEXT } from '../core.constants';
 import { SHOPIFY_HMAC_KEY } from './hmac.constants';
 import { ShopifyHmacType } from './hmac.enums';
 
 @Injectable()
 export class ShopifyHmacGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const hmacType = this.getShopifyHmacTypeFromContext(context);
     if (!hmacType) {
       return true;
@@ -46,7 +55,10 @@ export class ShopifyHmacGuard implements CanActivate {
       );
     }
 
-    const generatedHash = createHmac('sha256', Shopify.Context.API_SECRET_KEY)
+    const generatedHash = createHmac(
+      'sha256',
+      this.shopifyApi.config.apiSecretKey
+    )
       .update(req.rawBody)
       .digest('base64');
     const generatedHashBuffer = Buffer.from(generatedHash);
@@ -63,15 +75,15 @@ export class ShopifyHmacGuard implements CanActivate {
     return true;
   }
 
-  private validateHmacQuery(req: IncomingMessage) {
+  private async validateHmacQuery(req: IncomingMessage) {
     const query = (req as unknown as { query: AuthQuery }).query;
 
     try {
-      if (!validateHmac(query)) {
-        throw new UnauthorizedException('Invalid HMAC provided');
+      if (await this.shopifyApi.utils.validateHmac(query)) {
+        return true;
       }
 
-      return true;
+      throw new InvalidHmacError('Invalid HMAC provided in query params');
     } catch (err) {
       throw new UnauthorizedException(err);
     }

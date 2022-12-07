@@ -1,9 +1,9 @@
 import { Reflector } from '@nestjs/core';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
-import { SHOPIFY_HMAC_KEY } from './hmac.constants';
-import { ShopifyHmac } from './hmac.decorators';
-import { ShopifyHmacType } from './hmac.enums';
-import { ShopifyHmacGuard } from './hmac.guard';
+import { SHOPIFY_HMAC_KEY } from '../../src/hmac/hmac.constants';
+import { ShopifyHmac } from '../../src/hmac/hmac.decorators';
+import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
+import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';
 
 describe('ShopifyHmac', () => {
   const reflector = new Reflector();

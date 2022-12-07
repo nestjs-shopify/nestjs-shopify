@@ -1,3 +1,4 @@
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
   ApplicationConfig,
@@ -7,7 +8,12 @@ import {
 import { Injector } from '@nestjs/core/injector/injector';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module } from '@nestjs/core/injector/module';
-import Shopify from '@shopify/shopify-api';
+import {
+  AddHandlersParams,
+  DeliveryMethod,
+  Shopify,
+  WebhookHandler,
+} from '@shopify/shopify-api';
 import { addLeadingSlash } from './utils/add-leading-slash.util';
 import { ShopifyWebhooksMetadataAccessor } from './webhooks-metadata.accessor';
 import {
@@ -25,6 +31,8 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
   private readonly injector = new Injector();
 
   constructor(
+    @Inject(SHOPIFY_API_CONTEXT)
+    private readonly shopifyApi: Shopify,
     @Inject(SHOPIFY_WEBHOOKS_OPTIONS)
     private readonly options: ShopifyWebhooksOptions,
     private readonly appConfig: ApplicationConfig,
@@ -32,11 +40,11 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
     private readonly metadataAccessor: ShopifyWebhooksMetadataAccessor
   ) {}
 
-  onModuleInit() {
-    this.registerHandlers();
+  async onModuleInit() {
+    await this.registerHandlers();
   }
 
-  registerHandlers() {
+  async registerHandlers() {
     const handlers: InstanceWrapper[] = this.discoveryService
       .getProviders()
       .filter((wrapper: InstanceWrapper) =>
@@ -46,6 +54,8 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
             : wrapper.metatype
         )
       );
+
+    const handlerParams: AddHandlersParams = {};
 
     handlers.forEach((wrapper: InstanceWrapper) => {
       const { instance, metatype } = wrapper;
@@ -82,11 +92,15 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         .join('/')
         .replace('//', '/');
 
-      Shopify.Webhooks.Registry.addHandler(topic, {
-        path: addLeadingSlash(webhookPath),
-        webhookHandler,
+      handlerParams[topic] ??= [];
+      (handlerParams[topic] as WebhookHandler[]).push({
+        deliveryMethod: DeliveryMethod.Http,
+        callback: webhookHandler,
+        callbackUrl: addLeadingSlash(webhookPath),
       });
     });
+
+    await this.shopifyApi.webhooks.addHandlers(handlerParams);
   }
 
   private buildWebhookHandler(
@@ -98,7 +112,12 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
     let handle;
 
     if (isRequestScoped) {
-      handle = async (_topic: string, shop: string, body: string) => {
+      handle = async (
+        _topic: string,
+        shop: string,
+        body: string,
+        webhookId: string
+      ) => {
         const contextId = ContextIdFactory.create();
 
         const contextInstance = await this.injector.loadPerContext(
@@ -108,12 +127,22 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
           contextId
         );
         const data = JSON.parse(body);
-        return contextInstance[methodKey].call(contextInstance, shop, data);
+        return contextInstance[methodKey].call(
+          contextInstance,
+          shop,
+          data,
+          webhookId
+        );
       };
     } else {
-      handle = (_topic: string, shop: string, body: string) => {
+      handle = (
+        _topic: string,
+        shop: string,
+        body: string,
+        webhookId: string
+      ) => {
         const data = JSON.parse(body);
-        return instance[methodKey].call(instance, shop, data);
+        return instance[methodKey].call(instance, shop, data, webhookId);
       };
     }
 

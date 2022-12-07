@@ -1,22 +1,40 @@
+import '@shopify/shopify-api/adapters/node';
+import {
+  SHOPIFY_API_CONTEXT,
+  SHOPIFY_API_SESSION_STORAGE,
+} from '@nestjs-shopify/core';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import Shopify from '@shopify/shopify-api';
-import { Session } from '@shopify/shopify-api/dist/auth/session';
+import { Session, Shopify } from '@shopify/shopify-api';
 import * as jwt from 'jsonwebtoken';
 import * as request from 'supertest';
 import { AppModule } from '../../src/with-hybrid-auth/app.module';
+import { MemorySessionStorage } from '../../src/shopify-initializer/session-storage/memory.session-storage';
 
 const TEST_SHOP = 'test.myshopify.io';
 
 describe('Hybrid Authz (e2e)', () => {
   let app: INestApplication;
+  let shopifyApi: Shopify;
+  let sessionStorage: jest.Mocked<MemorySessionStorage>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(MemorySessionStorage)
+      .useValue({
+        getSessionById: jest.fn(),
+      })
+      .compile();
 
     app = await module.createNestApplication().init();
+    shopifyApi = module.get(SHOPIFY_API_CONTEXT);
+    sessionStorage = module.get(SHOPIFY_API_SESSION_STORAGE);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   afterAll(async () => {
@@ -35,24 +53,24 @@ describe('Hybrid Authz (e2e)', () => {
       sid: 'abc123',
     };
 
-    const session = new Session(
-      `${TEST_SHOP}_${jwtPayload.sub}`,
-      TEST_SHOP,
-      'state',
-      true
-    );
-    session.scope = 'write_products';
-    session.accessToken = 'asdf';
-    session.expires = new Date(jwtPayload.exp * 1000);
+    const session = new Session({
+      id: `${TEST_SHOP}_${jwtPayload.sub}`,
+      isOnline: true,
+      shop: TEST_SHOP,
+      state: 'state',
+      accessToken: 'asdf',
+      expires: new Date(jwtPayload.exp * 1000),
+      scope: 'write_products',
+    });
 
     let token: string;
 
     beforeEach(async () => {
-      await Shopify.Context.SESSION_STORAGE.storeSession(session);
+      sessionStorage.getSessionById.mockResolvedValueOnce(session);
 
-      token = jwt.sign(jwtPayload, Shopify.Context.API_SECRET_KEY, {
+      token = jwt.sign(jwtPayload, shopifyApi.config.apiSecretKey, {
         algorithm: 'HS256',
-        audience: Shopify.Context.API_KEY,
+        audience: shopifyApi.config.apiKey,
       });
     });
 

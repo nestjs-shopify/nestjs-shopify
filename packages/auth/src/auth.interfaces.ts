@@ -1,5 +1,5 @@
 import { ModuleMetadata, Type } from '@nestjs/common';
-import type { SessionInterface } from '@shopify/shopify-api';
+import type { Session } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 
 export enum AccessMode {
@@ -20,11 +20,15 @@ export interface ShopifyAuthOptionsFactory {
     | ShopifyAuthModuleOptions;
 }
 
+export type ShopifySessionRequest<T> = T & {
+  shopifySession?: Session | undefined;
+};
+
 export interface ShopifyAuthAfterHandler<
   T extends IncomingMessage = IncomingMessage,
   R extends ServerResponse = ServerResponse
 > {
-  afterAuth(req: T, res: R, session: SessionInterface): Promise<void>;
+  afterAuth(req: T, res: R, session: Session): Promise<void>;
 }
 
 export interface ShopifyAuthModuleAsyncOptions
