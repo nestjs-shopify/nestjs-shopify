@@ -112,7 +112,12 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
     let handle;
 
     if (isRequestScoped) {
-      handle = async (_topic: string, shop: string, body: string) => {
+      handle = async (
+        _topic: string,
+        shop: string,
+        body: string,
+        webhookId: string
+      ) => {
         const contextId = ContextIdFactory.create();
 
         const contextInstance = await this.injector.loadPerContext(
@@ -122,12 +127,22 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
           contextId
         );
         const data = JSON.parse(body);
-        return contextInstance[methodKey].call(contextInstance, shop, data);
+        return contextInstance[methodKey].call(
+          contextInstance,
+          shop,
+          data,
+          webhookId
+        );
       };
     } else {
-      handle = (_topic: string, shop: string, body: string) => {
+      handle = (
+        _topic: string,
+        shop: string,
+        body: string,
+        webhookId: string
+      ) => {
         const data = JSON.parse(body);
-        return instance[methodKey].call(instance, shop, data);
+        return instance[methodKey].call(instance, shop, data, webhookId);
       };
     }
 

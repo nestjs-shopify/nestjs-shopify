@@ -45,6 +45,7 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Hmac]: hmac('bar', rawBody),
           [ShopifyHeader.Topic]: 'products/create',
           [ShopifyHeader.Domain]: TEST_SHOP,
+          [ShopifyHeader.WebhookId]: '1',
         })
         .send(rawBody)
         .expect(200);
@@ -59,6 +60,7 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Hmac]: hmac('bar', rawBody),
           [ShopifyHeader.Topic]: 'products/update',
           [ShopifyHeader.Domain]: TEST_SHOP,
+          [ShopifyHeader.WebhookId]: '2',
         })
         .send(rawBody)
         .expect(200);
@@ -72,6 +74,7 @@ describe('Webhooks (e2e)', () => {
           'content-type': 'application/json',
           [ShopifyHeader.Topic]: 'products/create',
           [ShopifyHeader.Domain]: TEST_SHOP,
+          [ShopifyHeader.WebhookId]: '3',
         })
         .send(rawBody)
         .expect(400);
@@ -85,6 +88,7 @@ describe('Webhooks (e2e)', () => {
           'content-type': 'application/json',
           [ShopifyHeader.Hmac]: hmac('bar', rawBody),
           [ShopifyHeader.Domain]: TEST_SHOP,
+          [ShopifyHeader.WebhookId]: '4',
         })
         .send(rawBody)
         .expect(400);
@@ -98,6 +102,21 @@ describe('Webhooks (e2e)', () => {
           'content-type': 'application/json',
           [ShopifyHeader.Hmac]: hmac('bar', rawBody),
           [ShopifyHeader.Topic]: 'products/create',
+          [ShopifyHeader.WebhookId]: '5',
+        })
+        .send(rawBody)
+        .expect(400);
+    });
+
+    it('throws bad request if webhook id header missing', async () => {
+      const rawBody = '{"amount": 3.0}';
+      await request(app.getHttpServer())
+        .post('/webhooks')
+        .set({
+          'content-type': 'application/json',
+          [ShopifyHeader.Hmac]: hmac('bar', rawBody),
+          [ShopifyHeader.Topic]: 'products/create',
+          [ShopifyHeader.Domain]: TEST_SHOP,
         })
         .send(rawBody)
         .expect(400);
@@ -112,6 +131,7 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Hmac]: hmac('wrong', rawBody),
           [ShopifyHeader.Topic]: 'products/create',
           [ShopifyHeader.Domain]: TEST_SHOP,
+          [ShopifyHeader.WebhookId]: '6',
         })
         .send(rawBody)
         .expect(401);
@@ -126,6 +146,7 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Hmac]: hmac('bar', '{"amount": 5}'),
           [ShopifyHeader.Topic]: 'products/create',
           [ShopifyHeader.Domain]: TEST_SHOP,
+          [ShopifyHeader.WebhookId]: '7',
         })
         .send(rawBody)
         .expect(401);
@@ -140,6 +161,7 @@ describe('Webhooks (e2e)', () => {
           [ShopifyHeader.Hmac]: hmac('bar', rawBody),
           [ShopifyHeader.Topic]: 'orders/create',
           [ShopifyHeader.Domain]: TEST_SHOP,
+          [ShopifyHeader.WebhookId]: '8',
         })
         .send(rawBody)
         .expect(404);
