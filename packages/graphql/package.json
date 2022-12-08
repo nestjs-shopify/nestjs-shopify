@@ -6,10 +6,14 @@
     "@nestjs/common": "*",
     "@nestjs/core": "*",
     "@nestjs-shopify/auth": "*",
-    "@shopify/shopify-api": "*"
+    "@nestjs-shopify/core": "*",
+    "@shopify/shopify-api": "^6.0.0"
   },
   "peerDependenciesMeta": {
     "@nestjs-shopify/auth": {
+      "optional": false
+    },
+    "@nestjs-shopify/core": {
       "optional": false
     },
     "@nestjs/common": {

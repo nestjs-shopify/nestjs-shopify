@@ -1,11 +1,13 @@
-import { ConfigInterface, Session } from '@shopify/shopify-api';
+import { ConfigParams, ShopifyRestResources } from '@shopify/shopify-api';
+import { SessionStorage as ShopifySessionStorage } from '@shopify/shopify-app-session-storage';
 import { ASYNC_OPTIONS_TYPE } from './core.module-builder';
 
-export interface SessionStorage {
-  getSessionById(id: string): Promise<Session | undefined>;
-}
+export type SessionStorage = ShopifySessionStorage;
 
-export interface ShopifyCoreOptions extends ConfigInterface {
+export interface ShopifyCoreOptions<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends ShopifyRestResources = any
+> extends ConfigParams<T> {
   sessionStorage: SessionStorage;
 }
 

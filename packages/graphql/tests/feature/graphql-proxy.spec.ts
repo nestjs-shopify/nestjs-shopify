@@ -55,7 +55,7 @@ describe('GraphQL proxy', () => {
       jest
         .spyOn(shopifyApi.session, 'getCurrentId')
         .mockResolvedValueOnce('token-id');
-      mockSessionStorage.getSessionById.mockResolvedValueOnce(session);
+      mockSessionStorage.loadSession.mockResolvedValueOnce(session);
 
       graphqlProxySpy.mockResolvedValueOnce({
         headers: { 'content-type': 'application/json' },
