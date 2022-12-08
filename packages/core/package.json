@@ -5,7 +5,8 @@
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
-    "@shopify/shopify-api": "*"
+    "@shopify/shopify-api": "^6.0.0",
+    "@shopify/shopify-app-session-storage": "^1.0.0"
   },
   "peerDependenciesMeta": {
     "@nestjs/common": {

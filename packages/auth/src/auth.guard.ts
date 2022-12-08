@@ -87,7 +87,7 @@ export class ShopifyAuthGuard implements CanActivate {
         throw new InvalidSession('No session found');
       }
 
-      session = await this.sessionStorage.getSessionById(sessionId);
+      session = await this.sessionStorage.loadSession(sessionId);
     } catch (err) {
       this.logger.error(err);
       session = undefined;

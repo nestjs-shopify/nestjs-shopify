@@ -24,7 +24,7 @@ describe('Hybrid Authz (e2e)', () => {
     })
       .overrideProvider(MemorySessionStorage)
       .useValue({
-        getSessionById: jest.fn(),
+        loadSession: jest.fn(),
       })
       .compile();
 
@@ -66,7 +66,7 @@ describe('Hybrid Authz (e2e)', () => {
     let token: string;
 
     beforeEach(async () => {
-      sessionStorage.getSessionById.mockResolvedValueOnce(session);
+      sessionStorage.loadSession.mockResolvedValueOnce(session);
 
       token = jwt.sign(jwtPayload, shopifyApi.config.apiSecretKey, {
         algorithm: 'HS256',

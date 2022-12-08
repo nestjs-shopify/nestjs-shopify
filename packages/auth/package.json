@@ -6,7 +6,7 @@
     "@nestjs/common": "*",
     "@nestjs/core": "*",
     "@nestjs-shopify/core": "*",
-    "@shopify/shopify-api": "*"
+    "@shopify/shopify-api": "^6.0.0"
   },
   "peerDependenciesMeta": {
     "@nestjs/common": {
