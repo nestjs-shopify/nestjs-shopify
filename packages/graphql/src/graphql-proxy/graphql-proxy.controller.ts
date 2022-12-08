@@ -37,7 +37,11 @@ export class ShopifyGraphqlProxyController {
       session,
     });
 
+    // NOTE: the Shopify GraphQL client returns gzip encoding header. Which we do not
+    // use. Remove it otherwise the apps cannot parse the JSON response.
+    delete headers['Content-Encoding'];
+
     res.writeHead(200, headers);
-    res.end(body);
+    res.end(JSON.stringify(body));
   }
 }
