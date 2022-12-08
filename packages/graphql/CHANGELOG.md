@@ -1,5 +1,11 @@
 # @nestjs-shopify/graphql
 
+## 2.0.1
+
+### Patch Changes
+
+- 0d0fd61: Fix graphql package having es6 output
+
 ## 2.0.0
 
 ### Patch Changes
