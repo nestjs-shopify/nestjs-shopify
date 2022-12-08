@@ -1,10 +1,11 @@
 {
   "name": "@nestjs-shopify/webhooks",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "commonjs",
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
+    "@nestjs-shopify/core": "*",
     "@shopify/shopify-api": "^6.0.0"
   },
   "peerDependenciesMeta": {
@@ -12,6 +13,9 @@
       "optional": false
     },
     "@nestjs/core": {
+      "optional": false
+    },
+    "@nestjs-shopify/core": {
       "optional": false
     },
     "@shopify/shopify-api": {

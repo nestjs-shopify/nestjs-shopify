@@ -1,5 +1,12 @@
 # @nestjs-shopify/auth
 
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [8782b25]
+  - @nestjs-shopify/core@2.0.0
+
 ## 1.0.0
 
 ### Major Changes
