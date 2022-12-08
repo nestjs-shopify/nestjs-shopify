@@ -67,7 +67,7 @@ describe('GraphQL proxy', () => {
     it('should return 200 ok', async () => {
       await request(app.getHttpServer())
         .post('/graphql')
-        .set('Authorization', 'token')
+        .set('Authorization', 'Bearer token')
         .set('Content-Type', 'application/json')
         .send({
           operation,
@@ -79,7 +79,7 @@ describe('GraphQL proxy', () => {
     it('proxy raw request', async () => {
       await request(app.getHttpServer())
         .post('/graphql')
-        .set('Authorization', 'token')
+        .set('Authorization', 'Bearer token')
         .set('Content-Type', 'application/json')
         .send({
           operation,
