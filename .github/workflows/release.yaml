@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  NX_BRANCH: ${{ github.event.pull_request.head.ref }}
+
 jobs:
   release:
     name: Release
@@ -16,7 +19,7 @@ jobs:
           fetch-depth: 0
 
       - name: Nx set SHAs
-        uses: nrwl/nx-set-shas@v2
+        uses: nrwl/nx-set-shas@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
