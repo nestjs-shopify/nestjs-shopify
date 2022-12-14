@@ -9,7 +9,6 @@ import {
   ForbiddenException,
   Inject,
   Post,
-  RawBodyRequest,
   Req,
   Res,
 } from '@nestjs/common';
@@ -25,7 +24,7 @@ export class ShopifyGraphqlProxyController {
 
   @Post()
   async proxy(
-    @Req() req: ShopifySessionRequest<RawBodyRequest<IncomingMessage>>,
+    @Req() req: ShopifySessionRequest<IncomingMessage> & { body: string },
     @Res() res: ServerResponse
   ) {
     const session = req.shopifySession;
@@ -34,11 +33,15 @@ export class ShopifyGraphqlProxyController {
     }
 
     const { body, headers } = await this.shopifyApi.clients.graphqlProxy({
-      rawBody: req.rawBody?.toString() || '',
+      rawBody: req.body,
       session,
     });
 
+    // NOTE: the Shopify GraphQL client returns gzip encoding header. Which we do not
+    // use. Remove it otherwise the apps cannot parse the JSON response.
+    delete headers['Content-Encoding'];
+
     res.writeHead(200, headers);
-    res.end(body);
+    res.end(JSON.stringify(body));
   }
 }
