@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
+import { MockShopifyCoreModule } from '@nestjs-shopify/test-helpers';
 import {
   AuthQuery,
   ConfigInterface,
@@ -17,7 +18,6 @@ import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
 import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
 import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';
 import { ShopifyHmacModule } from '../../src/hmac/hmac.module';
-import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
 
 describe('ShopifyHmacGuard', () => {
   let guard: ShopifyHmacGuard;

@@ -1,7 +1,7 @@
 import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { MockShopifyCoreModule } from '@nestjs-shopify/test-helpers';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { ShopifyGraphqlProxyModule } from '../../src/graphql-proxy/graphql-proxy.module';
-import { MockShopifyCoreModule } from './mock-shopify-core-module';
 
 export function createTestingModule() {
   return Test.createTestingModule({

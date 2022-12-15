@@ -1,9 +1,9 @@
 import { PATH_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MockShopifyCoreModule } from '@nestjs-shopify/test-helpers';
 import { ShopifyWebhooksController } from '../../src/webhooks.controller';
 import { ShopifyWebhooksModule } from '../../src/webhooks.module';
-import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
 
 describe('ShopifyWebhookModule', () => {
   const reflector = new Reflector();

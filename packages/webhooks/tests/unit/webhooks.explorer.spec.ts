@@ -1,4 +1,5 @@
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import { MockShopifyCoreModule } from '@nestjs-shopify/test-helpers';
 import { ApplicationConfig } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import { shopifyWebhooks } from '@shopify/shopify-api/lib/webhooks';
@@ -7,7 +8,6 @@ import { ShopifyWebhooksExplorer } from '../../src/webhooks.explorer';
 import { ShopifyWebhooksModule } from '../../src/webhooks.module';
 import { ShopifyWebhookHandler } from '../../src/webhooks.interfaces';
 import { WebhookHandler } from '../../src/webhooks.decorators';
-import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
 
 @WebhookHandler('PRODUCTS_CREATE')
 class ProductsCreate extends ShopifyWebhookHandler {

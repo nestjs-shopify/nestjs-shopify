@@ -20,6 +20,7 @@
         }
       }
     },
+    "test-helpers": "packages/test-helpers",
     "webhooks": "packages/webhooks"
   }
 }

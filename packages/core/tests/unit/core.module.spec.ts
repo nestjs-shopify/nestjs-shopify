@@ -1,4 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  mockedShopifyCoreOptions,
+  MockShopifyCoreModule,
+} from '@nestjs-shopify/test-helpers';
 import { Shopify } from '@shopify/shopify-api';
 import { ShopifyCoreModule } from '../../src/core.module';
 import {
@@ -6,10 +10,6 @@ import {
   SHOPIFY_API_SESSION_STORAGE,
 } from '../../src/core.constants';
 import { SessionStorage } from '../../src/core.interfaces';
-import {
-  mockedShopifyCoreOptions,
-  MockShopifyCoreModule,
-} from '../helpers/mock-shopify-core-module';
 
 describe('ShopifyCoreModule', () => {
   let moduleRef: TestingModule;
