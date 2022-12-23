@@ -1,5 +1,7 @@
 # @nestjs-shopify
 
+![image](https://user-images.githubusercontent.com/1763486/209360850-305e128b-08e4-4844-8fa8-620faaf81f5a.png)
+
 A monorepo containing packages to develop Shopify application using NestJS.
 
 ## Packages
