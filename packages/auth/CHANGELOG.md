@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 2.0.1
+
+### Patch Changes
+
+- 34f4133: Add missing `jsonwebtoken` dependency
+
 ## 2.0.0
 
 ### Patch Changes
