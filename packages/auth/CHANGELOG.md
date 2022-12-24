@@ -1,5 +1,9 @@
 # @nestjs-shopify/auth
 
+## 2.0.2
+
+- Fix deployment issue in npmjs.com
+
 ## 2.0.1
 
 ### Patch Changes
