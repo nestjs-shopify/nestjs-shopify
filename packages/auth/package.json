@@ -2,6 +2,9 @@
   "name": "@nestjs-shopify/auth",
   "version": "2.0.0",
   "type": "commonjs",
+  "dependencies": {
+    "jsonwebtoken": "^8.0.0"
+  },
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
