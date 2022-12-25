@@ -142,25 +142,43 @@ Now, with this `AppModule` configured, if you want to install an App and store t
 
 ### Authorization
 
-When `ShopifyAuthModule` is setup, you can use `@UseShopifyAuth()` to require online or offline session in Controllers or specific routes. Example:
+By default the `ShopifyAuthGuard` and it's dependencies are not provided. You will need to import these by doing `ShopifyAuthModule.register()`:
 
 ```ts
-import { AccessMode, UseShopifyAuth } from '@nestjs-shopify/auth';
+import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { Module } from '@nestjs/common';
+import { ProductsController } from './products.controller.ts';
+
+@Module({
+  imports: [ShopifyAuthGuard.register()],
+  controllers: [ProductsController],
+})
+export class ProductsModule {}
+```
+
+
+When `ShopifyAuthModule` is setup, you can use `@UseShopifyAuth()` to require online or offline session in Controllers or specific routes. Example:
+```ts
+import { AccessMode, CurrentSession, UseShopifyAuth } from '@nestjs-shopify/auth';
 import { Controller, Get } from '@nestjs/common';
+import { Session } from '@shopify/shopify-api';
 
 @UseShopifyAuth(AccessMode.Online)
 @Controller()
-export class AppController {
-  @Get('online-route')
-  hello() {
-    return 'you are using online auth!';
+export class ProductsController {
+  @Get('products')
+  index(@CurrentSession() session: Session) {
+    // do something
   }
 
-  @Get('offline-route')
+  @Get('products/:id')
   // Overriding the controller access mode:
   @UseShopifyAuth(AccessMode.Offline)
-  offline() {
-    return 'you are using offline auth!';
+  show(
+    @CurrentSession() session: Session,
+    @Param('id') productId: string
+  ) {
+    // do something
   }
 }
 ```
