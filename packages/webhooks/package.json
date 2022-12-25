@@ -2,6 +2,14 @@
   "name": "@nestjs-shopify/webhooks",
   "version": "2.0.0",
   "type": "commonjs",
+  "homepage": "https://github.com/nestjs-shopify/nestjs-shopify",
+  "bugs": {
+    "url": "https://github.com/nestjs-shopify/nestjs-shopify/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nestjs-shopify/nestjs-shopify.git"
+  },
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
