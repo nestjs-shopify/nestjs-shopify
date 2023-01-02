@@ -25,7 +25,7 @@
     "@nestjs/testing": "9.1.4",
     "@nrwl/cli": "14.3.5",
     "@nrwl/eslint-plugin-nx": "14.3.6",
-    "@nrwl/jest": "14.3.5",
+    "@nrwl/jest": "15.4.2",
     "@nrwl/js": "14.3.5",
     "@nrwl/linter": "14.3.5",
     "@nrwl/workspace": "14.3.5",
