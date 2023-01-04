@@ -150,7 +150,7 @@ import { Module } from '@nestjs/common';
 import { ProductsController } from './products.controller.ts';
 
 @Module({
-  imports: [ShopifyAuthGuard.register()],
+  imports: [ShopifyAuthModule.register()],
   controllers: [ProductsController],
 })
 export class ProductsModule {}
