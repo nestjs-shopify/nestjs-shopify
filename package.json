@@ -27,7 +27,7 @@
     "@nrwl/eslint-plugin-nx": "14.3.6",
     "@nrwl/jest": "14.3.5",
     "@nrwl/js": "14.3.5",
-    "@nrwl/linter": "14.3.5",
+    "@nrwl/linter": "15.5.3",
     "@nrwl/workspace": "14.3.5",
     "@shopify/shopify-api": "6.0.0",
     "@shopify/shopify-app-session-storage": "^1.0.0",
