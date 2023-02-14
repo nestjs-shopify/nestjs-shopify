@@ -19,7 +19,8 @@ export class ShopifyAuthSessionService {
 
   public isValid(session: Session): boolean {
     const isSessionExpired =
-      !session.expires || new Date(session.expires) < new Date();
+      session.isOnline &&
+      (!session.expires || new Date(session.expires) < new Date());
 
     const scopesEqual = this.shopifyApi.config.scopes.equals(session.scope);
 
