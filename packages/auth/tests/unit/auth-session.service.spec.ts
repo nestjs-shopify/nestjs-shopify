@@ -50,12 +50,24 @@ describe('ShopifyAuthSessionService', () => {
       ).toBe(false);
     });
 
-    it('returns false if no expires is set', () => {
+    it('returns true if offline token', () => {
       expect(
         service.isValid({
           id: 'session-id',
           scope: 'read_products',
           accessToken: 'token',
+          isOnline: false,
+        } as Session)
+      ).toBe(true);
+    });
+
+    it('returns false if expires not set', () => {
+      expect(
+        service.isValid({
+          id: 'session-id',
+          scope: 'read_products',
+          accessToken: 'token',
+          isOnline: true,
         } as Session)
       ).toBe(false);
     });
@@ -66,6 +78,7 @@ describe('ShopifyAuthSessionService', () => {
           id: 'session-id',
           scope: 'read_products',
           accessToken: 'token',
+          isOnline: true,
           expires: '2022-09-01T12:00:00Z' as unknown as Date,
         } as Session)
       ).toBe(false);
@@ -77,6 +90,7 @@ describe('ShopifyAuthSessionService', () => {
           id: 'session-id',
           scope: 'read_products',
           accessToken: 'token',
+          isOnline: true,
           expires: new Date('2022-09-01T12:00:00Z'),
         } as Session)
       ).toBe(false);
@@ -98,6 +112,7 @@ describe('ShopifyAuthSessionService', () => {
             id: 'session-id',
             scope: 'read_products',
             accessToken: 'token',
+            isOnline: true,
             expires: '2022-09-01T12:00:01Z' as unknown as Date,
           } as Session)
         ).toBe(true);
@@ -109,6 +124,7 @@ describe('ShopifyAuthSessionService', () => {
             id: 'session-id',
             scope: 'read_products',
             accessToken: 'token',
+            isOnline: true,
             expires: new Date('2022-09-01T12:00:01Z'),
           } as Session)
         ).toBe(true);
