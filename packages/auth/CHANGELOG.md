@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 2.0.3
+
+### Patch Changes
+
+- 71ec7c8: Fix offline auth always being invalid due to not having an expires in session (issue #110)
+
 ## 2.0.2
 
 - Fix deployment issue in npmjs.com
