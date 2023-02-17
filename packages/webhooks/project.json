@@ -1,4 +1,5 @@
 {
+  "name": "webhooks",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/webhooks/src",
   "projectType": "library",
@@ -22,7 +23,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/webhooks"],
+      "outputs": ["{workspaceRoot}/coverage/packages/webhooks"],
       "options": {
         "jestConfig": "packages/webhooks/jest.config.ts",
         "passWithNoTests": true
