@@ -1,5 +1,4 @@
 import '@shopify/shopify-api/adapters/node';
-import '@shopify/shopify-api/lib/auth/oauth/nonce';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -8,9 +7,12 @@ import { IncomingMessage, ServerResponse } from 'http';
 import * as request from 'supertest';
 import { AppModule } from '../../src/with-hybrid-auth/app.module';
 
-jest.mock('@shopify/shopify-api/lib/auth/oauth/nonce', () => ({
-  __esModule: true,
-  nonce: jest.fn(() => 'random-nonce'),
+const randomBytes = new Uint8Array(Buffer.from('random-bytes'));
+const nonce = '470019581615';
+
+jest.mock('crypto', () => ({
+  ...jest.requireActual('crypto'),
+  getRandomValues: () => randomBytes,
 }));
 
 const TEST_SHOP = 'test.myshopify.io';
@@ -46,7 +48,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
       '?client_id=foo' +
       '&scope=write_products' +
       '&redirect_uri=https%3A%2F%2Flocalhost%3A8082%2Fonline%2Fcallback' +
-      `&state=random-nonce` +
+      `&state=${nonce}` +
       '&grant_options%5B%5D=per-user';
 
     it('calls shopify auth begin with correct params', async () => {
@@ -126,7 +128,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
       '?client_id=foo' +
       '&scope=write_products' +
       '&redirect_uri=https%3A%2F%2Flocalhost%3A8082%2Foffline%2Fcallback' +
-      `&state=random-nonce` +
+      `&state=${nonce}` +
       '&grant_options%5B%5D=';
 
     it('calls shopify auth begin with correct params', async () => {

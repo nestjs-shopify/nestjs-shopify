@@ -1,7 +1,6 @@
 import { ShopifyCoreModule } from '@nestjs-shopify/core';
 import { Logger, Module } from '@nestjs/common';
 import { ApiVersion, LogSeverity } from '@shopify/shopify-api';
-import { AuthScopes } from '@shopify/shopify-api/lib/auth/scopes';
 import { MemorySessionStorageModule } from './session-storage/memory-session-storage.module';
 import { MemorySessionStorage } from './session-storage/memory.session-storage';
 
@@ -19,7 +18,7 @@ const logger = new Logger('Shopify API');
         hostScheme: 'https' as const,
         isEmbeddedApp: true,
         isPrivateApp: false,
-        scopes: new AuthScopes(['write_products']),
+        scopes: ['write_products'],
         sessionStorage,
         logger: {
           log: async (_severity, msg) => logger.log(msg),
