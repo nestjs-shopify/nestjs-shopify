@@ -1,0 +1,16 @@
+{
+  "name": "integration",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "type": "library",
+  "sourceRoot": "integration/src",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "coverage": false,
+        "jestConfig": "integration/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

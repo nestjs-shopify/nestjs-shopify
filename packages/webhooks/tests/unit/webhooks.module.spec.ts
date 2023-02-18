@@ -1,3 +1,4 @@
+import '@shopify/shopify-api/adapters/node';
 import { PATH_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';

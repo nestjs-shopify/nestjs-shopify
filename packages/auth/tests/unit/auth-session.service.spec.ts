@@ -1,5 +1,11 @@
-import { JwtPayload, Session, Shopify } from '@shopify/shopify-api';
-import { AuthScopes } from '@shopify/shopify-api/lib/auth/scopes';
+import '@shopify/shopify-api/adapters/node';
+import {
+  ApiVersion,
+  JwtPayload,
+  Session,
+  Shopify,
+  shopifyApi as createShopifyApi,
+} from '@shopify/shopify-api';
 import {
   RequestLike,
   ShopifyAuthSessionService,
@@ -19,14 +25,14 @@ describe('ShopifyAuthSessionService', () => {
   });
 
   describe('.isValid', () => {
-    const shopifyApi = {
-      config: {
-        apiKey: 'foo',
-        apiSecretKey: 'bar',
-        isEmbeddedApp: false,
-        scopes: new AuthScopes(['read_products']),
-      },
-    } as Shopify;
+    const shopifyApi = createShopifyApi({
+      apiKey: 'foo',
+      apiSecretKey: 'bar',
+      isEmbeddedApp: false,
+      scopes: ['read_products'],
+      apiVersion: ApiVersion.Unstable,
+      hostName: 'localhost',
+    });
 
     beforeEach(() => {
       service = new ShopifyAuthSessionService(shopifyApi);
@@ -98,7 +104,7 @@ describe('ShopifyAuthSessionService', () => {
 
     describe('valid input', () => {
       beforeEach(() => {
-        jest.useFakeTimers('modern');
+        jest.useFakeTimers();
         jest.setSystemTime(new Date('2022-09-01T12:00:00Z'));
       });
 

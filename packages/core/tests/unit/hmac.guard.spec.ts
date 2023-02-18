@@ -7,23 +7,28 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import {
-  AuthQuery,
-  ConfigInterface,
-  ShopifyHeader,
-} from '@shopify/shopify-api';
-import { validateHmac } from '@shopify/shopify-api/lib/utils/hmac-validator';
+import { AuthQuery, shopifyApi, ShopifyHeader } from '@shopify/shopify-api';
 import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
 import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
 import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';
 import { ShopifyHmacModule } from '../../src/hmac/hmac.module';
-import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
+import {
+  mockedShopifyCoreOptions,
+  MockShopifyCoreModule,
+} from '../helpers/mock-shopify-core-module';
 
 describe('ShopifyHmacGuard', () => {
   let guard: ShopifyHmacGuard;
   let reflector: jest.Mocked<Reflector>;
 
+  const currentTimeInSeconds = 1662473266;
+  const fakedTime = currentTimeInSeconds * 1000;
+  const timestamp = currentTimeInSeconds.toString();
+
   beforeEach(async () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(fakedTime);
+
     const module = await Test.createTestingModule({
       imports: [MockShopifyCoreModule, ShopifyHmacModule],
     })
@@ -32,20 +37,20 @@ describe('ShopifyHmacGuard', () => {
         getAllAndOverride: jest.fn(),
       })
       .overrideProvider(SHOPIFY_API_CONTEXT)
-      .useValue({
-        config: {
+      .useValue(
+        shopifyApi({
+          ...mockedShopifyCoreOptions,
           apiSecretKey: 'foobar',
-        },
-        utils: {
-          validateHmac: validateHmac({
-            apiSecretKey: 'foobar',
-          } as ConfigInterface),
-        },
-      })
+        })
+      )
       .compile();
 
     guard = module.get(ShopifyHmacGuard);
     reflector = module.get(Reflector);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('without hmac type', () => {
@@ -72,7 +77,7 @@ describe('ShopifyHmacGuard', () => {
           host: 'https://test.myshopify.io',
           shop: 'test.myshopify.io',
           state: '12345678',
-          timestamp: '1662473266',
+          timestamp,
         },
       });
 
@@ -88,7 +93,7 @@ describe('ShopifyHmacGuard', () => {
           host: 'https://test.myshopify.io',
           shop: 'test.myshopify.io',
           state: '12345678',
-          timestamp: '1662473266',
+          timestamp,
         },
       });
 
@@ -105,7 +110,7 @@ describe('ShopifyHmacGuard', () => {
           host: 'https://test.myshopify.io',
           shop: 'test.myshopify.io',
           state: '12345678',
-          timestamp: '1662473266',
+          timestamp,
         },
       });
 

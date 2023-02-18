@@ -1,3 +1,4 @@
+import '@shopify/shopify-api/adapters/node';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Shopify } from '@shopify/shopify-api';
 import { ShopifyCoreModule } from '../../src/core.module';

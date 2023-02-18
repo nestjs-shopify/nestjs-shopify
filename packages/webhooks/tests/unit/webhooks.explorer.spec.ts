@@ -1,8 +1,8 @@
+import '@shopify/shopify-api/adapters/node';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { ApplicationConfig } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import { shopifyWebhooks } from '@shopify/shopify-api/lib/webhooks';
-import { ConfigInterface, Shopify } from '@shopify/shopify-api';
+import { Shopify } from '@shopify/shopify-api';
 import { ShopifyWebhooksExplorer } from '../../src/webhooks.explorer';
 import { ShopifyWebhooksModule } from '../../src/webhooks.module';
 import { ShopifyWebhookHandler } from '../../src/webhooks.interfaces';
@@ -42,15 +42,16 @@ describe('ShopifyWebhooksExplorer', () => {
       .useValue({
         getGlobalPrefix: jest.fn(),
       })
-      .overrideProvider(SHOPIFY_API_CONTEXT)
-      .useValue({
-        webhooks: shopifyWebhooks({} as ConfigInterface),
-      })
       .compile();
 
     service = module.get(ShopifyWebhooksExplorer);
     appConfig = module.get(ApplicationConfig);
     shopifyApi = module.get<Shopify>(SHOPIFY_API_CONTEXT);
+
+    // We mock the webhooks call to make sure nothing gets registered
+    jest
+      .spyOn(shopifyApi.webhooks, 'register')
+      .mockImplementation(() => Promise.resolve({}));
   });
 
   afterEach(() => {
