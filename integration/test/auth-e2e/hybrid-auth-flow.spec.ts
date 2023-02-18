@@ -29,7 +29,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
 
     app = await module.createNestApplication().init();
 
-    const shopifyApi = module.get<Shopify>(SHOPIFY_API_CONTEXT);
+    const shopifyApi = app.get<Shopify>(SHOPIFY_API_CONTEXT);
     callbackSpy = jest.spyOn(shopifyApi.auth, 'callback');
   });
 
