@@ -14,7 +14,7 @@
   },
   "private": true,
   "dependencies": {
-    "@changesets/cli": "2.25.0",
+    "@changesets/cli": "2.26.0",
     "tslib": "2.4.0"
   },
   "devDependencies": {
