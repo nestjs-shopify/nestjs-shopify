@@ -6,7 +6,18 @@ on:
   pull_request:
 
 jobs:
-  main:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - run: npm ci
+      - run: npm lint
+
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,9 +27,18 @@ jobs:
 
       - uses: nrwl/nx-set-shas@v3
       - run: npm ci
-      - run: npx nx workspace-lint
       # TODO: re-enable when it stops erroring constantly about package.json
       # - run: npx nx format:check
-      - run: npx nx affected --target=lint
-      - run: npx nx affected --target=test --ci --code-coverage
+      - run: npx nx affected:test --ci --code-coverage
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: nrwl/nx-set-shas@v3
+      - run: npm ci
       - run: npx nx affected --target=build
