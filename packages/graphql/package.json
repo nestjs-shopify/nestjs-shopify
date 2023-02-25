@@ -13,8 +13,8 @@
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
-    "@nestjs-shopify/auth": "*",
-    "@nestjs-shopify/core": "*",
+    "@nestjs-shopify/auth": "^2.0.0",
+    "@nestjs-shopify/core": "^2.0.0",
     "@shopify/shopify-api": "^6.0.0"
   },
   "peerDependenciesMeta": {
