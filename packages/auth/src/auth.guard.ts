@@ -13,10 +13,13 @@ import {
 import { Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
-import { RequestLike, ShopifyAuthSessionService } from './auth-session.service';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
+import {
+  getShopFromRequest,
+  RequestLike,
+} from './utils/get-shop-from-request.util';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -27,14 +30,13 @@ export class ShopifyAuthGuard implements CanActivate {
     private readonly shopifyApi: Shopify,
     @Inject(SHOPIFY_API_SESSION_STORAGE)
     private readonly sessionStorage: SessionStorage,
-    private readonly reflector: Reflector,
-    private readonly authSessionService: ShopifyAuthSessionService
+    private readonly reflector: Reflector
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const { accessMode, session } = await this.getSessionDataFromContext(ctx);
 
-    if (session && this.authSessionService.isValid(session)) {
+    if (session && session.isActive(this.shopifyApi.config.scopes)) {
       // We assign the session to the request for further usage in
       // our controllers/decorators
       this.assignSessionToRequest(ctx, session);
@@ -43,7 +45,7 @@ export class ShopifyAuthGuard implements CanActivate {
     }
 
     const req = ctx.switchToHttp().getRequest<IncomingMessage>();
-    const shop = this.authSessionService.getShop(req as RequestLike, session);
+    const shop = getShopFromRequest(req as RequestLike, session);
 
     if (shop) {
       throw new ShopifyAuthException(
@@ -76,13 +78,13 @@ export class ShopifyAuthGuard implements CanActivate {
     const isOnline = accessMode === AccessMode.Online;
     let session: Session | undefined;
 
-    const sessionId = await this.shopifyApi.session.getCurrentId({
-      rawRequest: req,
-      rawResponse: res,
-      isOnline,
-    });
-
     try {
+      const sessionId = await this.shopifyApi.session.getCurrentId({
+        rawRequest: req,
+        rawResponse: res,
+        isOnline,
+      });
+
       if (!sessionId) {
         throw new InvalidSession('No session found');
       }
