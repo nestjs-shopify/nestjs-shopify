@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "preversion": "npm run format && npm run lint && npm run build",
+    "preversion": "npm run lint && npm run build",
     "build": "nx affected:build",
     "benchmark": "nx affected:bench",
     "format": "prettier --write \"{packages,integration,benchmarks,tools}/**/*.ts\"",
