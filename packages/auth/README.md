@@ -142,21 +142,6 @@ Now, with this `AppModule` configured, if you want to install an App and store t
 
 ### Authorization
 
-By default the `ShopifyAuthGuard` and it's dependencies are not provided. You will need to import these by doing `ShopifyAuthModule.register()`:
-
-```ts
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
-import { Module } from '@nestjs/common';
-import { ProductsController } from './products.controller.ts';
-
-@Module({
-  imports: [ShopifyAuthModule.register()],
-  controllers: [ProductsController],
-})
-export class ProductsModule {}
-```
-
-
 When `ShopifyAuthModule` is setup, you can use `@UseShopifyAuth()` to require online or offline session in Controllers or specific routes. Example:
 ```ts
 import { AccessMode, CurrentSession, UseShopifyAuth } from '@nestjs-shopify/auth';
