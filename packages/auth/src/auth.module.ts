@@ -1,7 +1,5 @@
 import { DynamicModule } from '@nestjs/common';
-import { ShopifyAuthSessionService } from './auth-session.service';
 import { getControllerHackToken, getOptionsToken } from './auth.constants';
-import { ShopifyAuthGuard } from './auth.guard';
 import {
   AccessMode,
   ShopifyAuthModuleAsyncOptions,
@@ -13,14 +11,6 @@ import { buildControllerHackForToken } from './utils/build-controller-hack-for-t
 import { buildProvidersForToken } from './utils/build-provider-for-token.util';
 
 export class ShopifyAuthModule {
-  static register(): DynamicModule {
-    return {
-      module: ShopifyAuthModule,
-      providers: [ShopifyAuthGuard, ShopifyAuthSessionService],
-      exports: [ShopifyAuthSessionService],
-    };
-  }
-
   static forRootOnline(options: ShopifyAuthModuleOptions): DynamicModule {
     return {
       module: class ShopifyAuthOnlineModule {},

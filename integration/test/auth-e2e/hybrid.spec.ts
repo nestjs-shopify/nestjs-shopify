@@ -74,6 +74,25 @@ describe('Hybrid Authz (e2e)', () => {
       });
     });
 
+    it('GET /message/online, 403 missing header', async () => {
+      await request(app.getHttpServer())
+        .get('/message/online')
+        .set({
+          accepts: 'application/json',
+        })
+        .expect(403);
+    });
+
+    it('GET /message/online, 403 invalid jwt', async () => {
+      await request(app.getHttpServer())
+        .get('/message/online')
+        .set({
+          accepts: 'application/json',
+          authorization: `wrong`,
+        })
+        .expect(403);
+    });
+
     it('GET /message/online, 200', async () => {
       await request(app.getHttpServer())
         .get('/message/online')
