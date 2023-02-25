@@ -7,7 +7,7 @@
     "build": "nx affected:build",
     "benchmark": "nx affected:bench",
     "format": "prettier --write \"{packages,integration,benchmarks,tools}/**/*.ts\"",
-    "lint": "eslint --ext .ts .",
+    "lint": "nx affected:lint",
     "release": "npx changeset publish",
     "test": "nx affected:test",
     "test:integration": "NODE_NO_WARNINGS=1 nx test integration"
@@ -56,4 +56,3 @@
     "packages/graphql"
   ]
 }
-

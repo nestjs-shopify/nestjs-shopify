@@ -1,6 +1,6 @@
+import { SessionStorage } from '@nestjs-shopify/core';
 import { Injectable } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
-import { SessionStorage } from '../../../../packages/core/src';
 
 @Injectable()
 export class MemorySessionStorage implements SessionStorage {

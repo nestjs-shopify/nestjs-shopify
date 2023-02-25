@@ -4,6 +4,17 @@
   "type": "library",
   "sourceRoot": "integration/src",
   "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "integration/**/*.ts"
+        ]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
