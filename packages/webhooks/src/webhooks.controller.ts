@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Controller,
   HttpCode,
-  Inject,
   InternalServerErrorException,
   Logger,
   NotFoundException,
@@ -11,9 +10,9 @@ import {
   Req,
 } from '@nestjs/common';
 import {
+  InjectShopify,
   ShopifyHmac,
   ShopifyHmacType,
-  SHOPIFY_API_CONTEXT,
 } from '@nestjs-shopify/core';
 import {
   HttpWebhookHandler,
@@ -27,9 +26,7 @@ import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
 export class ShopifyWebhooksController {
   private readonly logger = new Logger('Webhook');
 
-  constructor(
-    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
-  ) {}
+  constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
 
   @Post()
   @HttpCode(200)

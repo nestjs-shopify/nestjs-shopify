@@ -35,14 +35,12 @@
   The Shopify API context now lives inside the Nest DI container. You can access it by doing the following in your injectable providers:
 
   ```ts
-  import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+  import { InjectShopify } from '@nestjs-shopify/core';
   import { Shopify } from '@shopify/shopify-api';
 
   @Injectable()
   export class MyProvider {
-    constructor(
-      @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
-    ) {}
+    constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
   }
   ```
 

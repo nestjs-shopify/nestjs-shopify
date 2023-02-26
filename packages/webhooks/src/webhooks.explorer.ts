@@ -1,4 +1,4 @@
-import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import { InjectShopify } from '@nestjs-shopify/core';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
   ApplicationConfig,
@@ -31,7 +31,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
   private readonly injector = new Injector();
 
   constructor(
-    @Inject(SHOPIFY_API_CONTEXT)
+    @InjectShopify()
     private readonly shopifyApi: Shopify,
     @Inject(SHOPIFY_WEBHOOKS_OPTIONS)
     private readonly options: ShopifyWebhooksOptions,

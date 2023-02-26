@@ -3,24 +3,15 @@ import {
   ShopifySessionRequest,
   UseShopifyAuth,
 } from '@nestjs-shopify/auth';
-import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
-import {
-  Controller,
-  ForbiddenException,
-  Inject,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { InjectShopify } from '@nestjs-shopify/core';
+import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
 import { Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 
 @Controller('graphql')
 @UseShopifyAuth(AccessMode.Online)
 export class ShopifyGraphqlProxyController {
-  constructor(
-    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
-  ) {}
+  constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
 
   @Post()
   async proxy(

@@ -1,12 +1,11 @@
 import {
+  InjectShopify,
+  InjectShopifySessionStorage,
   SessionStorage,
-  SHOPIFY_API_CONTEXT,
-  SHOPIFY_API_SESSION_STORAGE,
 } from '@nestjs-shopify/core';
 import {
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -26,9 +25,9 @@ export class ShopifyAuthGuard implements CanActivate {
   private readonly logger = new Logger(ShopifyAuthGuard.name);
 
   constructor(
-    @Inject(SHOPIFY_API_CONTEXT)
+    @InjectShopify()
     private readonly shopifyApi: Shopify,
-    @Inject(SHOPIFY_API_SESSION_STORAGE)
+    @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
     private readonly reflector: Reflector
   ) {}
