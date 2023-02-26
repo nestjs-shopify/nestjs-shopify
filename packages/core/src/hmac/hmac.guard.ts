@@ -2,7 +2,6 @@ import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   InternalServerErrorException,
   RawBodyRequest,
@@ -17,7 +16,7 @@ import {
 } from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { IncomingMessage } from 'http';
-import { SHOPIFY_API_CONTEXT } from '../core.constants';
+import { InjectShopify } from '../core.decorators';
 import { SHOPIFY_HMAC_KEY } from './hmac.constants';
 import { ShopifyHmacType } from './hmac.enums';
 
@@ -25,7 +24,7 @@ import { ShopifyHmacType } from './hmac.enums';
 export class ShopifyHmacGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    @Inject(SHOPIFY_API_CONTEXT) private readonly shopifyApi: Shopify
+    @InjectShopify() private readonly shopifyApi: Shopify
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

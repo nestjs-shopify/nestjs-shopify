@@ -1,8 +1,5 @@
-import {
-  SessionStorage,
-  SHOPIFY_API_SESSION_STORAGE,
-} from '@nestjs-shopify/core';
-import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common';
+import { SessionStorage } from '@nestjs-shopify/core';
+import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
@@ -16,7 +13,6 @@ export abstract class ShopifyAuthBaseController {
     protected readonly accessMode: AccessMode,
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
-    @Inject(SHOPIFY_API_SESSION_STORAGE)
     protected readonly sessionStorage: SessionStorage
   ) {}
 
