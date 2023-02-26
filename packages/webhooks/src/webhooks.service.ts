@@ -11,13 +11,13 @@ export class ShopifyWebhooksService {
   ) {}
 
   async registerWebhooks(session: Session) {
-    const response = await this.shopifyApi.webhooks.register({
+    const responsesByTopic = await this.shopifyApi.webhooks.register({
       session,
     });
 
-    Object.keys(response).forEach((topic: string) => {
-      response[topic].forEach((result) => {
-        if (result.success) {
+    Object.keys(responsesByTopic).forEach((topic: string) => {
+      responsesByTopic[topic].forEach((response) => {
+        if (response.success) {
           this.logger.log(`Registered webhook ${topic} successfully.`);
         } else {
           this.logger.warn(
