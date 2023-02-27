@@ -1,5 +1,11 @@
 # @nestjs-shopify/graphql
 
+## 3.1.0
+
+### Minor Changes
+
+- c9a89c6: Add and use `@InjectShopify()` and `@InjectShopifySessionStorage()` decorators.
+
 ## 3.0.0
 
 ### Patch Changes
