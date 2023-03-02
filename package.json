@@ -30,7 +30,7 @@
     "@nrwl/linter": "15.7.2",
     "@nrwl/workspace": "15.7.2",
     "@shopify/shopify-api": "6.2.0",
-    "@shopify/shopify-app-session-storage": "1.1.0",
+    "@shopify/shopify-app-session-storage": "1.1.1",
     "@types/jest": "29.4.0",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "16.11.7",
