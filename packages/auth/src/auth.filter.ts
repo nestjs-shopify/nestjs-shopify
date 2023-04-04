@@ -1,5 +1,7 @@
+import { InjectShopify } from '@nestjs-shopify/core';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
+import { Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { getOptionsToken } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
@@ -12,9 +14,9 @@ export class ShopifyAuthExceptionFilter
 {
   constructor(
     private readonly moduleRef: ModuleRef,
-    private readonly appConfig: ApplicationConfig
+    private readonly appConfig: ApplicationConfig,
     @InjectShopify()
-    private readonly shopifyApi: Shopify 
+    private readonly shopifyApi: Shopify
   ) {}
 
   async catch(exception: ShopifyAuthException, host: ArgumentsHost) {
@@ -24,7 +26,7 @@ export class ShopifyAuthExceptionFilter
     const req = context.getRequest<IncomingMessage>();
     const res = context.getResponse<ServerResponse>();
     res.statusCode = exception.getStatus();
-    
+
     const hostScheme = this.shopifyApi.config.hostScheme ?? 'https';
     const hostName = this.shopifyApi.config.hostName ?? req.headers.host;
     const domain = `${hostScheme}://${hostName}`;
