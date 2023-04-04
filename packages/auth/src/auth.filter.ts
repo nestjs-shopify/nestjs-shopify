@@ -13,6 +13,8 @@ export class ShopifyAuthExceptionFilter
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly appConfig: ApplicationConfig
+    @InjectShopify()
+    private readonly shopifyApi: Shopify 
   ) {}
 
   async catch(exception: ShopifyAuthException, host: ArgumentsHost) {
@@ -22,8 +24,10 @@ export class ShopifyAuthExceptionFilter
     const req = context.getRequest<IncomingMessage>();
     const res = context.getResponse<ServerResponse>();
     res.statusCode = exception.getStatus();
-
-    const domain = `https://${req.headers.host}`;
+    
+    const hostScheme = this.shopifyApi.config.hostScheme ?? 'https';
+    const hostName = this.shopifyApi.config.hostName ?? req.headers.host;
+    const domain = `${hostScheme}://${hostName}`;
     const redirectPath = this.buildRedirectPath(exception.shop, options);
     const authUrl = new URL(redirectPath, domain).toString();
 
