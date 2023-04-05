@@ -24,10 +24,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version-file: '.node-version'
+          cache: npm
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build packages
         run: npm run build
@@ -46,7 +47,7 @@ jobs:
       - name: Debug workspace
         run: cat package.json
 
-      - name: Create Release Pull Request
+      - name: Run Changesets Release
         id: changesets
         uses: changesets/action@v1
         with:

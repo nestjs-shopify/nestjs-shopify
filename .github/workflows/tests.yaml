@@ -13,6 +13,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: npm
       - uses: nrwl/nx-set-shas@v3
       - run: npm ci
       - run: npm run lint
@@ -24,6 +28,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: npm
 
       - uses: nrwl/nx-set-shas@v3
       - run: npm ci
@@ -38,6 +47,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: npm
 
       - uses: nrwl/nx-set-shas@v3
       - run: npm ci
