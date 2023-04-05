@@ -41,7 +41,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Modify workspace
-        run: sed -e 's|"packages\/|"dist/|' package.json > package-new.json && mv package-new.json package.json
+        run: sed -e 's|"packages\/|"dist/packages|' package.json > package-new.json && mv package-new.json package.json
 
       - name: Create Release Pull Request
         id: changesets
