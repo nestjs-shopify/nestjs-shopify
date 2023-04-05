@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 3.2.0
+
+### Minor Changes
+
+- 2c9293f: Respect `shopifyApi.hostScheme` and `shopifyApi.hostname` in OAuth redirect, see #166
+
 ## 3.1.0
 
 ### Minor Changes
