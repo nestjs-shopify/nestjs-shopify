@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "preversion": "npm run lint && npm run build",
     "build": "nx affected:build",
     "benchmark": "nx affected:bench",
     "format": "prettier --write \"{packages,integration,benchmarks,tools}/**/*.ts\"",
     "lint": "nx affected:lint",
-    "release": "npx changeset publish",
+    "release": "nx run-many --target=build && npx changeset publish",
     "test": "nx affected:test",
     "test:integration": "NODE_NO_WARNINGS=1 nx test integration"
   },
