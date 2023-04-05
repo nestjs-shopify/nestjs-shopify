@@ -43,6 +43,9 @@ jobs:
       - name: Modify workspace
         run: sed -e 's|"packages\/|"dist\/packages\/|' package.json > package-new.json && mv package-new.json package.json
 
+      - name: Debug workspace
+        run: cat package.json
+
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
