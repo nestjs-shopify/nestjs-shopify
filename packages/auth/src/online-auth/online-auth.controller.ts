@@ -13,12 +13,11 @@ import { getOptionsToken } from '../auth.constants';
 @Controller('shopify/online')
 export class ShopifyAuthOnlineController extends ShopifyAuthBaseController {
   constructor(
-    @InjectShopify() override readonly shopifyApi: Shopify,
+    @InjectShopify() shopifyApi: Shopify,
     @Inject(getOptionsToken(AccessMode.Online))
-    override readonly options: ShopifyAuthModuleOptions,
-    override readonly appConfig: ApplicationConfig,
-    @InjectShopifySessionStorage()
-    override readonly sessionStorage: SessionStorage
+    options: ShopifyAuthModuleOptions,
+    @InjectShopifySessionStorage() sessionStorage: SessionStorage,
+    appConfig: ApplicationConfig
   ) {
     super(shopifyApi, AccessMode.Online, options, appConfig, sessionStorage);
   }
