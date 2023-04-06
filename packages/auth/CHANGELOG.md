@@ -1,5 +1,12 @@
 # @nestjs-shopify/auth
 
+## 3.2.1
+
+### Patch Changes
+
+- ee2b939: Refactored online and offline auth controller path override
+- 699ec5e: Remove `override readonly` keyword usage in online and offline auth controllers
+
 ## 3.2.0
 
 ### Minor Changes
