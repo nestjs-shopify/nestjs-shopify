@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common';
-import { getControllerHackToken, getOptionsToken } from './auth.constants';
+import { getOptionsToken } from './auth.constants';
 import {
   AccessMode,
   ShopifyAuthModuleAsyncOptions,
@@ -22,7 +22,6 @@ export class ShopifyAuthModule {
         },
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Online),
-          getControllerHackToken(AccessMode.Online),
           ShopifyAuthOnlineController
         ),
       ],
@@ -41,7 +40,6 @@ export class ShopifyAuthModule {
         },
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Offline),
-          getControllerHackToken(AccessMode.Offline),
           ShopifyAuthOfflineController
         ),
       ],
@@ -60,7 +58,6 @@ export class ShopifyAuthModule {
         ...buildProvidersForToken(options, getOptionsToken(AccessMode.Online)),
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Online),
-          getControllerHackToken(AccessMode.Online),
           ShopifyAuthOnlineController
         ),
       ],
@@ -79,7 +76,6 @@ export class ShopifyAuthModule {
         ...buildProvidersForToken(options, getOptionsToken(AccessMode.Offline)),
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Offline),
-          getControllerHackToken(AccessMode.Offline),
           ShopifyAuthOfflineController
         ),
       ],

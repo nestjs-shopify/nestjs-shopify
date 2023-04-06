@@ -4,6 +4,3 @@ export const AUTH_MODE_KEY = 'shopify:authMode';
 
 export const getOptionsToken = (mode: AccessMode) =>
   `ShopifyAuthModuleOptions(${mode})`;
-
-export const getControllerHackToken = (mode: AccessMode) =>
-  `ShopifyAuthModuleControllerHack(${mode})`;
