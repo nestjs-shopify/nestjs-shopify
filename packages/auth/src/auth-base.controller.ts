@@ -47,9 +47,7 @@ export abstract class ShopifyAuthBaseController {
     @Req() req: IncomingMessage,
     @Res() res: ServerResponse
   ) {
-    const isOnline = this.accessMode === AccessMode.Online;
     const { headers = {}, session } = await this.shopifyApi.auth.callback({
-      isOnline,
       rawRequest: req,
       rawResponse: res,
     });

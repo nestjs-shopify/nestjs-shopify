@@ -15,7 +15,7 @@
     "@nestjs/core": "*",
     "@nestjs-shopify/auth": "^3.0.0",
     "@nestjs-shopify/core": "^2.0.0",
-    "@shopify/shopify-api": "^6.0.0"
+    "@shopify/shopify-api": "^7.0.0"
   },
   "peerDependenciesMeta": {
     "@nestjs-shopify/auth": {
