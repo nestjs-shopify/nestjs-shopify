@@ -1,5 +1,11 @@
 # @nestjs-shopify/core
 
+## 3.0.0
+
+### Major Changes
+
+- 83687c1: Upgrade to `"@shopify/shopify-api": "^7.0.0"`. See changelog of `@shopify/shopify-api` for the required changes: https://github.com/Shopify/shopify-api-js/blob/main/CHANGELOG.md
+
 ## 2.1.0
 
 ### Minor Changes
