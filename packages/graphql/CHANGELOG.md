@@ -1,5 +1,13 @@
 # @nestjs-shopify/graphql
 
+## 4.0.0
+
+### Patch Changes
+
+- Updated dependencies [83687c1]
+  - @nestjs-shopify/auth@4.0.0
+  - @nestjs-shopify/core@3.0.0
+
 ## 3.1.0
 
 ### Minor Changes

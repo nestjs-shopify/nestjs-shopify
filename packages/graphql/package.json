@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-shopify/graphql",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "type": "commonjs",
   "homepage": "https://github.com/nestjs-shopify/nestjs-shopify",
   "bugs": {
@@ -13,8 +13,8 @@
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
-    "@nestjs-shopify/auth": "^3.0.0",
-    "@nestjs-shopify/core": "^2.0.0",
+    "@nestjs-shopify/auth": "^4.0.0",
+    "@nestjs-shopify/core": "^3.0.0",
     "@shopify/shopify-api": "^7.0.0"
   },
   "peerDependenciesMeta": {
