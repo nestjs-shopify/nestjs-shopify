@@ -10,7 +10,7 @@ import { CustomersCreateWebhookHandler } from './customers-create.webhook-handle
   imports: [
     ShopifyCoreModule.forRoot({
       apiKey: 'foo',
-      apiSecret: 'bar',
+      apiSecretKey: 'bar',
       apiVersion: ApiVersion.Unstable,
       hostName: 'localhost:8081',
       isEmbeddedApp: true,
@@ -70,7 +70,7 @@ import { CustomersCreateWebhookHandler } from './customers-create.webhook-handle
   imports: [
     ShopifyCoreModule.forRoot({
       apiKey: 'foo',
-      apiSecret: 'bar',
+      apiSecretKey: 'bar',
       apiVersion: ApiVersion.Unstable,
       hostName: 'localhost:8081',
       isEmbeddedApp: true,

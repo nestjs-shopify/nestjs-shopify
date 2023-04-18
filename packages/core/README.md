@@ -26,7 +26,7 @@ From your application root module, import the `ShopifyCoreModule` using `forRoot
   imports: [
     ShopifyCoreModule.forRoot({
       apiKey: 'foo',
-      apiSecret: 'bar',
+      apiSecretKey: 'bar',
       apiVersion: ApiVersion.Unstable,
       hostName: 'localhost:8081',
       isEmbeddedApp: true,
@@ -49,7 +49,7 @@ import { ConfigService } from '@nestjs/config';
       useFactory: async (configService: ConfigService) => {
         return {
           apiKey: configService.get('SHOPIFY_API_KEY'),
-          apiSecret: configService.get('SHOPIFY_API_SECRET'),
+          apiSecretKey: configService.get('SHOPIFY_API_SECRET'),
           apiVersion: ApiVersion.Unstable,
           hostName: configService.get('HOST').replace(/https:\/\//, ''),
           isEmbeddedApp: true,
@@ -133,7 +133,7 @@ import { MyHandler } from './my.handler.ts';
   imports: [
     ShopifyCoreModule.forRoot({
       apiKey: 'foo',
-      apiSecret: 'bar',
+      apiSecretKey: 'bar',
       apiVersion: ApiVersion.Unstable,
       hostName: 'localhost:8081',
       isEmbeddedApp: true,
@@ -215,7 +215,7 @@ import { MyHandler } from './my.handler.ts';
   imports: [
     ShopifyCoreModule.forRoot({
       apiKey: 'foo',
-      apiSecret: 'bar',
+      apiSecretKey: 'bar',
       apiVersion: ApiVersion.Unstable,
       hostName: 'localhost:8081',
       isEmbeddedApp: true,
