@@ -17,7 +17,7 @@
     "tslib": "2.5.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "9.4.0",
+    "@nestjs/cli": "9.4.1",
     "@nestjs/common": "9.4.0",
     "@nestjs/core": "9.4.0",
     "@nestjs/platform-express": "9.4.0",
