@@ -28,7 +28,7 @@
     "@nrwl/js": "16.1.4",
     "@nrwl/linter": "16.1.4",
     "@nrwl/workspace": "16.1.4",
-    "@shopify/shopify-api": "7.0.0",
+    "@shopify/shopify-api": "7.1.0",
     "@shopify/shopify-app-session-storage": "1.1.2",
     "@types/jest": "29.5.1",
     "@types/jsonwebtoken": "^9.0.0",
