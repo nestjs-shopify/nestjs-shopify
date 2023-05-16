@@ -11,7 +11,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
@@ -43,7 +44,9 @@ export class ShopifyAuthGuard implements CanActivate {
       return true;
     }
 
-    const req = ctx.switchToHttp().getRequest<IncomingMessage>();
+    const req = ctx
+      .switchToHttp()
+      .getRequest<IncomingMessage | FastifyRequest>();
     const shop = getShopFromRequest(req as RequestLike, session);
 
     if (shop) {
@@ -63,7 +66,7 @@ export class ShopifyAuthGuard implements CanActivate {
   ) {
     const req = ctx
       .switchToHttp()
-      .getRequest<ShopifySessionRequest<IncomingMessage>>();
+      .getRequest<ShopifySessionRequest<IncomingMessage | FastifyRequest>>();
     req.shopifySession = session;
   }
 
@@ -71,8 +74,10 @@ export class ShopifyAuthGuard implements CanActivate {
     const accessMode = this.getAccessModeFromContext(ctx);
 
     const http = ctx.switchToHttp();
-    const req = http.getRequest<IncomingMessage>();
-    const res = http.getResponse<ServerResponse>();
+    const request = http.getRequest<IncomingMessage | FastifyRequest>();
+    const response = http.getResponse<ServerResponse | FastifyReply>();
+    const req = request instanceof IncomingMessage ? request : request.raw;
+    const res = response instanceof ServerResponse ? response : response.raw;
 
     const isOnline = accessMode === AccessMode.Online;
     let session: Session | undefined;

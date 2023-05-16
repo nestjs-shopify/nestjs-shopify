@@ -2,7 +2,8 @@ import { SessionStorage } from '@nestjs-shopify/core';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
@@ -19,9 +20,12 @@ export abstract class ShopifyAuthBaseController {
   @Get('auth')
   async auth(
     @Query('shop') domain: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Req() request: IncomingMessage | FastifyRequest,
+    @Res() response: ServerResponse | FastifyReply
   ) {
+    const req = request instanceof IncomingMessage ? request : request.raw;
+    const res = response instanceof ServerResponse ? response : response.raw;
+
     let globalPrefix = '';
     const { basePath = '', useGlobalPrefix } = this.options;
     const isOnline = this.accessMode === AccessMode.Online;
@@ -44,9 +48,12 @@ export abstract class ShopifyAuthBaseController {
   @Get('callback')
   async callback(
     @Query('host') host: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Req() request: IncomingMessage | FastifyRequest,
+    @Res() response: ServerResponse | FastifyReply
   ) {
+    const req = request instanceof IncomingMessage ? request : request.raw;
+    const res = response instanceof ServerResponse ? response : response.raw;
+
     const { headers = {}, session } = await this.shopifyApi.auth.callback({
       rawRequest: req,
       rawResponse: res,
@@ -56,7 +63,11 @@ export abstract class ShopifyAuthBaseController {
       await this.sessionStorage.storeSession(session);
 
       if (this.options.afterAuthHandler) {
-        await this.options.afterAuthHandler.afterAuth(req, res, session);
+        await this.options.afterAuthHandler.afterAuth(
+          request,
+          response,
+          session
+        );
         return;
       }
 

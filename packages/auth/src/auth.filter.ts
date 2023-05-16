@@ -2,7 +2,8 @@ import { InjectShopify } from '@nestjs-shopify/core';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { getOptionsToken } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
@@ -23,8 +24,10 @@ export class ShopifyAuthExceptionFilter
     const options = this.getShopifyOptionsFor(exception.accessMode);
     const context = host.switchToHttp();
 
-    const req = context.getRequest<IncomingMessage>();
-    const res = context.getResponse<ServerResponse>();
+    const request = context.getRequest<IncomingMessage | FastifyRequest>();
+    const response = context.getResponse<ServerResponse | FastifyReply>();
+    const req = request instanceof IncomingMessage ? request : request.raw;
+    const res = response instanceof ServerResponse ? response : response.raw;
     res.statusCode = exception.getStatus();
 
     const hostScheme = this.shopifyApi.config.hostScheme ?? 'https';

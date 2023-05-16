@@ -16,6 +16,7 @@ import {
 } from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { IncomingMessage } from 'http';
+import { FastifyRequest } from 'fastify';
 import { InjectShopify } from '../core.decorators';
 import { SHOPIFY_HMAC_KEY } from './hmac.constants';
 import { ShopifyHmacType } from './hmac.enums';
@@ -33,7 +34,7 @@ export class ShopifyHmacGuard implements CanActivate {
       return true;
     }
 
-    const req: RawBodyRequest<IncomingMessage> = context
+    const req: RawBodyRequest<IncomingMessage | FastifyRequest> = context
       .switchToHttp()
       .getRequest();
 
@@ -45,7 +46,9 @@ export class ShopifyHmacGuard implements CanActivate {
     }
   }
 
-  private validateHmacHeader(req: RawBodyRequest<IncomingMessage>) {
+  private validateHmacHeader(
+    req: RawBodyRequest<IncomingMessage | FastifyRequest>
+  ) {
     const expectedHmac = this.getHmacFromHeaders(req);
 
     if (!req.rawBody) {
@@ -74,7 +77,7 @@ export class ShopifyHmacGuard implements CanActivate {
     return true;
   }
 
-  private async validateHmacQuery(req: IncomingMessage) {
+  private async validateHmacQuery(req: IncomingMessage | FastifyRequest) {
     const query = (req as unknown as { query: AuthQuery }).query;
 
     try {
@@ -88,7 +91,7 @@ export class ShopifyHmacGuard implements CanActivate {
     }
   }
 
-  private getHmacFromHeaders(req: IncomingMessage): string {
+  private getHmacFromHeaders(req: IncomingMessage | FastifyRequest): string {
     const hmacHeader =
       req.headers[ShopifyHeader.Hmac] ||
       req.headers[ShopifyHeader.Hmac.toLowerCase()];

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
 import type { IncomingMessage } from 'http';
+import { FastifyRequest } from 'fastify';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthExceptionFilter } from './auth.filter';
 import { ShopifyAuthGuard } from './auth.guard';
@@ -27,7 +28,7 @@ export const CurrentSession = createParamDecorator<
 >((_data: unknown, ctx: ExecutionContext) => {
   const req = ctx
     .switchToHttp()
-    .getRequest<ShopifySessionRequest<IncomingMessage>>();
+    .getRequest<ShopifySessionRequest<IncomingMessage | FastifyRequest>>();
 
   return req.shopifySession;
 });

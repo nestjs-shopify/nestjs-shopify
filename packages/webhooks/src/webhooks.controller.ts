@@ -20,6 +20,7 @@ import {
   ShopifyHeader,
 } from '@shopify/shopify-api';
 import type { IncomingMessage } from 'http';
+import { FastifyRequest } from 'fastify';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
@@ -31,7 +32,7 @@ export class ShopifyWebhooksController {
   @Post()
   @HttpCode(200)
   @ShopifyHmac(ShopifyHmacType.Header)
-  async handle(@Req() req: RawBodyRequest<IncomingMessage>) {
+  async handle(@Req() req: RawBodyRequest<IncomingMessage | FastifyRequest>) {
     const { rawBody } = req;
     if (!rawBody) {
       throw new InternalServerErrorException(
@@ -65,7 +66,7 @@ export class ShopifyWebhooksController {
     );
   }
 
-  private getHeaders(req: IncomingMessage) {
+  private getHeaders(req: IncomingMessage | FastifyRequest) {
     let topic: string | string[] | undefined;
     let domain: string | string[] | undefined;
     let webhookId: string | string[] | undefined;
