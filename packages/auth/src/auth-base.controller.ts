@@ -1,9 +1,9 @@
 import { SessionStorage } from '@nestjs-shopify/core';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
-import { ApplicationConfig } from '@nestjs/core';
+import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
+import { getRawReqAndRes } from './utils/get-raw-req-and-res.util';
 import { joinUrl } from './utils/join-url.util';
 
 @Controller('shopify')
@@ -13,15 +13,22 @@ export abstract class ShopifyAuthBaseController {
     protected readonly accessMode: AccessMode,
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
-    protected readonly sessionStorage: SessionStorage
+    protected readonly sessionStorage: SessionStorage,
+    protected readonly adapterHost: HttpAdapterHost
   ) {}
 
   @Get('auth')
   async auth(
     @Query('shop') domain: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Req() req: any,
+    @Res() res: any
   ) {
+    const { rawRequest, rawResponse } = getRawReqAndRes(
+      this.adapterHost,
+      req,
+      res
+    );
+
     let globalPrefix = '';
     const { basePath = '', useGlobalPrefix } = this.options;
     const isOnline = this.accessMode === AccessMode.Online;
@@ -35,8 +42,8 @@ export abstract class ShopifyAuthBaseController {
     await this.shopifyApi.auth.begin({
       callbackPath,
       isOnline,
-      rawRequest: req,
-      rawResponse: res,
+      rawRequest: rawRequest,
+      rawResponse: rawResponse,
       shop: domain,
     });
   }
@@ -44,12 +51,17 @@ export abstract class ShopifyAuthBaseController {
   @Get('callback')
   async callback(
     @Query('host') host: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Req() req: any,
+    @Res() res: any
   ) {
+    const { rawRequest, rawResponse } = getRawReqAndRes(
+      this.adapterHost,
+      req,
+      res
+    );
     const { headers = {}, session } = await this.shopifyApi.auth.callback({
-      rawRequest: req,
-      rawResponse: res,
+      rawRequest: rawRequest,
+      rawResponse: rawResponse,
     });
 
     if (session) {

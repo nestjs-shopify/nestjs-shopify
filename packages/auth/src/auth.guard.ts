@@ -9,7 +9,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { HttpAdapterHost, Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
@@ -19,6 +19,7 @@ import {
   getShopFromRequest,
   RequestLike,
 } from './utils/get-shop-from-request.util';
+import { getRawReqAndRes } from './utils/get-raw-req-and-res.util';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -29,7 +30,8 @@ export class ShopifyAuthGuard implements CanActivate {
     private readonly shopifyApi: Shopify,
     @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
+    private readonly adapterHost: HttpAdapterHost
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -73,14 +75,20 @@ export class ShopifyAuthGuard implements CanActivate {
     const http = ctx.switchToHttp();
     const req = http.getRequest<IncomingMessage>();
     const res = http.getResponse<ServerResponse>();
+    // get raw req & res
+    const { rawRequest, rawResponse } = getRawReqAndRes(
+      this.adapterHost,
+      req,
+      res
+    );
 
     const isOnline = accessMode === AccessMode.Online;
     let session: Session | undefined;
 
     try {
       const sessionId = await this.shopifyApi.session.getCurrentId({
-        rawRequest: req,
-        rawResponse: res,
+        rawRequest: rawRequest,
+        rawResponse: rawResponse,
         isOnline,
       });
 
