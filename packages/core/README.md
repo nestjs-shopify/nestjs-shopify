@@ -75,10 +75,7 @@ import { MyRedisSessionStorage } from './my-redis-session-storage';
 @Module({
   imports: [
     ShopifyCoreModule.forRootAsync({
-      useFactory: async (
-        configService: ConfigService,
-        sessionStorage: MyRedisSessionStorage
-      ) => {
+      useFactory: async (configService: ConfigService, sessionStorage: MyRedisSessionStorage) => {
         return {
           apiKey: configService.get('SHOPIFY_API_KEY'),
           apiSecret: configService.get('SHOPIFY_API_SECRET'),
@@ -100,10 +97,7 @@ export class AppModule {}
 ```ts
 // my-redis-session-storage.ts
 import { Injectable } from '@nestjs/common';
-import {
-  SessionStorage,
-  SessionInterface,
-} from '@shopify/shopify-api/dist/auth/session';
+import { SessionStorage, SessionInterface } from '@shopify/shopify-api/dist/auth/session';
 
 @Injectable()
 export class MyRedisSessionStorage implements SessionStorage {
@@ -117,6 +111,35 @@ export class MyRedisSessionStorage implements SessionStorage {
 
   async deleteSession(id: string): Promise<boolean> {
     // ... implement your redis delete logic
+  }
+}
+```
+
+# CSP middleware
+
+The library provides a CSP middleware that you can use to protect your application from XSS attacks. The middleware is not applied by default. To make use of this middleware, add the following to your application root module:
+
+```ts
+// app.module.ts
+import { ShopifyCoreModule, ShopifyCspMiddleware } from '@nestjs-shopify/core';
+import { Module, NestModule } from '@nestjs/common';
+
+@Module({
+  imports: [
+    ShopifyCoreModule.forRoot({ ... }),
+    // ...
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Apply the middleware to all routes
+    consumer.apply(ShopifyCspMiddleware).forRoutes('*');
+
+    // Or apply the middleware to specific routes
+    consumer
+      .apply(ShopifyCspMiddleware)
+      .exclude('cats')
+      .forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
   }
 }
 ```
