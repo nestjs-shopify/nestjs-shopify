@@ -20,6 +20,7 @@ import {
   getShopFromRequest,
   RequestLike,
 } from './utils/get-shop-from-request.util';
+import { hasValidAccessToken } from './utils/has-valid-access-token.util';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -94,6 +95,10 @@ export class ShopifyAuthGuard implements CanActivate {
       }
 
       session = await this.sessionStorage.loadSession(sessionId);
+
+      if (session && !(await hasValidAccessToken(this.shopifyApi, session))) {
+        session = undefined;
+      }
     } catch (err) {
       this.logger.error(err);
       session = undefined;
