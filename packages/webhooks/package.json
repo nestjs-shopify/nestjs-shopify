@@ -1,6 +1,6 @@
 {
   "name": "@rh-nestjs-shopify/webhooks",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "type": "commonjs",
   "homepage": "https://github.com/RockyHubJsc/nestjs-shopify",
   "bugs": {
