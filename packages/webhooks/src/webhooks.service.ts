@@ -1,4 +1,4 @@
-import { InjectShopify } from '@nestjs-shopify/core';
+import { InjectShopify } from '@rh-nestjs-shopify/core';
 import { Injectable, Logger } from '@nestjs/common';
 import { Session, Shopify } from '@shopify/shopify-api';
 

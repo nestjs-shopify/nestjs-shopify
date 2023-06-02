@@ -1,5 +1,5 @@
 import '@shopify/shopify-api/adapters/node';
-import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import { SHOPIFY_API_CONTEXT } from '@rh-nestjs-shopify/core';
 import { ApplicationConfig } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import { Shopify } from '@shopify/shopify-api';

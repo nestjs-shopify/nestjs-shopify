@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ShopifyWebhooksModule } from '@nestjs-shopify/webhooks';
+import { ShopifyWebhooksModule } from '@rh-nestjs-shopify/webhooks';
 import { ShopifyInitializerModule } from '../shopify-initializer/shopify-initializer.module';
 import { handlers } from './handlers';
 

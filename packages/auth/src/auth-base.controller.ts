@@ -1,4 +1,4 @@
-import { SessionStorage } from '@nestjs-shopify/core';
+import { SessionStorage } from '@rh-nestjs-shopify/core';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';

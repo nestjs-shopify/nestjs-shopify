@@ -2,7 +2,7 @@ import {
   InjectShopify,
   InjectShopifySessionStorage,
   SessionStorage,
-} from '@nestjs-shopify/core';
+} from '@rh-nestjs-shopify/core';
 import {
   CanActivate,
   ExecutionContext,

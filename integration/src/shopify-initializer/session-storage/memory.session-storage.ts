@@ -1,4 +1,4 @@
-import { SessionStorage } from '@nestjs-shopify/core';
+import { SessionStorage } from '@rh-nestjs-shopify/core';
 import { Injectable } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
 

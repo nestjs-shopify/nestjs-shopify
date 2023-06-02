@@ -15,10 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nestjs-shopify/auth": ["packages/auth/src/index.ts"],
-      "@nestjs-shopify/core": ["packages/core/src/index.ts"],
-      "@nestjs-shopify/graphql": ["packages/graphql/src/index.ts"],
-      "@nestjs-shopify/webhooks": ["packages/webhooks/src/index.ts"]
+      "@rh-nestjs-shopify/auth": ["packages/auth/src/index.ts"],
+      "@rh-nestjs-shopify/core": ["packages/core/src/index.ts"],
+      "@rh-nestjs-shopify/graphql": ["packages/graphql/src/index.ts"],
+      "@rh-nestjs-shopify/webhooks": ["packages/webhooks/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

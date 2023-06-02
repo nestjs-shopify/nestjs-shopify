@@ -4,7 +4,7 @@ import {
   InjectShopify,
   InjectShopifySessionStorage,
   SessionStorage,
-} from '@nestjs-shopify/core';
+} from '@rh-nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
 import { AccessMode, ShopifyAuthModuleOptions } from '../auth.interfaces';
 import { ShopifyAuthBaseController } from '../auth-base.controller';

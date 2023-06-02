@@ -1,4 +1,4 @@
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { ShopifyAuthModule } from '@rh-nestjs-shopify/auth';
 import { Module } from '@nestjs/common';
 
 @Module({

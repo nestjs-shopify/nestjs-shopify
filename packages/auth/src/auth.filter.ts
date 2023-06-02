@@ -1,4 +1,4 @@
-import { InjectShopify } from '@nestjs-shopify/core';
+import { InjectShopify } from '@rh-nestjs-shopify/core';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';

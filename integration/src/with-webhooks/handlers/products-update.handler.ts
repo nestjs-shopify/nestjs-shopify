@@ -1,7 +1,7 @@
 import {
   ShopifyWebhookHandler,
   WebhookHandler,
-} from '@nestjs-shopify/webhooks';
+} from '@rh-nestjs-shopify/webhooks';
 import { Inject, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { IncomingMessage } from 'http';

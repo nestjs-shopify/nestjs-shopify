@@ -1,27 +1,27 @@
 {
-  "name": "@nestjs-shopify/graphql",
-  "version": "4.0.0",
+  "name": "@rh-nestjs-shopify/graphql",
+  "version": "4.0.2",
   "type": "commonjs",
-  "homepage": "https://github.com/nestjs-shopify/nestjs-shopify",
+  "homepage": "https://github.com/RockyHubJsc/nestjs-shopify",
   "bugs": {
-    "url": "https://github.com/nestjs-shopify/nestjs-shopify/issues"
+    "url": "https://github.com/RockyHubJsc/nestjs-shopify/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nestjs-shopify/nestjs-shopify.git"
+    "url": "git+https://github.com/RockyHubJsc/nestjs-shopify.git"
   },
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
-    "@nestjs-shopify/auth": "^4.0.0",
-    "@nestjs-shopify/core": "^3.0.0",
+    "@rh-nestjs-shopify/auth": "^4.0.0",
+    "@rh-nestjs-shopify/core": "^3.0.0",
     "@shopify/shopify-api": "^7.0.0"
   },
   "peerDependenciesMeta": {
-    "@nestjs-shopify/auth": {
+    "@rh-nestjs-shopify/auth": {
       "optional": false
     },
-    "@nestjs-shopify/core": {
+    "@rh-nestjs-shopify/core": {
       "optional": false
     },
     "@nestjs/common": {

@@ -13,7 +13,7 @@ import {
   InjectShopify,
   ShopifyHmac,
   ShopifyHmacType,
-} from '@nestjs-shopify/core';
+} from '@rh-nestjs-shopify/core';
 import {
   HttpWebhookHandler,
   Shopify,

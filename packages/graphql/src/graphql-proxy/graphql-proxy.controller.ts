@@ -2,8 +2,8 @@ import {
   AccessMode,
   ShopifySessionRequest,
   UseShopifyAuth,
-} from '@nestjs-shopify/auth';
-import { InjectShopify } from '@nestjs-shopify/core';
+} from '@rh-nestjs-shopify/auth';
+import { InjectShopify } from '@rh-nestjs-shopify/core';
 import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
 import { Shopify } from '@shopify/shopify-api';
 import { IncomingMessage, ServerResponse } from 'http';

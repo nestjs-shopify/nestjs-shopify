@@ -1,4 +1,4 @@
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { ShopifyAuthModule } from '@rh-nestjs-shopify/auth';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { ShopifyGraphqlProxyModule } from '../../src/graphql-proxy/graphql-proxy.module';
 import { MockShopifyCoreModule } from './mock-shopify-core-module';

@@ -1,4 +1,4 @@
-import { ShopifyCoreModule } from '@nestjs-shopify/core';
+import { ShopifyCoreModule } from '@rh-nestjs-shopify/core';
 import { ApiVersion } from '@shopify/shopify-api';
 import { mockLogger } from './mock-logger';
 import { mockSessionStorage } from './mock-session-storage';

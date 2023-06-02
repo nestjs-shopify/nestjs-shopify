@@ -1,4 +1,4 @@
-import { AccessMode, UseShopifyAuth } from '@nestjs-shopify/auth';
+import { AccessMode, UseShopifyAuth } from '@rh-nestjs-shopify/auth';
 import { Controller, Get } from '@nestjs/common';
 
 @Controller('message')

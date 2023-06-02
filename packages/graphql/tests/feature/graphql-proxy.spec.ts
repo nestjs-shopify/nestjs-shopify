@@ -1,5 +1,5 @@
 import '@shopify/shopify-api/adapters/node';
-import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+import { SHOPIFY_API_CONTEXT } from '@rh-nestjs-shopify/core';
 import { INestApplication } from '@nestjs/common';
 import { Session, Shopify } from '@shopify/shopify-api';
 import * as request from 'supertest';

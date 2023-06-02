@@ -1,4 +1,4 @@
-import { SessionStorage } from '@nestjs-shopify/core';
+import { SessionStorage } from '@rh-nestjs-shopify/core';
 
 export const mockSessionStorage = {
   loadSession: jest.fn(),

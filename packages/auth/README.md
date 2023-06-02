@@ -22,7 +22,7 @@ Make sure you have your Shopify context initialized:
 npm install @nestjs-shopify/core
 ```
 
-See `@nestjs-shopify/core` usage: https://github.com/nestjs-shopify/nestjs-shopify/tree/main/packages/core.
+See `@nestjs-shopify/core` usage: https://github.com/RockyHubJsc/nestjs-shopify/tree/main/packages/core.
 
 ## Usage
 
@@ -143,6 +143,7 @@ Now, with this `AppModule` configured, if you want to install an App and store t
 ### Authorization
 
 When `ShopifyAuthModule` is setup, you can use `@UseShopifyAuth()` to require online or offline session in Controllers or specific routes. Example:
+
 ```ts
 import { AccessMode, CurrentSession, UseShopifyAuth } from '@nestjs-shopify/auth';
 import { Controller, Get } from '@nestjs/common';
@@ -159,10 +160,7 @@ export class ProductsController {
   @Get('products/:id')
   // Overriding the controller access mode:
   @UseShopifyAuth(AccessMode.Offline)
-  show(
-    @CurrentSession() session: Session,
-    @Param('id') productId: string
-  ) {
+  show(@CurrentSession() session: Session, @Param('id') productId: string) {
     // do something
   }
 }

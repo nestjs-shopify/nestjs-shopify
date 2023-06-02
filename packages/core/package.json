@@ -1,14 +1,14 @@
 {
-  "name": "@nestjs-shopify/core",
-  "version": "3.0.0",
+  "name": "@rh-nestjs-shopify/core",
+  "version": "3.0.2",
   "type": "commonjs",
-  "homepage": "https://github.com/nestjs-shopify/nestjs-shopify",
+  "homepage": "https://github.com/RockyHubJsc/nestjs-shopify",
   "bugs": {
-    "url": "https://github.com/nestjs-shopify/nestjs-shopify/issues"
+    "url": "https://github.com/RockyHubJsc/nestjs-shopify/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nestjs-shopify/nestjs-shopify.git"
+    "url": "git+https://github.com/RockyHubJsc/nestjs-shopify.git"
   },
   "peerDependencies": {
     "@nestjs/common": "*",

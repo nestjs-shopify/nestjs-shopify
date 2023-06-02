@@ -1,7 +1,7 @@
 import {
   ShopifyWebhookHandler,
   WebhookHandler,
-} from '@nestjs-shopify/webhooks';
+} from '@rh-nestjs-shopify/webhooks';
 
 @WebhookHandler('PRODUCTS_CREATE')
 export class ProductsCreateHandler extends ShopifyWebhookHandler {
