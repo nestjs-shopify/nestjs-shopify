@@ -9,12 +9,12 @@
 
 ## Packages
 
-| Package                                       | Description                                                                                                             |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| [@nestjs-shopify/core](packages/core)         | Use to initialize the `@shopify/shopify-api` package with your Shopify app credentials. Required for webhooks and auth. |
-| [@nestjs-shopify/webhooks](packages/webhooks) | Register and process Shopify webhooks.                                                                                  |
-| [@nestjs-shopify/auth](packages/auth)         | Setup online and/or offline auth and protected your NestJS API with Shopify JWT session tokens.                         |
-| [@nestjs-shopify/graphql](packages/graphql)   | Setup a Shopify GraphQL Admin API proxy that is automatically setup to use online session tokens.                       |
+| Package                                          | Description                                                                                                             |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| [@rh-nestjs-shopify/core](packages/core)         | Use to initialize the `@shopify/shopify-api` package with your Shopify app credentials. Required for webhooks and auth. |
+| [@rh-nestjs-shopify/webhooks](packages/webhooks) | Register and process Shopify webhooks.                                                                                  |
+| [@rh-nestjs-shopify/auth](packages/auth)         | Setup online and/or offline auth and protected your NestJS API with Shopify JWT session tokens.                         |
+| [@rh-nestjs-shopify/graphql](packages/graphql)   | Setup a Shopify GraphQL Admin API proxy that is automatically setup to use online session tokens.                       |
 
 ## Example app
 

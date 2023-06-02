@@ -1,4 +1,4 @@
-# @nestjs-shopify/core
+# @rh-nestjs-shopify/core
 
 A wrapper for [@shopify/shopify-node-api](https://github.com/Shopify/shopify-node-api) to setup your Shopify context in a NestJS application.
 
@@ -7,13 +7,13 @@ A wrapper for [@shopify/shopify-node-api](https://github.com/Shopify/shopify-nod
 Install package using NPM:
 
 ```
-npm i @shopify/shopify-api @nestjs-shopify/core
+npm i @shopify/shopify-api @rh-nestjs-shopify/core
 ```
 
 or using Yarn:
 
 ```
-yarn add @shopify/shopify-api @nestjs-shopify/core
+yarn add @shopify/shopify-api @rh-nestjs-shopify/core
 ```
 
 # Usage
@@ -75,10 +75,7 @@ import { MyRedisSessionStorage } from './my-redis-session-storage';
 @Module({
   imports: [
     ShopifyCoreModule.forRootAsync({
-      useFactory: async (
-        configService: ConfigService,
-        sessionStorage: MyRedisSessionStorage
-      ) => {
+      useFactory: async (configService: ConfigService, sessionStorage: MyRedisSessionStorage) => {
         return {
           apiKey: configService.get('SHOPIFY_API_KEY'),
           apiSecret: configService.get('SHOPIFY_API_SECRET'),
@@ -100,10 +97,7 @@ export class AppModule {}
 ```ts
 // my-redis-session-storage.ts
 import { Injectable } from '@nestjs/common';
-import {
-  SessionStorage,
-  SessionInterface,
-} from '@shopify/shopify-api/dist/auth/session';
+import { SessionStorage, SessionInterface } from '@shopify/shopify-api/dist/auth/session';
 
 @Injectable()
 export class MyRedisSessionStorage implements SessionStorage {

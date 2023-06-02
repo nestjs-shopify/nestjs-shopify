@@ -1,4 +1,4 @@
-# @nestjs-shopify/auth
+# @rh-nestjs-shopify/auth
 
 An OAuth setup for NestJS using Shopify's [@shopify/shopify-node-api](https://github.com/Shopify/shopify-node-api) package. Allows for online and offline auth using this module.
 
@@ -7,22 +7,22 @@ An OAuth setup for NestJS using Shopify's [@shopify/shopify-node-api](https://gi
 Install package using NPM:
 
 ```
-npm install @nestjs-shopify/auth
+npm install @rh-nestjs-shopify/auth
 ```
 
 or using Yarn:
 
 ```
-yarn add @nestjs-shopify/auth
+yarn add @rh-nestjs-shopify/auth
 ```
 
 Make sure you have your Shopify context initialized:
 
 ```
-npm install @nestjs-shopify/core
+npm install @rh-nestjs-shopify/core
 ```
 
-See `@nestjs-shopify/core` usage: https://github.com/RockyHubJsc/nestjs-shopify/tree/main/packages/core.
+See `@rh-nestjs-shopify/core` usage: https://github.com/RockyHubJsc/nestjs-shopify/tree/main/packages/core.
 
 ## Usage
 
@@ -30,7 +30,7 @@ From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootO
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { ShopifyAuthModule } from '@rh-nestjs-shopify/auth';
 
 @Module({
   imports: [
@@ -46,7 +46,7 @@ Or using `useFactory`/`useClass`/`useExisting`:
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { ShopifyAuthModule } from '@rh-nestjs-shopify/auth';
 
 @Module({
   imports: [
@@ -145,7 +145,7 @@ Now, with this `AppModule` configured, if you want to install an App and store t
 When `ShopifyAuthModule` is setup, you can use `@UseShopifyAuth()` to require online or offline session in Controllers or specific routes. Example:
 
 ```ts
-import { AccessMode, CurrentSession, UseShopifyAuth } from '@nestjs-shopify/auth';
+import { AccessMode, CurrentSession, UseShopifyAuth } from '@rh-nestjs-shopify/auth';
 import { Controller, Get } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
 

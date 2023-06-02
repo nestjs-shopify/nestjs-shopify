@@ -1,6 +1,6 @@
 {
   "name": "@rh-nestjs-shopify/graphql",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "type": "commonjs",
   "homepage": "https://github.com/RockyHubJsc/nestjs-shopify",
   "bugs": {

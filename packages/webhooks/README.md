@@ -1,4 +1,4 @@
-# @nestjs-shopify/webhooks
+# @rh-nestjs-shopify/webhooks
 
 Enable Shopify webhook support for your NestJS application using `ShopifyWebhooksModule`. Import this module at the root level after `ShopifyCoreModule`:
 
@@ -29,10 +29,7 @@ The `ShopifyWebhooksModule` automatically configures webhook handlers based on t
 
 ```ts
 // customers-create.webhook-handler.ts
-import {
-  ShopifyWebhookHandler,
-  WebhookHandler,
-} from '@nestjs-shopify/webhooks';
+import { ShopifyWebhookHandler, WebhookHandler } from '@rh-nestjs-shopify/webhooks';
 
 @WebhookHandler('PRODUCTS_CREATE')
 export class CustomersCreateWebhookHandler extends ShopifyWebhookHandler {
@@ -93,8 +90,8 @@ This module exports the `ShopifyWebhooksService`. Call this service with an **of
 
 ```ts
 // my-auth.handler.ts
-import { ShopifyAuthAfterHandler } from '@nestjs-shopify/auth';
-import { ShopifyWebhooksService } from '@nestjs-shopify/webhooks';
+import { ShopifyAuthAfterHandler } from '@rh-nestjs-shopify/auth';
+import { ShopifyWebhooksService } from '@rh-nestjs-shopify/webhooks';
 
 @Injectable()
 export class MyAuthHandler implements ShopifyAuthAfterHandler {
