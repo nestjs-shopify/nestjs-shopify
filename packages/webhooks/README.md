@@ -99,18 +99,14 @@ import { ShopifyWebhooksService } from '@nestjs-shopify/webhooks';
 @Injectable()
 export class MyAuthHandler implements ShopifyAuthAfterHandler {
   constructor(private readonly webhooksService: ShopifyWebhooksService) {}
-  async afterAuth(req: Request, res: Response, session: SessionInterface) {
+  async afterAuth(req: Request, res: Response, session: Session) {
     if (session.isOnline) {
       // redirect to homepage of your app etc...
       return;
     }
 
     // Otherwise, we have an offline access token
-    const { shop, accessToken } = session;
-    await this.webhooksService.registerWebhooks({
-      shop,
-      accessToken,
-    });
+    await this.webhooksService.registerWebhooks(session);
 
     // Your other logic for offline auth...
   }
