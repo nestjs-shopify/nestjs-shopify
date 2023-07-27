@@ -15,7 +15,7 @@ import {
   ShopifyHmacType,
 } from '@nestjs-shopify/core';
 import {
-  HttpWebhookHandler,
+  HttpWebhookHandlerWithCallback,
   Shopify,
   ShopifyHeader,
 } from '@shopify/shopify-api';
@@ -43,7 +43,7 @@ export class ShopifyWebhooksController {
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
     const webhookEntries = this.shopifyApi.webhooks.getHandlers(
       graphqlTopic
-    ) as HttpWebhookHandler[];
+    ) as HttpWebhookHandlerWithCallback[];
 
     if (webhookEntries.length === 0) {
       throw new NotFoundException(

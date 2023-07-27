@@ -1,7 +1,7 @@
 import '@shopify/shopify-api/adapters/node';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { Test } from '@nestjs/testing';
-import { DeliveryMethod, Session, Shopify } from '@shopify/shopify-api';
+import { DeliveryMethod, Session, Shopify, WebhookOperation } from '@shopify/shopify-api';
 import { ShopifyWebhooksModule } from '../../src/webhooks.module';
 import { ShopifyWebhooksService } from '../../src/webhooks.service';
 import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
@@ -38,6 +38,7 @@ describe('ShopifyWebhooksService', () => {
             deliveryMethod: DeliveryMethod.Http,
             result: 'Forced error in tests',
             success: false,
+            operation: WebhookOperation.Create
           },
         ],
         'products/update': [
@@ -45,6 +46,7 @@ describe('ShopifyWebhooksService', () => {
             deliveryMethod: DeliveryMethod.EventBridge,
             result: { data: { webhookSubscriptionCreate: {} } },
             success: true,
+            operation: WebhookOperation.Update
           },
         ],
       });
