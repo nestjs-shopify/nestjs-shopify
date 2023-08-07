@@ -26,7 +26,7 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@nestjs/cli": "9.5.0",
+    "@nestjs/cli": "10.1.11",
     "@nestjs/common": "9.4.3",
     "@nestjs/core": "9.4.3",
     "@nestjs/platform-express": "9.4.3",
