@@ -15,12 +15,12 @@
   "dependencies": {
     "@changesets/cli": "2.26.2",
     "@nrwl/cli": "15.9.3",
-    "@nrwl/eslint-plugin-nx": "16.5.3",
-    "@nrwl/jest": "16.5.3",
-    "@nrwl/js": "16.5.3",
-    "@nrwl/linter": "16.5.3",
-    "@nrwl/workspace": "16.5.3",
-    "nx": "16.5.3",
+    "@nrwl/eslint-plugin-nx": "16.7.2",
+    "@nrwl/jest": "16.7.2",
+    "@nrwl/js": "16.7.2",
+    "@nrwl/linter": "16.7.2",
+    "@nrwl/workspace": "16.7.2",
+    "nx": "16.7.2",
     "reflect-metadata": "0.1.13",
     "tslib": "2.5.0",
     "typescript": "5.1.6"
