@@ -97,20 +97,29 @@ export class AppModule {}
 ```ts
 // my-redis-session-storage.ts
 import { Injectable } from '@nestjs/common';
-import { SessionStorage, SessionInterface } from '@shopify/shopify-api/dist/auth/session';
+import { SessionStorage } from '@nestjs-shopify/core';
+import { Session } from '@shopify/shopify-api';
 
 @Injectable()
 export class MyRedisSessionStorage implements SessionStorage {
-  async storeSession(session: SessionInterface): Promise<boolean> {
+  async storeSession(session: Session): Promise<boolean> {
     // ... implement your redis store logic
   }
 
-  async loadSession(id: string): Promise<SessionInterface | undefined> {
+  async loadSession(id: string): Promise<Session | undefined> {
     // ... implement your redis load logic
   }
 
   async deleteSession(id: string): Promise<boolean> {
     // ... implement your redis delete logic
+  }
+
+  async deleteSessions(ids: string[]): Promise<boolean> {
+    // ... implement your redis multi-delete logic
+  }
+
+  async findSessionsByShop(shop: string): Promise<Session[]> {
+    // ... implement your redis multi-find logic
   }
 }
 ```
