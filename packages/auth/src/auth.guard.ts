@@ -96,7 +96,7 @@ export class ShopifyAuthGuard implements CanActivate {
 
       session = await this.sessionStorage.loadSession(sessionId);
 
-      if (session && !(await hasValidAccessToken(this.shopifyApi, session))) {
+      if (session && session.expires && session.expires <= new Date()) {
         session = undefined;
       }
     } catch (err) {
