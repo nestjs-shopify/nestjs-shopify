@@ -1,5 +1,11 @@
 # @nestjs-shopify/core
 
+## 3.1.0
+
+### Minor Changes
+
+- a82f3f8: Add `ShopifyCspMiddleware` to assign CSP frame-ancestors. See [NestJS Docs](https://docs.nestjs.com/middleware#applying-middleware) on how to use this middleware in your app.
+
 ## 3.0.0
 
 ### Major Changes
