@@ -1,33 +1,80 @@
-import { InjectShopify } from '@rh-nestjs-shopify/core';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
-import { Shopify } from '@shopify/shopify-api';
+import { InjectShopify } from '@rh-nestjs-shopify/core';
+import { HttpResponseError, Session, Shopify } from '@shopify/shopify-api';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
-import { FastifyRequest, FastifyReply } from 'fastify';
 import { getOptionsToken } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
-import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
+import {
+  AccessMode,
+  ShopifyAuthModuleOptions,
+  ShopifySessionRequest,
+} from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
-@Catch(ShopifyAuthException)
+@Catch(ShopifyAuthException, HttpResponseError)
 export class ShopifyAuthExceptionFilter
-  implements ExceptionFilter<ShopifyAuthException>
+  implements ExceptionFilter<ShopifyAuthException | HttpResponseError>
 {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly appConfig: ApplicationConfig,
     @InjectShopify()
-    private readonly shopifyApi: Shopify
+    private readonly shopifyApi: Shopify,
   ) {}
 
-  async catch(exception: ShopifyAuthException, host: ArgumentsHost) {
-    const options = this.getShopifyOptionsFor(exception.accessMode);
+  async catch(
+    exception: ShopifyAuthException | HttpResponseError,
+    host: ArgumentsHost,
+  ) {
     const context = host.switchToHttp();
-
-    const request = context.getRequest<IncomingMessage | FastifyRequest>();
+    const request =
+      context.getRequest<
+        ShopifySessionRequest<IncomingMessage | FastifyRequest>
+      >();
     const response = context.getResponse<ServerResponse | FastifyReply>();
+
     const req = request instanceof IncomingMessage ? request : request.raw;
     const res = response instanceof ServerResponse ? response : response.raw;
+
+    const responseBody = {
+      message: exception.message,
+      statusCode: 400,
+      timestamp: new Date().toISOString(),
+    };
+    if (exception instanceof HttpResponseError) {
+      if (exception.response.code === 401) {
+        return this.hanldeShopifyAuthException(
+          new ShopifyAuthException(
+            exception.message,
+            (request.shopifySession as Session).shop,
+            AccessMode.Online,
+          ),
+          req,
+          res,
+        );
+      } else {
+        return res.end(
+          JSON.stringify({
+            message: exception.message,
+            statusCode: exception.response.code,
+            timestamp: new Date().toISOString(),
+          }),
+        );
+      }
+    } else if (exception instanceof ShopifyAuthException) {
+      return this.hanldeShopifyAuthException(exception, req, res);
+    }
+    return res.end(JSON.stringify(responseBody));
+  }
+
+  private hanldeShopifyAuthException(
+    exception: ShopifyAuthException,
+    req: IncomingMessage,
+    res: ServerResponse,
+  ) {
+    const options = this.getShopifyOptionsFor(exception.accessMode);
     res.statusCode = exception.getStatus();
 
     const hostScheme = this.shopifyApi.config.hostScheme ?? 'https';
@@ -54,7 +101,7 @@ export class ShopifyAuthExceptionFilter
             message: exception.message,
             statusCode: exception.getStatus(),
             timestamp: new Date().toISOString(),
-          })
+          }),
         );
     }
   }
@@ -75,7 +122,7 @@ export class ShopifyAuthExceptionFilter
   private getShopifyOptionsFor(accessMode: AccessMode) {
     return this.moduleRef.get<ShopifyAuthModuleOptions>(
       getOptionsToken(accessMode),
-      { strict: false }
+      { strict: false },
     );
   }
 }
