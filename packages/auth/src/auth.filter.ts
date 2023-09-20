@@ -45,7 +45,7 @@ export class ShopifyAuthExceptionFilter
     };
     if (exception instanceof HttpResponseError) {
       if (exception.response.code === 401) {
-        return this.hanldeShopifyAuthException(
+        return this.handleShopifyAuthException(
           new ShopifyAuthException(
             exception.message,
             (request.shopifySession as Session).shop,
@@ -64,12 +64,12 @@ export class ShopifyAuthExceptionFilter
         );
       }
     } else if (exception instanceof ShopifyAuthException) {
-      return this.hanldeShopifyAuthException(exception, req, res);
+      return this.handleShopifyAuthException(exception, req, res);
     }
     return res.end(JSON.stringify(responseBody));
   }
 
-  private hanldeShopifyAuthException(
+  private handleShopifyAuthException(
     exception: ShopifyAuthException,
     req: IncomingMessage,
     res: ServerResponse,
