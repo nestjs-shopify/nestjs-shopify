@@ -32,7 +32,7 @@
     "@nestjs/platform-express": "10.2.6",
     "@nestjs/testing": "10.2.6",
     "@shopify/shopify-api": "7.7.0",
-    "@shopify/shopify-app-session-storage": "1.1.8",
+    "@shopify/shopify-app-session-storage": "1.1.10",
     "@types/jest": "29.5.5",
     "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "18.17.17",
