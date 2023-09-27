@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 4.0.1
+
+### Patch Changes
+
+- 1857bfc: Disallow @nestjs versions lower than `9.0.0`. Older versions will not work.
+
 ## 4.0.0
 
 ### Major Changes
