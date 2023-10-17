@@ -3,10 +3,10 @@ import {
   ShopifySessionRequest,
   UseShopifyAuth,
 } from '@nestjs-shopify/auth';
-import { InjectShopify } from '@nestjs-shopify/core';
+import { InjectShopify, ShopifyCoreRequestWrapper } from '@nestjs-shopify/core';
 import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
 import { Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage } from 'http';
 
 @Controller('graphql')
 @UseShopifyAuth(AccessMode.Online)
@@ -15,9 +15,14 @@ export class ShopifyGraphqlProxyController {
 
   @Post()
   async proxy(
-    @Req() req: ShopifySessionRequest<IncomingMessage> & { body: string },
-    @Res() res: ServerResponse
+    @Req() abstractReq: ShopifySessionRequest<unknown>,
+    @Res() abstractRes: unknown
   ) {
+    const req = ShopifyCoreRequestWrapper.getRawRequest(
+      abstractReq
+    ) as ShopifySessionRequest<IncomingMessage> & { body: string };
+    const res = ShopifyCoreRequestWrapper.getRawResponse(abstractRes);
+
     const session = req.shopifySession;
     if (!session) {
       throw new ForbiddenException('No session found');

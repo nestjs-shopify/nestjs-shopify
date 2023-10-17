@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import {
   InjectShopify,
+  ShopifyCoreRequestWrapper,
   ShopifyHmac,
   ShopifyHmacType,
 } from '@nestjs-shopify/core';
@@ -31,8 +32,9 @@ export class ShopifyWebhooksController {
   @Post()
   @HttpCode(200)
   @ShopifyHmac(ShopifyHmacType.Header)
-  async handle(@Req() req: RawBodyRequest<IncomingMessage>) {
-    const { rawBody } = req;
+  async handle(@Req() abstractReq: RawBodyRequest<unknown>) {
+    const { rawBody } = abstractReq;
+    const req = ShopifyCoreRequestWrapper.getRawRequest(abstractReq);
     if (!rawBody) {
       throw new InternalServerErrorException(
         'Enable `rawBody` option when creating Nest application.'

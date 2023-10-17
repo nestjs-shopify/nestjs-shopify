@@ -1,8 +1,10 @@
-import { SessionStorage } from '@nestjs-shopify/core';
+import {
+  SessionStorage,
+  ShopifyCoreRequestWrapper,
+} from '@nestjs-shopify/core';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
@@ -13,15 +15,18 @@ export abstract class ShopifyAuthBaseController {
     protected readonly accessMode: AccessMode,
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
-    protected readonly sessionStorage: SessionStorage
+    protected readonly sessionStorage: SessionStorage,
   ) {}
 
   @Get('auth')
   async auth(
     @Query('shop') domain: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Req() abstractReq: unknown,
+    @Res() abstractRes: unknown,
   ) {
+    const req = ShopifyCoreRequestWrapper.getRawRequest(abstractReq);
+    const res = ShopifyCoreRequestWrapper.getRawResponse(abstractRes);
+
     let globalPrefix = '';
     const { basePath = '', useGlobalPrefix } = this.options;
     const isOnline = this.accessMode === AccessMode.Online;
@@ -44,9 +49,12 @@ export abstract class ShopifyAuthBaseController {
   @Get('callback')
   async callback(
     @Query('host') host: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Req() abstractReq: unknown,
+    @Res() abstractRes: unknown,
   ) {
+    const req = ShopifyCoreRequestWrapper.getRawRequest(abstractReq);
+    const res = ShopifyCoreRequestWrapper.getRawResponse(abstractRes);
+
     const { headers = {}, session } = await this.shopifyApi.auth.callback({
       rawRequest: req,
       rawResponse: res,

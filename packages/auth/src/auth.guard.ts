@@ -2,6 +2,7 @@ import {
   InjectShopify,
   InjectShopifySessionStorage,
   SessionStorage,
+  ShopifyCoreRequestWrapper,
 } from '@nestjs-shopify/core';
 import {
   CanActivate,
@@ -11,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
@@ -43,7 +44,8 @@ export class ShopifyAuthGuard implements CanActivate {
       return true;
     }
 
-    const req = ctx.switchToHttp().getRequest<IncomingMessage>();
+    const abstractReq = ctx.switchToHttp().getRequest();
+    const req = ShopifyCoreRequestWrapper.getRawRequest(abstractReq);
     const shop = getShopFromRequest(req as RequestLike, session);
 
     if (shop) {
@@ -61,9 +63,10 @@ export class ShopifyAuthGuard implements CanActivate {
     ctx: ExecutionContext,
     session: Session | undefined
   ) {
-    const req = ctx
-      .switchToHttp()
-      .getRequest<ShopifySessionRequest<IncomingMessage>>();
+    const abstractReq = ctx.switchToHttp().getRequest();
+    const req = ShopifyCoreRequestWrapper.getRawRequest(
+      abstractReq
+    ) as ShopifySessionRequest<IncomingMessage>;
     req.shopifySession = session;
   }
 
@@ -71,8 +74,10 @@ export class ShopifyAuthGuard implements CanActivate {
     const accessMode = this.getAccessModeFromContext(ctx);
 
     const http = ctx.switchToHttp();
-    const req = http.getRequest<IncomingMessage>();
-    const res = http.getResponse<ServerResponse>();
+    const abstractReq = http.getRequest();
+    const abstractRes = http.getResponse();
+    const req = ShopifyCoreRequestWrapper.getRawRequest(abstractReq);
+    const res = ShopifyCoreRequestWrapper.getRawResponse(abstractRes);
 
     const isOnline = accessMode === AccessMode.Online;
     let session: Session | undefined;

@@ -12,6 +12,7 @@ import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthExceptionFilter } from './auth.filter';
 import { ShopifyAuthGuard } from './auth.guard';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
+import { ShopifyCoreRequestWrapper } from '@nestjs-shopify/core';
 
 export const UseShopifyAuth = (mode = AccessMode.Online) =>
   applyDecorators(
@@ -25,9 +26,10 @@ export const CurrentSession = createParamDecorator<
   ExecutionContext,
   Session | undefined
 >((_data: unknown, ctx: ExecutionContext) => {
-  const req = ctx
-    .switchToHttp()
-    .getRequest<ShopifySessionRequest<IncomingMessage>>();
+  const abstractReq = ctx.switchToHttp().getRequest();
+  const req = ShopifyCoreRequestWrapper.getRawRequest(
+    abstractReq
+  ) as ShopifySessionRequest<IncomingMessage>;
 
   return req.shopifySession;
 });
