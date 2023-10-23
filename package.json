@@ -33,7 +33,7 @@
     "@nestjs/testing": "10.2.7",
     "@shopify/shopify-api": "7.7.0",
     "@shopify/shopify-app-session-storage": "1.1.10",
-    "@types/jest": "29.5.5",
+    "@types/jest": "29.5.6",
     "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "18.18.5",
     "@types/supertest": "2.0.14",
