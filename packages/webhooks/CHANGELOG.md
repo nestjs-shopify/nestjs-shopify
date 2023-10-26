@@ -1,5 +1,11 @@
 # @nestjs-shopify/webhooks
 
+## 3.1.0
+
+### Minor Changes
+
+- e83d181: update dependencies @shopify/shopify-api to 8.0.1 and @shopify/shopify-app-session-storage to 2.0.0, also allow those versions in peerDependencies
+
 ## 3.0.1
 
 ### Patch Changes
