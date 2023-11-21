@@ -19,15 +19,18 @@ import {
   Shopify,
   ShopifyHeader,
 } from '@shopify/shopify-api';
-import type { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'node:http';
 import { FastifyRequest } from 'fastify';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
+import { ShopifyFactory } from '../../core/src/shopify-factory';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
   private readonly logger = new Logger('Webhook');
 
-  constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
+  constructor(
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory
+  ) {}
 
   @Post()
   @HttpCode(200)
@@ -42,9 +45,9 @@ export class ShopifyWebhooksController {
 
     const { domain, topic, webhookId } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
-    const webhookEntries = this.shopifyApi.webhooks.getHandlers(
-      graphqlTopic
-    ) as HttpWebhookHandlerWithCallback[];
+    const webhookEntries = (
+      this.shopifyFactory.getInstance('DEFAULT') as Shopify
+    ).webhooks.getHandlers(graphqlTopic) as HttpWebhookHandlerWithCallback[];
 
     if (webhookEntries.length === 0) {
       throw new NotFoundException(

@@ -15,17 +15,18 @@ import {
   ShopifyHeader,
 } from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
-import { IncomingMessage } from 'http';
+import { IncomingMessage } from 'node:http';
 import { FastifyRequest } from 'fastify';
 import { InjectShopify } from '../core.decorators';
 import { SHOPIFY_HMAC_KEY } from './hmac.constants';
 import { ShopifyHmacType } from './hmac.enums';
+import { ShopifyFactory } from '../shopify-factory';
 
 @Injectable()
 export class ShopifyHmacGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    @InjectShopify() private readonly shopifyApi: Shopify
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -59,7 +60,8 @@ export class ShopifyHmacGuard implements CanActivate {
 
     const generatedHash = createHmac(
       'sha256',
-      this.shopifyApi.config.apiSecretKey
+      (this.shopifyFactory.getInstance('DEFAULT') as Shopify).config
+        .apiSecretKey
     )
       .update(req.rawBody)
       .digest('base64');
@@ -81,7 +83,11 @@ export class ShopifyHmacGuard implements CanActivate {
     const query = (req as unknown as { query: AuthQuery }).query;
 
     try {
-      if (await this.shopifyApi.utils.validateHmac(query)) {
+      if (
+        await (
+          this.shopifyFactory.getInstance('DEFAULT') as Shopify
+        ).utils.validateHmac(query)
+      ) {
         return true;
       }
 

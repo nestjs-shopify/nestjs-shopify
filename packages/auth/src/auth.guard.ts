@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
-import { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'node:http';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
@@ -21,6 +21,7 @@ import {
   RequestLike,
 } from './utils/get-shop-from-request.util';
 import { hasValidAccessToken } from './utils/has-valid-access-token.util';
+import { ShopifyFactory } from '../../core/src/shopify-factory';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -28,7 +29,7 @@ export class ShopifyAuthGuard implements CanActivate {
 
   constructor(
     @InjectShopify()
-    private readonly shopifyApi: Shopify,
+    private readonly shopifyFactory: ShopifyFactory,
     @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
     private readonly reflector: Reflector
@@ -36,14 +37,21 @@ export class ShopifyAuthGuard implements CanActivate {
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const { accessMode, session } = await this.getSessionDataFromContext(ctx);
-
-    if (session && session.isActive(this.shopifyApi.config.scopes)) {
+    let check = false;
+    this.shopifyFactory.getInstances().forEach((instance) => {
+      if (session && session.isActive(instance.config.scopes)) {
+        check = true;
+      }
+    });
+    if (session && check) {
       // We assign the session to the request for further usage in
       // our controllers/decorators
       this.assignSessionToRequest(ctx, session);
+      console.log('[ShopifyAuthGuard] TRUE');
 
       return true;
     }
+    console.log('[ShopifyAuthGuard] FALSE');
 
     const req = ctx
       .switchToHttp()
@@ -84,7 +92,13 @@ export class ShopifyAuthGuard implements CanActivate {
     let session: Session | undefined;
 
     try {
-      const sessionId = await this.shopifyApi.session.getCurrentId({
+      /**
+       * decode jwt -> dont care instance
+       * @returns `day-la-shop-test-1.myshopify.com_103420526893`
+       */
+      const sessionId = await (
+        this.shopifyFactory.getInstance('DEFAULT') as Shopify
+      ).session.getCurrentId({
         rawRequest: req,
         rawResponse: res,
         isOnline,

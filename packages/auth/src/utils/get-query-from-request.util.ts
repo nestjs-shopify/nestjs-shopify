@@ -1,4 +1,4 @@
-import { IncomingMessage } from 'http';
+import { IncomingMessage } from 'node:http';
 
 export function getQueryFromRequest(req: IncomingMessage): {
   [k: string]: string;

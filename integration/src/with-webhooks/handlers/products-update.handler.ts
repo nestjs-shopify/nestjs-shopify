@@ -4,7 +4,7 @@ import {
 } from '@rh-nestjs-shopify/webhooks';
 import { Inject, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { IncomingMessage } from 'http';
+import { IncomingMessage } from 'node:http';
 
 @WebhookHandler({ topic: 'PRODUCTS_UPDATE', scope: Scope.REQUEST })
 export class ProductsUpdateHandler extends ShopifyWebhookHandler {

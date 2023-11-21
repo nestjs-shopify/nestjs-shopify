@@ -3,7 +3,7 @@ import { SHOPIFY_API_CONTEXT } from '@rh-nestjs-shopify/core';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AuthQuery, Shopify } from '@shopify/shopify-api';
-import { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'node:http';
 import * as request from 'supertest';
 import { AppModule } from '../../src/with-hybrid-auth/app.module';
 

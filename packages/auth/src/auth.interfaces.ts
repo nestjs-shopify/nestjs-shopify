@@ -1,6 +1,6 @@
 import { ModuleMetadata, Type } from '@nestjs/common';
 import type { Session } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import { FastifyRequest, FastifyReply } from 'fastify';
 
 export enum AccessMode {
