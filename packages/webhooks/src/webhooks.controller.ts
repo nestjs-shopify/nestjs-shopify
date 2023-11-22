@@ -46,7 +46,7 @@ export class ShopifyWebhooksController {
     const { domain, topic, webhookId } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
     const webhookEntries = (
-      this.shopifyFactory.getInstance('DEFAULT') as Shopify
+      this.shopifyFactory.getInstance() as Shopify
     ).webhooks.getHandlers(graphqlTopic) as HttpWebhookHandlerWithCallback[];
 
     if (webhookEntries.length === 0) {

@@ -58,10 +58,11 @@ export class ShopifyHmacGuard implements CanActivate {
       );
     }
 
+    const shopifyInstance = this.shopifyFactory.getInstance() as Shopify;
+
     const generatedHash = createHmac(
       'sha256',
-      (this.shopifyFactory.getInstance('DEFAULT') as Shopify).config
-        .apiSecretKey,
+      shopifyInstance.config.apiSecretKey,
     )
       .update(req.rawBody)
       .digest('base64');
@@ -81,13 +82,9 @@ export class ShopifyHmacGuard implements CanActivate {
 
   private async validateHmacQuery(req: IncomingMessage | FastifyRequest) {
     const query = (req as unknown as { query: AuthQuery }).query;
-
+    const shopifyInstance = this.shopifyFactory.getInstance() as Shopify;
     try {
-      if (
-        await (
-          this.shopifyFactory.getInstance('DEFAULT') as Shopify
-        ).utils.validateHmac(query)
-      ) {
+      if (await shopifyInstance.utils.validateHmac(query)) {
         return true;
       }
 

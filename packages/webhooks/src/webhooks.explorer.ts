@@ -32,7 +32,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
 
   constructor(
     @InjectShopify()
-    private readonly shopifyApi: ShopifyFactory,
+    private readonly shopifyFactory: ShopifyFactory,
     @Inject(SHOPIFY_WEBHOOKS_OPTIONS)
     private readonly options: ShopifyWebhooksOptions,
     private readonly appConfig: ApplicationConfig,
@@ -100,7 +100,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
       });
     });
 
-    (this.shopifyApi.getInstance('DEFAULT') as Shopify).webhooks.addHandlers(
+    (this.shopifyFactory.getInstance() as Shopify).webhooks.addHandlers(
       handlerParams,
     );
   }

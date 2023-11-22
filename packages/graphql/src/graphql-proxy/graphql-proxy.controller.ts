@@ -32,7 +32,7 @@ export class ShopifyGraphqlProxyController {
     }
 
     const { body, headers } = await (
-      this.shopifyFactory.getInstance('DEFAULT') as Shopify
+      this.shopifyFactory.getInstance() as Shopify
     ).clients.graphqlProxy({
       rawBody: req.body,
       session,
