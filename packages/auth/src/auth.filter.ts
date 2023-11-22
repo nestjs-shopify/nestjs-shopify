@@ -1,11 +1,8 @@
-import { ArgumentsHost, Catch, ExceptionFilter, Inject } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import {
   InjectShopify,
   InjectShopifyCoreOptions,
-  InjectShopifySessionStorage,
-  SHOPIFY_CORE_OPTIONS,
-  SessionStorage,
   ShopifyCoreOptions,
   ShopifyFactory,
 } from '@rh-nestjs-shopify/core';
@@ -19,6 +16,7 @@ import {
   ShopifyAuthModuleOptions,
   ShopifySessionRequest,
 } from './auth.interfaces';
+import { buildAuthParamScopePath } from './utils/build-auth-path.util';
 import { joinUrl } from './utils/join-url.util';
 
 @Catch(ShopifyAuthException, HttpResponseError)
@@ -30,8 +28,6 @@ export class ShopifyAuthExceptionFilter
     private readonly appConfig: ApplicationConfig,
     @InjectShopify()
     private readonly shopifyFactory: ShopifyFactory,
-    @InjectShopifySessionStorage()
-    private readonly sessionStorage: SessionStorage,
     @InjectShopifyCoreOptions()
     private readonly shopifyCoreOptions: ShopifyCoreOptions,
   ) {}
@@ -145,13 +141,12 @@ export class ShopifyAuthExceptionFilter
 
     const basePath = options.basePath || '';
     const authPath = `auth?shop=${shop}`;
-    const redirectPath = joinUrl(prefix, basePath, authPath);
-    if (this.shopifyCoreOptions.prefixScope) {
-      return redirectPath.replace(
-        this.shopifyCoreOptions.prefixScope,
-        keyShopifyInstance,
-      );
-    }
+    let redirectPath = joinUrl(prefix, basePath, authPath);
+    redirectPath = buildAuthParamScopePath(
+      redirectPath,
+      this.shopifyCoreOptions.prefixScope,
+      keyShopifyInstance,
+    );
     return redirectPath;
   }
 

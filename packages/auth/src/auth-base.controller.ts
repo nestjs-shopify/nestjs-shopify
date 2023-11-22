@@ -9,6 +9,7 @@ import { Shopify } from '@shopify/shopify-api';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'node:http';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
+import { buildAuthParamScopePath } from './utils/build-auth-path.util';
 import { joinUrl } from './utils/join-url.util';
 
 @Controller('shopify')
@@ -40,22 +41,20 @@ export abstract class ShopifyAuthBaseController {
       globalPrefix = this.appConfig.getGlobalPrefix();
     }
 
-    const scope =
-      param?.[`${this.shopifyCoreOptions?.prefixScope || ''}`] || '';
+    const scope = param?.[`${this.shopifyCoreOptions.prefixScope || ''}`] || '';
 
     console.log({ param });
     console.log({
-      scope: param?.[`${this.shopifyCoreOptions?.prefixScope || ''}`] || '',
+      scope: param?.[`${this.shopifyCoreOptions.prefixScope || ''}`] || '',
     });
     console.log({ url: request.url });
 
     let callbackPath = joinUrl(globalPrefix, basePath, 'callback');
-    if (callbackPath.indexOf(`:${this.shopifyCoreOptions.prefixScope}`)) {
-      callbackPath = callbackPath.replace(
-        `:${this.shopifyCoreOptions.prefixScope}`,
-        scope,
-      );
-    }
+    callbackPath = buildAuthParamScopePath(
+      callbackPath,
+      this.shopifyCoreOptions.prefixScope,
+      scope,
+    );
 
     await (this.shopifyFactory.getInstance(scope) as Shopify).auth.begin({
       callbackPath,
@@ -76,8 +75,7 @@ export abstract class ShopifyAuthBaseController {
     const req = request instanceof IncomingMessage ? request : request.raw;
     const res = response instanceof ServerResponse ? response : response.raw;
 
-    const scope =
-      param?.[`${this.shopifyCoreOptions?.prefixScope || ''}`] || '';
+    const scope = param?.[`${this.shopifyCoreOptions.prefixScope || ''}`] || '';
 
     const { headers = {}, session } = await (
       this.shopifyFactory.getInstance(scope) as Shopify

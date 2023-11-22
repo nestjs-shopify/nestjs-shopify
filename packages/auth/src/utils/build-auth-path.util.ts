@@ -56,3 +56,21 @@ export function buildAuthCallbackPath(
   }
   return url;
 }
+
+/**
+ *
+ * @param path
+ * @param prefixScope
+ * @param scope
+ * @returns
+ */
+export const buildAuthParamScopePath = (
+  path: string,
+  prefixScope: string,
+  scope: string,
+) => {
+  if (path.indexOf(`/:${prefixScope}/`)) {
+    return path.replace(`/:${prefixScope}/`, scope);
+  }
+  return path;
+};
