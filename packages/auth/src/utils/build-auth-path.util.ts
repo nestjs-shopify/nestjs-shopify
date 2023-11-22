@@ -10,13 +10,13 @@ export function buildAuthPath(
   multiScope?: {
     prefix: string;
     scope: string;
-  }
+  },
 ) {
   const options = moduleRef.get<ShopifyAuthModuleOptions>(
     getOptionsToken(accessMode),
     {
       strict: false,
-    }
+    },
   );
   const prefix = options.useGlobalPrefix ? appConfig.getGlobalPrefix() : '';
 
@@ -37,13 +37,13 @@ export function buildAuthCallbackPath(
   multiScope?: {
     prefix: string;
     scope: string;
-  }
+  },
 ) {
   const options = moduleRef.get<ShopifyAuthModuleOptions>(
     getOptionsToken(accessMode),
     {
       strict: false,
-    }
+    },
   );
   const prefix = options.useGlobalPrefix ? appConfig.getGlobalPrefix() : '';
 

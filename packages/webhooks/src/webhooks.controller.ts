@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import {
   InjectShopify,
+  ShopifyFactory,
   ShopifyHmac,
   ShopifyHmacType,
 } from '@rh-nestjs-shopify/core';
@@ -19,17 +20,16 @@ import {
   Shopify,
   ShopifyHeader,
 } from '@shopify/shopify-api';
-import type { IncomingMessage } from 'node:http';
 import { FastifyRequest } from 'fastify';
+import type { IncomingMessage } from 'node:http';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
-import { ShopifyFactory } from '../../core/src/shopify-factory';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
   private readonly logger = new Logger('Webhook');
 
   constructor(
-    @InjectShopify() private readonly shopifyFactory: ShopifyFactory
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
   ) {}
 
   @Post()
@@ -39,7 +39,7 @@ export class ShopifyWebhooksController {
     const { rawBody } = req;
     if (!rawBody) {
       throw new InternalServerErrorException(
-        'Enable `rawBody` option when creating Nest application.'
+        'Enable `rawBody` option when creating Nest application.',
       );
     }
 
@@ -51,7 +51,7 @@ export class ShopifyWebhooksController {
 
     if (webhookEntries.length === 0) {
       throw new NotFoundException(
-        `No webhook is registered for topic ${topic}`
+        `No webhook is registered for topic ${topic}`,
       );
     }
 
@@ -63,9 +63,9 @@ export class ShopifyWebhooksController {
           graphqlTopic,
           domain as string,
           rawBody.toString(),
-          webhookId as string
-        )
-      )
+          webhookId as string,
+        ),
+      ),
     );
   }
 
@@ -101,8 +101,8 @@ export class ShopifyWebhooksController {
     if (missingHeaders.length) {
       throw new BadRequestException(
         `Missing one or more of the required HTTP headers to process webhooks: [${missingHeaders.join(
-          ', '
-        )}]`
+          ', ',
+        )}]`,
       );
     }
 

@@ -1,20 +1,19 @@
+import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
 import {
   AccessMode,
   ShopifySessionRequest,
   UseShopifyAuth,
 } from '@rh-nestjs-shopify/auth';
-import { InjectShopify } from '@rh-nestjs-shopify/core';
-import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
+import { InjectShopify, ShopifyFactory } from '@rh-nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { ShopifyFactory } from '../../../core/src/shopify-factory';
 
 @Controller('graphql')
 @UseShopifyAuth(AccessMode.Online)
 export class ShopifyGraphqlProxyController {
   constructor(
-    @InjectShopify() private readonly shopifyFactory: ShopifyFactory
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
   ) {}
 
   @Post()
@@ -23,7 +22,7 @@ export class ShopifyGraphqlProxyController {
     req: ShopifySessionRequest<IncomingMessage | FastifyRequest> & {
       body: string;
     },
-    @Res() response: ServerResponse | FastifyReply
+    @Res() response: ServerResponse | FastifyReply,
   ) {
     const res = response instanceof ServerResponse ? response : response.raw;
 

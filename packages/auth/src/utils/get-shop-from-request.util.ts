@@ -9,13 +9,13 @@ export interface RequestLike {
 
 export const getShopFromRequest = (
   req: RequestLike,
-  session: Session | undefined
+  session: Session | undefined,
 ): string | undefined =>
   session?.shop || getShopFromAuthHeader(req) || getShopFromQuery(req);
 
 function getShopFromQuery(req: RequestLike): string | undefined {
   const query = Object.fromEntries(
-    new URLSearchParams(req.url?.split('?')?.[1] || '').entries()
+    new URLSearchParams(req.url?.split('?')?.[1] || '').entries(),
   );
 
   return query['shop'];

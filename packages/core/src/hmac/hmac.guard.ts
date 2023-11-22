@@ -26,7 +26,7 @@ import { ShopifyFactory } from '../shopify-factory';
 export class ShopifyHmacGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    @InjectShopify() private readonly shopifyFactory: ShopifyFactory
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -48,20 +48,20 @@ export class ShopifyHmacGuard implements CanActivate {
   }
 
   private validateHmacHeader(
-    req: RawBodyRequest<IncomingMessage | FastifyRequest>
+    req: RawBodyRequest<IncomingMessage | FastifyRequest>,
   ) {
     const expectedHmac = this.getHmacFromHeaders(req);
 
     if (!req.rawBody) {
       throw new InternalServerErrorException(
-        `Missing raw body in request. Ensure that 'rawBody' option is set when initializing Nest application.`
+        `Missing raw body in request. Ensure that 'rawBody' option is set when initializing Nest application.`,
       );
     }
 
     const generatedHash = createHmac(
       'sha256',
       (this.shopifyFactory.getInstance('DEFAULT') as Shopify).config
-        .apiSecretKey
+        .apiSecretKey,
     )
       .update(req.rawBody)
       .digest('base64');
@@ -104,13 +104,13 @@ export class ShopifyHmacGuard implements CanActivate {
 
     if (!hmacHeader) {
       throw new BadRequestException(
-        `Missing required HTTP header: ${ShopifyHeader.Hmac}`
+        `Missing required HTTP header: ${ShopifyHeader.Hmac}`,
       );
     }
 
     if (typeof hmacHeader !== 'string') {
       throw new BadRequestException(
-        `Malformed '${ShopifyHeader.Hmac}' provided: ${hmacHeader}`
+        `Malformed '${ShopifyHeader.Hmac}' provided: ${hmacHeader}`,
       );
     }
 
@@ -118,11 +118,11 @@ export class ShopifyHmacGuard implements CanActivate {
   }
 
   private getShopifyHmacTypeFromContext(
-    ctx: ExecutionContext
+    ctx: ExecutionContext,
   ): ShopifyHmacType | undefined {
     return this.reflector.getAllAndOverride<ShopifyHmacType | undefined>(
       SHOPIFY_HMAC_KEY,
-      [ctx.getHandler(), ctx.getClass()]
+      [ctx.getHandler(), ctx.getClass()],
     );
   }
 }

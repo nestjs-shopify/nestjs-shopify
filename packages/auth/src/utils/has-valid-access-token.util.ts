@@ -9,7 +9,7 @@ const TEST_GRAPHQL_QUERY = `
 
 export async function hasValidAccessToken(
   api: Shopify,
-  session: Session
+  session: Session,
 ): Promise<boolean> {
   try {
     const client = new api.clients.Graphql({ session });

@@ -11,13 +11,13 @@ export class ShopifyFactory {
       for (const scopes of multiScopes || []) {
         this.instance.set(
           scopes.key,
-          shopifyApi({ ...option, scopes: scopes.scopes })
+          shopifyApi({ ...option, scopes: scopes.scopes }),
         );
       }
     } else {
       this.instance.set(
         'DEFAULT',
-        shopifyApi({ ...option, scopes: option.scopes })
+        shopifyApi({ ...option, scopes: option.scopes }),
       );
     }
   }

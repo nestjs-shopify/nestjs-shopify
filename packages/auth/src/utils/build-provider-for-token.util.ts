@@ -6,7 +6,7 @@ import {
 
 export function buildProvidersForToken(
   asyncOptions: ShopifyAuthModuleAsyncOptions,
-  token: string
+  token: string,
 ): Provider[] {
   if (asyncOptions.useExisting || asyncOptions.useFactory) {
     return [createAsyncOptionsProvider(asyncOptions, token)];
@@ -27,7 +27,7 @@ export function buildProvidersForToken(
 
 export function createAsyncOptionsProvider(
   options: ShopifyAuthModuleAsyncOptions,
-  token: string
+  token: string,
 ): Provider {
   if (options.useFactory) {
     return {

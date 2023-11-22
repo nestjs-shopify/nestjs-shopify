@@ -14,7 +14,7 @@ interface ResponseLike {
 @Injectable()
 export class ShopifyCspMiddleware implements NestMiddleware {
   constructor(
-    @InjectShopify() private readonly shopifyFactory: ShopifyFactory
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
   ) {}
 
   public use(req: RequestLike, res: ResponseLike, next: () => void) {
@@ -31,8 +31,8 @@ export class ShopifyCspMiddleware implements NestMiddleware {
       res.setHeader(
         'Content-Security-Policy',
         `frame-ancestors https://${encodeURIComponent(
-          sanitizedShop
-        )} https://admin.shopify.com;`
+          sanitizedShop,
+        )} https://admin.shopify.com;`,
       );
     } else {
       res.setHeader('Content-Security-Policy', 'frame-ancestors none');

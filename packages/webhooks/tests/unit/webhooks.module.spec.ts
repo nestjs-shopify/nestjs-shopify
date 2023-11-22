@@ -30,7 +30,7 @@ describe('ShopifyWebhookModule', () => {
 
     it('should override webhook controller path', async () => {
       expect(reflector.get(PATH_METADATA, ShopifyWebhooksController)).toEqual(
-        '/mywebhooks'
+        '/mywebhooks',
       );
     });
   });
@@ -57,7 +57,7 @@ describe('ShopifyWebhookModule', () => {
 
     it('should add webhook to registry', async () => {
       expect(reflector.get(PATH_METADATA, ShopifyWebhooksController)).toEqual(
-        '/mywebhooks2'
+        '/mywebhooks2',
       );
     });
   });

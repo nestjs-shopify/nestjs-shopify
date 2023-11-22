@@ -1,6 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
-import { InjectShopify } from '@rh-nestjs-shopify/core';
+import { InjectShopify, ShopifyFactory } from '@rh-nestjs-shopify/core';
 import { HttpResponseError, Session, Shopify } from '@shopify/shopify-api';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'node:http';
@@ -12,7 +12,6 @@ import {
   ShopifySessionRequest,
 } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
-import { ShopifyFactory } from '../../core/src/shopify-factory';
 
 @Catch(ShopifyAuthException, HttpResponseError)
 export class ShopifyAuthExceptionFilter
@@ -22,12 +21,12 @@ export class ShopifyAuthExceptionFilter
     private readonly moduleRef: ModuleRef,
     private readonly appConfig: ApplicationConfig,
     @InjectShopify()
-    private readonly shopifyFactory: ShopifyFactory
+    private readonly shopifyFactory: ShopifyFactory,
   ) {}
 
   async catch(
     exception: ShopifyAuthException | HttpResponseError,
-    host: ArgumentsHost
+    host: ArgumentsHost,
   ) {
     const context = host.switchToHttp();
     const request =
@@ -50,10 +49,10 @@ export class ShopifyAuthExceptionFilter
           new ShopifyAuthException(
             exception.message,
             (request.shopifySession as Session).shop,
-            AccessMode.Online
+            AccessMode.Online,
           ),
           req,
-          res
+          res,
         );
       } else {
         return res.end(
@@ -61,7 +60,7 @@ export class ShopifyAuthExceptionFilter
             message: exception.message,
             statusCode: exception.response.code,
             timestamp: new Date().toISOString(),
-          })
+          }),
         );
       }
     } else if (exception instanceof ShopifyAuthException) {
@@ -73,7 +72,7 @@ export class ShopifyAuthExceptionFilter
   private handleShopifyAuthException(
     exception: ShopifyAuthException,
     req: IncomingMessage,
-    res: ServerResponse
+    res: ServerResponse,
   ) {
     const options = this.getShopifyOptionsFor(exception.accessMode);
     res.statusCode = exception.getStatus();
@@ -106,7 +105,7 @@ export class ShopifyAuthExceptionFilter
             message: exception.message,
             statusCode: exception.getStatus(),
             timestamp: new Date().toISOString(),
-          })
+          }),
         );
     }
   }
@@ -127,7 +126,7 @@ export class ShopifyAuthExceptionFilter
   private getShopifyOptionsFor(accessMode: AccessMode) {
     return this.moduleRef.get<ShopifyAuthModuleOptions>(
       getOptionsToken(accessMode),
-      { strict: false }
+      { strict: false },
     );
   }
 }

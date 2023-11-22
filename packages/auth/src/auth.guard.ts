@@ -1,27 +1,26 @@
 import {
-  InjectShopify,
-  InjectShopifySessionStorage,
-  SessionStorage,
-} from '@rh-nestjs-shopify/core';
-import {
   CanActivate,
   ExecutionContext,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import {
+  InjectShopify,
+  InjectShopifySessionStorage,
+  SessionStorage,
+  ShopifyFactory,
+} from '@rh-nestjs-shopify/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { FastifyRequest, FastifyReply } from 'fastify';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
 import {
-  getShopFromRequest,
   RequestLike,
+  getShopFromRequest,
 } from './utils/get-shop-from-request.util';
-import { hasValidAccessToken } from './utils/has-valid-access-token.util';
-import { ShopifyFactory } from '../../core/src/shopify-factory';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -32,7 +31,7 @@ export class ShopifyAuthGuard implements CanActivate {
     private readonly shopifyFactory: ShopifyFactory,
     @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -62,7 +61,7 @@ export class ShopifyAuthGuard implements CanActivate {
       throw new ShopifyAuthException(
         'Reauthorization Required',
         shop,
-        accessMode
+        accessMode,
       );
     }
 
@@ -71,7 +70,7 @@ export class ShopifyAuthGuard implements CanActivate {
 
   private assignSessionToRequest(
     ctx: ExecutionContext,
-    session: Session | undefined
+    session: Session | undefined,
   ) {
     const req = ctx
       .switchToHttp()

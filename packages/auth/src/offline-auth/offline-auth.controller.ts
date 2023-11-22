@@ -4,8 +4,8 @@ import {
   InjectShopify,
   InjectShopifySessionStorage,
   SessionStorage,
+  ShopifyFactory,
 } from '@rh-nestjs-shopify/core';
-import { ShopifyFactory } from '../../../core/src/shopify-factory';
 import { ShopifyAuthBaseController } from '../auth-base.controller';
 import { getOptionsToken } from '../auth.constants';
 import { AccessMode, ShopifyAuthModuleOptions } from '../auth.interfaces';
@@ -17,14 +17,14 @@ export class ShopifyAuthOfflineController extends ShopifyAuthBaseController {
     @Inject(getOptionsToken(AccessMode.Offline))
     options: ShopifyAuthModuleOptions,
     @InjectShopifySessionStorage() sessionStorage: SessionStorage,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
   ) {
     super(
       shopifyFactory,
       AccessMode.Offline,
       options,
       appConfig,
-      sessionStorage
+      sessionStorage,
     );
   }
 }

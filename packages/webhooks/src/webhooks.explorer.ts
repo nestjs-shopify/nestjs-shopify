@@ -1,4 +1,3 @@
-import { InjectShopify } from '@rh-nestjs-shopify/core';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import {
   ApplicationConfig,
@@ -8,6 +7,7 @@ import {
 import { Injector } from '@nestjs/core/injector/injector';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module } from '@nestjs/core/injector/module';
+import { InjectShopify, ShopifyFactory } from '@rh-nestjs-shopify/core';
 import {
   AddHandlersParams,
   DeliveryMethod,
@@ -25,7 +25,6 @@ import {
   ShopifyWebhookHandler,
   ShopifyWebhooksOptions,
 } from './webhooks.interfaces';
-import { ShopifyFactory } from '../../core/src/shopify-factory';
 
 @Injectable()
 export class ShopifyWebhooksExplorer implements OnModuleInit {
@@ -38,7 +37,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
     private readonly options: ShopifyWebhooksOptions,
     private readonly appConfig: ApplicationConfig,
     private readonly discoveryService: DiscoveryService,
-    private readonly metadataAccessor: ShopifyWebhooksMetadataAccessor
+    private readonly metadataAccessor: ShopifyWebhooksMetadataAccessor,
   ) {}
 
   async onModuleInit() {
@@ -52,8 +51,8 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         this.metadataAccessor.isShopifyWebhookHandler(
           !wrapper.metatype || wrapper.inject
             ? wrapper.instance?.constructor
-            : wrapper.metatype
-        )
+            : wrapper.metatype,
+        ),
       );
 
     const handlerParams: AddHandlersParams = {};
@@ -62,14 +61,14 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
       const { instance, metatype } = wrapper;
       const isRequestScoped = !wrapper.isDependencyTreeStatic();
       const metadata = this.metadataAccessor.getShopifyWebhooksHandlerMetadata(
-        instance.constructor || metatype
+        instance.constructor || metatype,
       );
 
       if (!metadata) {
         throw new Error(
           `No metadata found for Shopfiy Webhook Handler ${
             instance.constructor || metatype
-          }`
+          }`,
         );
       }
 
@@ -82,7 +81,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         instance,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         wrapper.host!,
-        isRequestScoped
+        isRequestScoped,
       );
 
       const globalPrefix = this.appConfig.getGlobalPrefix();
@@ -102,14 +101,14 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
     });
 
     (this.shopifyApi.getInstance('DEFAULT') as Shopify).webhooks.addHandlers(
-      handlerParams
+      handlerParams,
     );
   }
 
   private buildWebhookHandler(
     instance: ShopifyWebhookHandler,
     moduleRef: Module,
-    isRequestScoped: boolean
+    isRequestScoped: boolean,
   ) {
     const methodKey = 'handle';
     let handle;
@@ -119,7 +118,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         _topic: string,
         shop: string,
         body: string,
-        webhookId: string
+        webhookId: string,
       ) => {
         const contextId = ContextIdFactory.create();
 
@@ -127,14 +126,14 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
           instance,
           moduleRef,
           moduleRef.providers,
-          contextId
+          contextId,
         );
         const data = JSON.parse(body);
         return contextInstance[methodKey].call(
           contextInstance,
           shop,
           data,
-          webhookId
+          webhookId,
         );
       };
     } else {
@@ -142,7 +141,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         _topic: string,
         shop: string,
         body: string,
-        webhookId: string
+        webhookId: string,
       ) => {
         const data = JSON.parse(body);
         return instance[methodKey].call(instance, shop, data, webhookId);

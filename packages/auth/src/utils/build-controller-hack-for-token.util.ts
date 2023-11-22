@@ -8,7 +8,7 @@ import { ShopifyAuthModuleOptions } from '../auth.interfaces';
  */
 export function buildControllerHackForToken(
   optionsToken: string,
-  controller: Type<ShopifyAuthBaseController>
+  controller: Type<ShopifyAuthBaseController>,
 ): Provider {
   return {
     provide: randomUUID(),

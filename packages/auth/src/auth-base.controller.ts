@@ -1,10 +1,9 @@
 import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
-import { SessionStorage } from '@rh-nestjs-shopify/core';
+import { SessionStorage, ShopifyFactory } from '@rh-nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { ShopifyFactory } from '../../core/src/shopify-factory';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
@@ -15,7 +14,7 @@ export abstract class ShopifyAuthBaseController {
     protected readonly accessMode: AccessMode,
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
-    protected readonly sessionStorage: SessionStorage
+    protected readonly sessionStorage: SessionStorage,
   ) {}
 
   @Get('auth')
@@ -23,7 +22,7 @@ export abstract class ShopifyAuthBaseController {
     @Query('shop') domain: string,
     @Param('scope') scope: string,
     @Req() request: IncomingMessage | FastifyRequest,
-    @Res() response: ServerResponse | FastifyReply
+    @Res() response: ServerResponse | FastifyReply,
   ) {
     const req = request instanceof IncomingMessage ? request : request.raw;
     const res = response instanceof ServerResponse ? response : response.raw;
@@ -40,7 +39,7 @@ export abstract class ShopifyAuthBaseController {
 
     const callbackPath = joinUrl(globalPrefix, basePath, 'callback').replace(
       ':scope',
-      scope
+      scope,
     );
 
     await (this.shopifyFactory.getInstance(scope) as Shopify).auth.begin({
@@ -57,7 +56,7 @@ export abstract class ShopifyAuthBaseController {
     @Query('host') host: string,
     @Param('scope') scope: string,
     @Req() request: IncomingMessage | FastifyRequest,
-    @Res() response: ServerResponse | FastifyReply
+    @Res() response: ServerResponse | FastifyReply,
   ) {
     const req = request instanceof IncomingMessage ? request : request.raw;
     const res = response instanceof ServerResponse ? response : response.raw;
@@ -78,7 +77,7 @@ export abstract class ShopifyAuthBaseController {
         await this.options.afterAuthHandler.afterAuth(
           request,
           response,
-          session
+          session,
         );
         return;
       }
