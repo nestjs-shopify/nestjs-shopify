@@ -1,6 +1,13 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, Inject } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
-import { InjectShopify, ShopifyFactory } from '@rh-nestjs-shopify/core';
+import {
+  InjectShopify,
+  InjectShopifySessionStorage,
+  SHOPIFY_CORE_OPTIONS,
+  SessionStorage,
+  ShopifyCoreOptions,
+  ShopifyFactory,
+} from '@rh-nestjs-shopify/core';
 import { HttpResponseError, Session, Shopify } from '@shopify/shopify-api';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'node:http';
@@ -22,6 +29,10 @@ export class ShopifyAuthExceptionFilter
     private readonly appConfig: ApplicationConfig,
     @InjectShopify()
     private readonly shopifyFactory: ShopifyFactory,
+    @InjectShopifySessionStorage()
+    private readonly sessionStorage: SessionStorage,
+    @Inject(SHOPIFY_CORE_OPTIONS)
+    private readonly shopifyCoreOptions: ShopifyCoreOptions,
   ) {}
 
   async catch(
@@ -77,14 +88,19 @@ export class ShopifyAuthExceptionFilter
     const options = this.getShopifyOptionsFor(exception.accessMode);
     res.statusCode = exception.getStatus();
 
-    const hostScheme =
-      (this.shopifyFactory.getInstance('DEFAULT') as Shopify).config
-        .hostScheme ?? 'https';
-    const hostName =
-      (this.shopifyFactory.getInstance('DEFAULT') as Shopify).config.hostName ??
-      req.headers.host;
+    const keyShopifyInstance = 'DEFAULT';
+    const shopifyInstance = this.shopifyFactory.getInstance(
+      keyShopifyInstance,
+    ) as Shopify;
+
+    const hostScheme = shopifyInstance.config.hostScheme ?? 'https';
+    const hostName = shopifyInstance.config.hostName ?? req.headers.host;
     const domain = `${hostScheme}://${hostName}`;
-    const redirectPath = this.buildRedirectPath(exception.shop, options);
+    const redirectPath = this.buildRedirectPath(
+      exception.shop,
+      options,
+      keyShopifyInstance,
+    );
     const authUrl = new URL(redirectPath, domain).toString();
 
     if (options.returnHeaders) {
@@ -110,16 +126,27 @@ export class ShopifyAuthExceptionFilter
     }
   }
 
-  private buildRedirectPath(shop: string, options: ShopifyAuthModuleOptions) {
+  private buildRedirectPath(
+    shop: string,
+    options: ShopifyAuthModuleOptions,
+    keyShopifyInstance: string,
+  ) {
     let prefix = '';
     if (options.useGlobalPrefix) {
       prefix = this.appConfig.getGlobalPrefix();
     }
 
+    console.log('[buildRedirectPath] , [ShopifyAuthExceptionFilter]');
+
     const basePath = options.basePath || '';
     const authPath = `auth?shop=${shop}`;
     const redirectPath = joinUrl(prefix, basePath, authPath);
-
+    if (this.shopifyCoreOptions.prefix) {
+      return redirectPath.replace(
+        this.shopifyCoreOptions.prefix,
+        keyShopifyInstance,
+      );
+    }
     return redirectPath;
   }
 

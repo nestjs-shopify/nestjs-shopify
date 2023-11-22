@@ -36,6 +36,7 @@ export abstract class ShopifyAuthBaseController {
     }
 
     console.log({ scope });
+    console.log({ url: request.url });
 
     const callbackPath = joinUrl(globalPrefix, basePath, 'callback').replace(
       ':scope',
