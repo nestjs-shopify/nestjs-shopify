@@ -2,8 +2,10 @@ import { Controller, Inject } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
 import {
   InjectShopify,
+  InjectShopifyCoreOptions,
   InjectShopifySessionStorage,
   SessionStorage,
+  ShopifyCoreOptions,
   ShopifyFactory,
 } from '@rh-nestjs-shopify/core';
 import { ShopifyAuthBaseController } from '../auth-base.controller';
@@ -18,6 +20,7 @@ export class ShopifyAuthOnlineController extends ShopifyAuthBaseController {
     options: ShopifyAuthModuleOptions,
     @InjectShopifySessionStorage() sessionStorage: SessionStorage,
     appConfig: ApplicationConfig,
+    @InjectShopifyCoreOptions() shopifyCoreOptions: ShopifyCoreOptions,
   ) {
     super(
       shopifyFactory,
@@ -25,6 +28,7 @@ export class ShopifyAuthOnlineController extends ShopifyAuthBaseController {
       options,
       appConfig,
       sessionStorage,
+      shopifyCoreOptions,
     );
   }
 }

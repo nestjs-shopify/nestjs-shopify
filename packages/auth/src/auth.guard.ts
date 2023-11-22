@@ -37,11 +37,9 @@ export class ShopifyAuthGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const { accessMode, session } = await this.getSessionDataFromContext(ctx);
     let check = false;
-    let shopifyInstance = this.shopifyFactory.getInstance();
     for (const instance of this.shopifyFactory.getInstances()) {
       if (session && session.isActive(instance[1].config.scopes)) {
         check = true;
-        shopifyInstance = instance[1];
         break;
       }
     }
@@ -100,7 +98,7 @@ export class ShopifyAuthGuard implements CanActivate {
        * @returns `day-la-shop-test-1.myshopify.com_103420526893`
        */
       const sessionId = await (
-        this.shopifyFactory.getInstance('DEFAULT') as Shopify
+        this.shopifyFactory.getInstance() as Shopify
       ).session.getCurrentId({
         rawRequest: req,
         rawResponse: res,

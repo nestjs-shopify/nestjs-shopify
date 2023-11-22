@@ -15,8 +15,8 @@ export interface ShopifyCoreOptions<
   T extends ShopifyRestResources = any,
 > extends ConfigParams<T> {
   sessionStorage: SessionStorage;
-  multiScopes?: MultiScopes[];
-  prefix?: ':scope' | string;
+  multiScopes: MultiScopes[];
+  prefixScope: 'scope' | string;
 }
 
 export type ShopifyCoreAsyncOptions = typeof ASYNC_OPTIONS_TYPE;

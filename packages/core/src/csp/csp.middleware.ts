@@ -20,12 +20,11 @@ export class ShopifyCspMiddleware implements NestMiddleware {
   public use(req: RequestLike, res: ResponseLike, next: () => void) {
     const { shop } = req.query;
     const sanitizedShop = (
-      this.shopifyFactory.getInstance('DEFAULT') as Shopify
+      this.shopifyFactory.getInstance() as Shopify
     ).utils.sanitizeShop(shop);
 
     if (
-      (this.shopifyFactory.getInstance('DEFAULT') as Shopify).config
-        .isEmbeddedApp &&
+      (this.shopifyFactory.getInstance() as Shopify).config.isEmbeddedApp &&
       sanitizedShop
     ) {
       res.setHeader(

@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, Inject } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import {
   InjectShopify,
+  InjectShopifyCoreOptions,
   InjectShopifySessionStorage,
   SHOPIFY_CORE_OPTIONS,
   SessionStorage,
@@ -31,7 +32,7 @@ export class ShopifyAuthExceptionFilter
     private readonly shopifyFactory: ShopifyFactory,
     @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
-    @Inject(SHOPIFY_CORE_OPTIONS)
+    @InjectShopifyCoreOptions()
     private readonly shopifyCoreOptions: ShopifyCoreOptions,
   ) {}
 
@@ -96,6 +97,10 @@ export class ShopifyAuthExceptionFilter
     const hostScheme = shopifyInstance.config.hostScheme ?? 'https';
     const hostName = shopifyInstance.config.hostName ?? req.headers.host;
     const domain = `${hostScheme}://${hostName}`;
+
+    /**
+     * TODO: check key instance
+     */
     const redirectPath = this.buildRedirectPath(
       exception.shop,
       options,
@@ -141,9 +146,9 @@ export class ShopifyAuthExceptionFilter
     const basePath = options.basePath || '';
     const authPath = `auth?shop=${shop}`;
     const redirectPath = joinUrl(prefix, basePath, authPath);
-    if (this.shopifyCoreOptions.prefix) {
+    if (this.shopifyCoreOptions.prefixScope) {
       return redirectPath.replace(
-        this.shopifyCoreOptions.prefix,
+        this.shopifyCoreOptions.prefixScope,
         keyShopifyInstance,
       );
     }

@@ -1,6 +1,10 @@
 import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
-import { SessionStorage, ShopifyFactory } from '@rh-nestjs-shopify/core';
+import {
+  SessionStorage,
+  ShopifyCoreOptions,
+  ShopifyFactory,
+} from '@rh-nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'node:http';
@@ -15,12 +19,13 @@ export abstract class ShopifyAuthBaseController {
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
     protected readonly sessionStorage: SessionStorage,
+    protected readonly shopifyCoreOptions: ShopifyCoreOptions,
   ) {}
 
   @Get('auth')
   async auth(
     @Query('shop') domain: string,
-    @Param('scope') scope: string,
+    @Param() param: any,
     @Req() request: IncomingMessage | FastifyRequest,
     @Res() response: ServerResponse | FastifyReply,
   ) {
@@ -35,13 +40,22 @@ export abstract class ShopifyAuthBaseController {
       globalPrefix = this.appConfig.getGlobalPrefix();
     }
 
-    console.log({ scope });
+    const scope =
+      param?.[`${this.shopifyCoreOptions?.prefixScope || ''}`] || '';
+
+    console.log({ param });
+    console.log({
+      scope: param?.[`${this.shopifyCoreOptions?.prefixScope || ''}`] || '',
+    });
     console.log({ url: request.url });
 
-    const callbackPath = joinUrl(globalPrefix, basePath, 'callback').replace(
-      ':scope',
-      scope,
-    );
+    let callbackPath = joinUrl(globalPrefix, basePath, 'callback');
+    if (callbackPath.indexOf(`:${this.shopifyCoreOptions.prefixScope}`)) {
+      callbackPath = callbackPath.replace(
+        `:${this.shopifyCoreOptions.prefixScope}`,
+        scope,
+      );
+    }
 
     await (this.shopifyFactory.getInstance(scope) as Shopify).auth.begin({
       callbackPath,
@@ -55,15 +69,16 @@ export abstract class ShopifyAuthBaseController {
   @Get('callback')
   async callback(
     @Query('host') host: string,
-    @Param('scope') scope: string,
+    @Param() param: any,
     @Req() request: IncomingMessage | FastifyRequest,
     @Res() response: ServerResponse | FastifyReply,
   ) {
     const req = request instanceof IncomingMessage ? request : request.raw;
     const res = response instanceof ServerResponse ? response : response.raw;
-    console.log(request.url);
 
-    console.log({ scope });
+    const scope =
+      param?.[`${this.shopifyCoreOptions?.prefixScope || ''}`] || '';
+
     const { headers = {}, session } = await (
       this.shopifyFactory.getInstance(scope) as Shopify
     ).auth.callback({
