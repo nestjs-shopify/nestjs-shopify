@@ -41,18 +41,18 @@ export abstract class ShopifyAuthBaseController {
       globalPrefix = this.appConfig.getGlobalPrefix();
     }
 
-    const scope = param?.[`${this.shopifyCoreOptions.prefixScope || ''}`] || '';
+    const scope = param?.[`${this.shopifyCoreOptions.prefixParamScope || ''}`] || '';
 
     console.log({ param });
     console.log({
-      scope: param?.[`${this.shopifyCoreOptions.prefixScope || ''}`] || '',
+      scope: param?.[`${this.shopifyCoreOptions.prefixParamScope || ''}`] || '',
     });
     console.log({ url: request.url });
 
     let callbackPath = joinUrl(globalPrefix, basePath, 'callback');
     callbackPath = buildAuthParamScopePath(
       callbackPath,
-      this.shopifyCoreOptions.prefixScope,
+      this.shopifyCoreOptions.prefixParamScope,
       scope,
     );
 
@@ -75,7 +75,7 @@ export abstract class ShopifyAuthBaseController {
     const req = request instanceof IncomingMessage ? request : request.raw;
     const res = response instanceof ServerResponse ? response : response.raw;
 
-    const scope = param?.[`${this.shopifyCoreOptions.prefixScope || ''}`] || '';
+    const scope = param?.[`${this.shopifyCoreOptions.prefixParamScope || ''}`] || '';
 
     const { headers = {}, session } = await (
       this.shopifyFactory.getInstance(scope) as Shopify

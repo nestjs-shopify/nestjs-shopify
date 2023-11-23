@@ -144,7 +144,7 @@ export class ShopifyAuthExceptionFilter
     let redirectPath = joinUrl(prefix, basePath, authPath);
     redirectPath = buildAuthParamScopePath(
       redirectPath,
-      this.shopifyCoreOptions.prefixScope,
+      this.shopifyCoreOptions.prefixParamScope,
       keyShopifyInstance,
     );
     return redirectPath;
