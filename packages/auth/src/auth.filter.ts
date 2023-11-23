@@ -137,8 +137,6 @@ export class ShopifyAuthExceptionFilter
       prefix = this.appConfig.getGlobalPrefix();
     }
 
-    console.log('[buildRedirectPath] , [ShopifyAuthExceptionFilter]');
-
     const basePath = options.basePath || '';
     const authPath = `auth?shop=${shop}`;
     let redirectPath = joinUrl(prefix, basePath, authPath);

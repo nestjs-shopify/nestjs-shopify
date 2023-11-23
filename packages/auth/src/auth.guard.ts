@@ -48,12 +48,9 @@ export class ShopifyAuthGuard implements CanActivate {
       // We assign the session to the request for further usage in
       // our controllers/decorators
       this.assignSessionToRequest(ctx, session);
-      console.log('[ShopifyAuthGuard] TRUE');
 
       return true;
     }
-    console.log('[ShopifyAuthGuard] FALSE');
-
     const req = ctx
       .switchToHttp()
       .getRequest<IncomingMessage | FastifyRequest>();
