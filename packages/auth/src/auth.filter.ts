@@ -3,6 +3,8 @@ import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import {
   InjectShopify,
   InjectShopifyCoreOptions,
+  InjectShopifySessionStorage,
+  SessionStorage,
   ShopifyCoreOptions,
   ShopifyFactory,
 } from '@rh-nestjs-shopify/core';
@@ -30,6 +32,8 @@ export class ShopifyAuthExceptionFilter
     private readonly shopifyFactory: ShopifyFactory,
     @InjectShopifyCoreOptions()
     private readonly shopifyCoreOptions: ShopifyCoreOptions,
+    @InjectShopifySessionStorage()
+    private readonly sessionStorage: SessionStorage,
   ) {}
 
   async catch(
@@ -77,26 +81,37 @@ export class ShopifyAuthExceptionFilter
     return res.end(JSON.stringify(responseBody));
   }
 
-  private handleShopifyAuthException(
+  private async handleShopifyAuthException(
     exception: ShopifyAuthException,
     req: IncomingMessage,
     res: ServerResponse,
   ) {
     const options = this.getShopifyOptionsFor(exception.accessMode);
     res.statusCode = exception.getStatus();
+    console.log('[handleShopifyAuthException]');
 
-    const keyShopifyInstance = 'DEFAULT';
-    const shopifyInstance = this.shopifyFactory.getInstance(
+    let keyShopifyInstance = 'DEFAULT';
+    let shopifyInstance = this.shopifyFactory.getInstance(
       keyShopifyInstance,
     ) as Shopify;
+
+    const shopSessions = await this.sessionStorage.findSessionsByShop(
+      exception.shop,
+    );
+    if (shopSessions.length > 0) {
+      for (const instance of this.shopifyFactory.getInstances()) {
+        if (shopSessions[0].isActive(instance[1].config.scopes)) {
+          shopifyInstance = instance[1];
+          keyShopifyInstance = instance[0];
+          break;
+        }
+      }
+    }
 
     const hostScheme = shopifyInstance.config.hostScheme ?? 'https';
     const hostName = shopifyInstance.config.hostName ?? req.headers.host;
     const domain = `${hostScheme}://${hostName}`;
 
-    /**
-     * TODO: check key instance
-     */
     const redirectPath = this.buildRedirectPath(
       exception.shop,
       options,
