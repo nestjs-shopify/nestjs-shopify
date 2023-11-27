@@ -10,10 +10,8 @@ export class ShopifyWebhooksService {
     @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
   ) {}
 
-  async registerWebhooks(session: Session, scope?: string) {
-    const shopifyInstance = scope
-      ? (this.shopifyFactory.getInstance(scope) as Shopify)
-      : (this.shopifyFactory.getInstance() as Shopify);
+  async registerWebhooks(session: Session) {
+    const shopifyInstance = this.shopifyFactory.getInstance() as Shopify;
     const responsesByTopic = await shopifyInstance.webhooks.register({
       session,
     });
