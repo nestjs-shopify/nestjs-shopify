@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import {
   InjectShopify,
@@ -25,6 +25,8 @@ import { joinUrl } from './utils/join-url.util';
 export class ShopifyAuthExceptionFilter
   implements ExceptionFilter<ShopifyAuthException | HttpResponseError>
 {
+  private readonly logger = new Logger('ShopifyAuthExceptionFilter');
+
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly appConfig: ApplicationConfig,
@@ -40,6 +42,7 @@ export class ShopifyAuthExceptionFilter
     exception: ShopifyAuthException | HttpResponseError,
     host: ArgumentsHost,
   ) {
+    this.logger.debug('[ShopifyAuthException]');
     const context = host.switchToHttp();
     const request =
       context.getRequest<
@@ -88,23 +91,29 @@ export class ShopifyAuthExceptionFilter
   ) {
     const options = this.getShopifyOptionsFor(exception.accessMode);
     res.statusCode = exception.getStatus();
-    console.log('[handleShopifyAuthException]');
 
     let keyShopifyInstance = 'DEFAULT';
     let shopifyInstance = this.shopifyFactory.getInstance(
       keyShopifyInstance,
     ) as Shopify;
 
-    const shopSessions = await this.sessionStorage.findSessionsByShop(
-      exception.shop,
-    );
-    if (shopSessions.length > 0) {
-      for (const instance of this.shopifyFactory.getInstances()) {
-        if (shopSessions[0].isActive(instance[1].config.scopes)) {
-          shopifyInstance = instance[1];
-          keyShopifyInstance = instance[0];
-          break;
-        }
+    const shopInfo = await this.sessionStorage.loadShopByDomain(exception.shop);
+    this.logger.debug({ shopInfo });
+
+    if (
+      shopInfo &&
+      shopInfo?.authPlan &&
+      shopInfo?.authPlan != keyShopifyInstance
+    ) {
+      this.logger.debug('Shop AuthPlan : ', shopInfo?.authPlan);
+      const tmp = this.shopifyCoreOptions.multiScopes.find(
+        (i) => i.key == shopInfo?.authPlan,
+      );
+      if (tmp) {
+        keyShopifyInstance = tmp.key;
+        shopifyInstance = this.shopifyFactory.getInstance(
+          keyShopifyInstance,
+        ) as Shopify;
       }
     }
 

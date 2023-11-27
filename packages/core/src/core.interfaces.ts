@@ -3,7 +3,14 @@ import { AuthScopes } from '@shopify/shopify-api/lib/auth/scopes';
 import { SessionStorage as ShopifySessionStorage } from '@shopify/shopify-app-session-storage';
 import { ASYNC_OPTIONS_TYPE } from './core.module-builder';
 
-export type SessionStorage = ShopifySessionStorage;
+export interface ShopInterface {
+  authPlan: string;
+}
+
+export type SessionStorage = ShopifySessionStorage & {
+  loadShopByDomain(domain: string): Promise<ShopInterface & unknown>;
+  loadShopById(id: number): Promise<ShopInterface & unknown>;
+};
 
 export type MultiScopes = {
   key: 'DEFAULT' | string;
