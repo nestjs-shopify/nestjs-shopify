@@ -4,7 +4,7 @@ import { SessionStorage as ShopifySessionStorage } from '@shopify/shopify-app-se
 import { ASYNC_OPTIONS_TYPE } from './core.module-builder';
 
 export interface ShopInterface {
-  authPlan: string;
+  addedScopes: string;
 }
 
 export type SessionStorage = ShopifySessionStorage & {

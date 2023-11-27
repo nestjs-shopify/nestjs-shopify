@@ -20,6 +20,7 @@ import {
 } from './auth.interfaces';
 import { buildAuthParamScopePath } from './utils/build-auth-path.util';
 import { joinUrl } from './utils/join-url.util';
+import { getPrefixRedirectAuth } from './utils/get-prefix-auth-scope.util';
 
 @Catch(ShopifyAuthException, HttpResponseError)
 export class ShopifyAuthExceptionFilter
@@ -100,17 +101,15 @@ export class ShopifyAuthExceptionFilter
     const shopInfo = await this.sessionStorage.loadShopByDomain(exception.shop);
     this.logger.debug({ shopInfo });
 
-    if (
-      shopInfo &&
-      shopInfo?.authPlan &&
-      shopInfo?.authPlan != keyShopifyInstance
-    ) {
-      this.logger.debug('Shop AuthPlan : ', shopInfo?.authPlan);
-      const tmp = this.shopifyCoreOptions.multiScopes.find(
-        (i) => i.key == shopInfo?.authPlan,
+    if (shopInfo && shopInfo?.addedScopes) {
+      this.logger.debug('Shop addedScopes : ', shopInfo?.addedScopes);
+
+      const prefix = getPrefixRedirectAuth(
+        this.shopifyCoreOptions.multiScopes,
+        shopInfo.addedScopes,
       );
-      if (tmp) {
-        keyShopifyInstance = tmp.key;
+      if (prefix) {
+        keyShopifyInstance = prefix;
         shopifyInstance = this.shopifyFactory.getInstance(
           keyShopifyInstance,
         ) as Shopify;
