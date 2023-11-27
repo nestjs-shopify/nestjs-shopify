@@ -1,21 +1,23 @@
+import { Logger } from '@nestjs/common';
 import { Shopify, shopifyApi } from '@shopify/shopify-api';
-import { ShopifyCoreOptions } from './core.interfaces';
-import { trace } from 'console';
 
+import { ShopifyCoreOptions } from './core.interfaces';
+
+const logger = new Logger('ShopifyFactory');
 export class ShopifyFactory {
-  private instance = new Map<string, Shopify>();
+  private instances = new Map<string, Shopify>();
 
   constructor(options: ShopifyCoreOptions) {
     const { multiScopes, ...option } = options;
     if (multiScopes && multiScopes.length > 0) {
       for (const scopes of multiScopes || []) {
-        this.instance.set(
+        this.instances.set(
           scopes.key,
           shopifyApi({ ...option, scopes: scopes.scopes }),
         );
       }
     } else {
-      this.instance.set(
+      this.instances.set(
         'DEFAULT',
         shopifyApi({ ...option, scopes: option.scopes }),
       );
@@ -23,24 +25,23 @@ export class ShopifyFactory {
   }
 
   getInstances() {
-    return this.instance;
+    return this.instances;
   }
 
   getInstance(key = 'DEFAULT') {
-    console.log('[getInstance]', key);
+    logger.log(`[getInstance] : ${key}`);
 
-    if (this.instance.has(key)) {
-      return this.instance.get(key);
+    if (this.instances.has(key)) {
+      return this.instances.get(key);
     } else {
-      trace();
-      throw new Error('NOT FOUND INSTANCE');
+      throw new Error('NOT_FOUND_INSTANCE');
     }
   }
 
   setInstance(key: string, options: ShopifyCoreOptions) {
     const { multiScopes, ...option } = options;
     const shopify = shopifyApi({ ...option });
-    this.instance.set(key, shopify);
+    this.instances.set(key, shopify);
     return shopify;
   }
 }
