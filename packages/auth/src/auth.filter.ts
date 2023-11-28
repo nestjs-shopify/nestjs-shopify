@@ -19,8 +19,8 @@ import {
   ShopifySessionRequest,
 } from './auth.interfaces';
 import { buildAuthParamScopePath } from './utils/build-auth-path.util';
-import { joinUrl } from './utils/join-url.util';
 import { getPrefixRedirectAuth } from './utils/get-prefix-auth-scope.util';
+import { joinUrl } from './utils/join-url.util';
 
 @Catch(ShopifyAuthException, HttpResponseError)
 export class ShopifyAuthExceptionFilter

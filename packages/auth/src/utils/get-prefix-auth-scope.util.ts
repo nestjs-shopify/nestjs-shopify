@@ -1,5 +1,5 @@
-import { Session } from '@shopify/shopify-api';
 import { MultiScopes } from '@rh-nestjs-shopify/core';
+import { Session } from '@shopify/shopify-api';
 
 /**
  *
@@ -16,7 +16,7 @@ export const getImpliedScopes = (scopesArray: string[]) => {
     }
     return array;
   }, [] as string[]);
-  return arr;
+  return arr.filter((i) => (i != null || i != undefined) && i != '');
 };
 
 /**
@@ -24,6 +24,9 @@ export const getImpliedScopes = (scopesArray: string[]) => {
  * @param session
  * @param requireScopes
  * @returns
+ * `1` : Pass,
+ * `-1` : Offline Scope not validate,
+ * `-2` : Staff Scope not validate
  */
 export const hasShopifyScopes = (
   session: Session,
@@ -40,15 +43,24 @@ export const hasShopifyScopes = (
     });
   };
 
-  if (!session.isOnline && session.scope) {
-    const sessionScopes = session.scope.split(',');
-    return check(getImpliedScopes(sessionScopes), getImpliedScopes(hasScopes));
-  } else if (session.onlineAccessInfo) {
+  const checkOfflineScope = check(
+    getImpliedScopes((session?.scope || '').split(',')),
+    getImpliedScopes(hasScopes),
+  );
+
+  if (!checkOfflineScope) {
+    return -1;
+  }
+
+  if (checkOfflineScope && session.onlineAccessInfo) {
     const sessionScopes =
       session.onlineAccessInfo.associated_user_scope.split(',');
-    return check(getImpliedScopes(sessionScopes), getImpliedScopes(hasScopes));
+    return check(getImpliedScopes(sessionScopes), getImpliedScopes(hasScopes))
+      ? 1
+      : -2;
   }
-  return false;
+
+  return -1;
 };
 
 /**
