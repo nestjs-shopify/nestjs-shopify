@@ -1,6 +1,6 @@
 {
   "name": "@rh-nestjs-shopify/webhooks",
-  "version": "3.0.5",
+  "version": "4.0.9",
   "type": "commonjs",
   "homepage": "https://github.com/RockyHubJsc/nestjs-shopify",
   "bugs": {
@@ -13,7 +13,7 @@
   "peerDependencies": {
     "@nestjs/common": "*",
     "@nestjs/core": "*",
-    "@rh-nestjs-shopify/core": "^3.0.0",
+    "@rh-nestjs-shopify/core": "^4.0.9",
     "@shopify/shopify-api": "^7.0.0"
   },
   "peerDependenciesMeta": {
