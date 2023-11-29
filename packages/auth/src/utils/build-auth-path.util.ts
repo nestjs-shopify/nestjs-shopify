@@ -7,8 +7,8 @@ export function buildAuthPath(
   moduleRef: ModuleRef,
   appConfig: ApplicationConfig,
   accessMode: AccessMode,
-  multiScope?: {
-    prefix: string;
+  multiScopes?: {
+    prefixParamScope: string;
     scope: string;
   },
 ) {
@@ -22,10 +22,12 @@ export function buildAuthPath(
 
   const basePath = options.basePath || '';
   const url = joinUrl(prefix, basePath, 'auth');
-  if (multiScope) {
-    if (url.includes(multiScope.prefix)) {
-      return url.replace(multiScope.prefix, multiScope.scope);
-    }
+  if (multiScopes) {
+    return buildAuthParamScopePath(
+      url,
+      multiScopes.prefixParamScope,
+      multiScopes.scope,
+    );
   }
   return url;
 }
@@ -35,7 +37,7 @@ export function buildAuthCallbackPath(
   appConfig: ApplicationConfig,
   accessMode: AccessMode,
   multiScope?: {
-    prefix: string;
+    prefixParamScope: string;
     scope: string;
   },
 ) {
@@ -50,9 +52,11 @@ export function buildAuthCallbackPath(
   const basePath = options.basePath || '';
   const url = joinUrl(prefix, basePath, 'callback');
   if (multiScope) {
-    if (url.includes(multiScope.prefix)) {
-      return url.replace(multiScope.prefix, multiScope.scope);
-    }
+    return buildAuthParamScopePath(
+      url,
+      multiScope.prefixParamScope,
+      multiScope.scope,
+    );
   }
   return url;
 }
