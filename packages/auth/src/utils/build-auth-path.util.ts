@@ -69,8 +69,5 @@ export const buildAuthParamScopePath = (
   prefixParamScope: string,
   scope: string,
 ) => {
-  if (path.includes(`/:${prefixParamScope}/`)) {
-    return path.replace(`/:${prefixParamScope}/`, `/${scope}/`);
-  }
-  return path;
+  return path.replace(`/:${prefixParamScope}/`, `/${scope}/`);
 };
