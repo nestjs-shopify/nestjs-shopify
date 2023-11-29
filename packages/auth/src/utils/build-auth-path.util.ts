@@ -36,7 +36,7 @@ export function buildAuthCallbackPath(
   moduleRef: ModuleRef,
   appConfig: ApplicationConfig,
   accessMode: AccessMode,
-  multiScope?: {
+  multiScopes?: {
     prefixParamScope: string;
     scope: string;
   },
@@ -51,11 +51,11 @@ export function buildAuthCallbackPath(
 
   const basePath = options.basePath || '';
   const url = joinUrl(prefix, basePath, 'callback');
-  if (multiScope) {
+  if (multiScopes) {
     return buildAuthParamScopePath(
       url,
-      multiScope.prefixParamScope,
-      multiScope.scope,
+      multiScopes.prefixParamScope,
+      multiScopes.scope,
     );
   }
   return url;
