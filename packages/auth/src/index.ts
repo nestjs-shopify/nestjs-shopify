@@ -11,7 +11,7 @@ export * from './online-auth/online-auth.controller';
 
 export * from './offline-auth/offline-auth.controller';
 
-export * from './utils/join-url.util';
-export * from './utils/has-valid-access-token.util';
 export * from './utils/build-auth-path.util';
 export * from './utils/get-query-from-request.util';
+export * from './utils/has-valid-access-token.util';
+export * from './utils/join-url.util';

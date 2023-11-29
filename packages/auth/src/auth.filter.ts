@@ -1,9 +1,16 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
-import { InjectShopify } from '@rh-nestjs-shopify/core';
+import {
+  InjectShopify,
+  InjectShopifyCoreOptions,
+  InjectShopifySessionStorage,
+  SessionStorage,
+  ShopifyCoreOptions,
+  ShopifyFactory,
+} from '@rh-nestjs-shopify/core';
 import { HttpResponseError, Session, Shopify } from '@shopify/shopify-api';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'node:http';
 import { getOptionsToken } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import {
@@ -11,23 +18,32 @@ import {
   ShopifyAuthModuleOptions,
   ShopifySessionRequest,
 } from './auth.interfaces';
+import { buildAuthParamScopePath } from './utils/build-auth-path.util';
+import { getPrefixRedirectAuth } from './utils/get-prefix-auth-scope.util';
 import { joinUrl } from './utils/join-url.util';
 
 @Catch(ShopifyAuthException, HttpResponseError)
 export class ShopifyAuthExceptionFilter
   implements ExceptionFilter<ShopifyAuthException | HttpResponseError>
 {
+  private readonly logger = new Logger('ShopifyAuthExceptionFilter');
+
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly appConfig: ApplicationConfig,
     @InjectShopify()
-    private readonly shopifyApi: Shopify,
+    private readonly shopifyFactory: ShopifyFactory,
+    @InjectShopifyCoreOptions()
+    private readonly shopifyCoreOptions: ShopifyCoreOptions,
+    @InjectShopifySessionStorage()
+    private readonly sessionStorage: SessionStorage,
   ) {}
 
   async catch(
     exception: ShopifyAuthException | HttpResponseError,
     host: ArgumentsHost,
   ) {
+    this.logger.debug('[ShopifyAuthException]');
     const context = host.switchToHttp();
     const request =
       context.getRequest<
@@ -69,7 +85,7 @@ export class ShopifyAuthExceptionFilter
     return res.end(JSON.stringify(responseBody));
   }
 
-  private handleShopifyAuthException(
+  private async handleShopifyAuthException(
     exception: ShopifyAuthException,
     req: IncomingMessage,
     res: ServerResponse,
@@ -77,10 +93,38 @@ export class ShopifyAuthExceptionFilter
     const options = this.getShopifyOptionsFor(exception.accessMode);
     res.statusCode = exception.getStatus();
 
-    const hostScheme = this.shopifyApi.config.hostScheme ?? 'https';
-    const hostName = this.shopifyApi.config.hostName ?? req.headers.host;
+    let keyShopifyInstance = 'DEFAULT';
+    let shopifyInstance = this.shopifyFactory.getInstance(
+      keyShopifyInstance,
+    ) as Shopify;
+
+    const shopInfo = await this.sessionStorage.loadShopByDomain(exception.shop);
+    this.logger.debug({ shopInfo });
+
+    if (shopInfo && shopInfo?.addedScopes) {
+      this.logger.debug('Shop addedScopes : ', shopInfo?.addedScopes);
+
+      const prefix = getPrefixRedirectAuth(
+        this.shopifyCoreOptions.multiScopes,
+        shopInfo.addedScopes,
+      );
+      if (prefix) {
+        keyShopifyInstance = prefix;
+        shopifyInstance = this.shopifyFactory.getInstance(
+          keyShopifyInstance,
+        ) as Shopify;
+      }
+    }
+
+    const hostScheme = shopifyInstance.config.hostScheme ?? 'https';
+    const hostName = shopifyInstance.config.hostName ?? req.headers.host;
     const domain = `${hostScheme}://${hostName}`;
-    const redirectPath = this.buildRedirectPath(exception.shop, options);
+
+    const redirectPath = this.buildRedirectPath(
+      exception.shop,
+      options,
+      keyShopifyInstance,
+    );
     const authUrl = new URL(redirectPath, domain).toString();
 
     if (options.returnHeaders) {
@@ -106,7 +150,11 @@ export class ShopifyAuthExceptionFilter
     }
   }
 
-  private buildRedirectPath(shop: string, options: ShopifyAuthModuleOptions) {
+  private buildRedirectPath(
+    shop: string,
+    options: ShopifyAuthModuleOptions,
+    keyShopifyInstance: string,
+  ) {
     let prefix = '';
     if (options.useGlobalPrefix) {
       prefix = this.appConfig.getGlobalPrefix();
@@ -114,8 +162,12 @@ export class ShopifyAuthExceptionFilter
 
     const basePath = options.basePath || '';
     const authPath = `auth?shop=${shop}`;
-    const redirectPath = joinUrl(prefix, basePath, authPath);
-
+    let redirectPath = joinUrl(prefix, basePath, authPath);
+    redirectPath = buildAuthParamScopePath(
+      redirectPath,
+      this.shopifyCoreOptions.prefixParamScope,
+      keyShopifyInstance,
+    );
     return redirectPath;
   }
 

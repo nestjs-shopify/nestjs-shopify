@@ -1,18 +1,20 @@
+import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
 import {
   AccessMode,
   ShopifySessionRequest,
   UseShopifyAuth,
 } from '@rh-nestjs-shopify/auth';
-import { InjectShopify } from '@rh-nestjs-shopify/core';
-import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
+import { InjectShopify, ShopifyFactory } from '@rh-nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
-import { IncomingMessage, ServerResponse } from 'http';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { IncomingMessage, ServerResponse } from 'node:http';
 
 @Controller('graphql')
 @UseShopifyAuth(AccessMode.Online)
 export class ShopifyGraphqlProxyController {
-  constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
+  constructor(
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
+  ) {}
 
   @Post()
   async proxy(
@@ -20,7 +22,7 @@ export class ShopifyGraphqlProxyController {
     req: ShopifySessionRequest<IncomingMessage | FastifyRequest> & {
       body: string;
     },
-    @Res() response: ServerResponse | FastifyReply
+    @Res() response: ServerResponse | FastifyReply,
   ) {
     const res = response instanceof ServerResponse ? response : response.raw;
 
@@ -29,7 +31,9 @@ export class ShopifyGraphqlProxyController {
       throw new ForbiddenException('No session found');
     }
 
-    const { body, headers } = await this.shopifyApi.clients.graphqlProxy({
+    const { body, headers } = await (
+      this.shopifyFactory.getInstance() as Shopify
+    ).clients.graphqlProxy({
       rawBody: req.body,
       session,
     });

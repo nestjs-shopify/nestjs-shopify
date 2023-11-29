@@ -41,7 +41,7 @@ describe('ShopifyHmacGuard', () => {
         shopifyApi({
           ...mockedShopifyCoreOptions,
           apiSecretKey: 'foobar',
-        })
+        }),
       )
       .compile();
 
@@ -82,7 +82,7 @@ describe('ShopifyHmacGuard', () => {
       });
 
       await expect(guard.canActivate(ctx)).rejects.toThrow(
-        UnauthorizedException
+        UnauthorizedException,
       );
     });
 
@@ -98,7 +98,7 @@ describe('ShopifyHmacGuard', () => {
       });
 
       await expect(guard.canActivate(ctx)).rejects.toThrow(
-        UnauthorizedException
+        UnauthorizedException,
       );
     });
 
@@ -137,7 +137,7 @@ describe('ShopifyHmacGuard', () => {
       });
 
       await expect(guard.canActivate(ctx)).rejects.toThrow(
-        InternalServerErrorException
+        InternalServerErrorException,
       );
     });
 
@@ -151,7 +151,7 @@ describe('ShopifyHmacGuard', () => {
       });
 
       await expect(guard.canActivate(ctx)).rejects.toThrow(
-        UnauthorizedException
+        UnauthorizedException,
       );
     });
 

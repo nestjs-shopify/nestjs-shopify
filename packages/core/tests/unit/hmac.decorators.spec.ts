@@ -20,9 +20,9 @@ describe('ShopifyHmac', () => {
 
       it('should add hmac guard to target class', () => {
         expect(reflector.get(GUARDS_METADATA, TargetClass)).toContain(
-          ShopifyHmacGuard
+          ShopifyHmacGuard,
         );
       });
-    }
+    },
   );
 });

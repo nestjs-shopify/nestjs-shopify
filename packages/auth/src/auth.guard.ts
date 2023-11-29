@@ -1,26 +1,26 @@
 import {
-  InjectShopify,
-  InjectShopifySessionStorage,
-  SessionStorage,
-} from '@rh-nestjs-shopify/core';
-import {
   CanActivate,
   ExecutionContext,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import {
+  InjectShopify,
+  InjectShopifySessionStorage,
+  SessionStorage,
+  ShopifyFactory,
+} from '@rh-nestjs-shopify/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
-import { IncomingMessage, ServerResponse } from 'http';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { IncomingMessage, ServerResponse } from 'node:http';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
 import {
-  getShopFromRequest,
   RequestLike,
+  getShopFromRequest,
 } from './utils/get-shop-from-request.util';
-import { hasValidAccessToken } from './utils/has-valid-access-token.util';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -28,23 +28,29 @@ export class ShopifyAuthGuard implements CanActivate {
 
   constructor(
     @InjectShopify()
-    private readonly shopifyApi: Shopify,
+    private readonly shopifyFactory: ShopifyFactory,
     @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const { accessMode, session } = await this.getSessionDataFromContext(ctx);
+    let check = false;
+    for (const instance of this.shopifyFactory.getInstances()) {
+      if (session && session.isActive(instance[1].config.scopes)) {
+        check = true;
+        break;
+      }
+    }
 
-    if (session && session.isActive(this.shopifyApi.config.scopes)) {
+    if (session && check) {
       // We assign the session to the request for further usage in
       // our controllers/decorators
       this.assignSessionToRequest(ctx, session);
 
       return true;
     }
-
     const req = ctx
       .switchToHttp()
       .getRequest<IncomingMessage | FastifyRequest>();
@@ -54,7 +60,7 @@ export class ShopifyAuthGuard implements CanActivate {
       throw new ShopifyAuthException(
         'Reauthorization Required',
         shop,
-        accessMode
+        accessMode,
       );
     }
 
@@ -63,7 +69,7 @@ export class ShopifyAuthGuard implements CanActivate {
 
   private assignSessionToRequest(
     ctx: ExecutionContext,
-    session: Session | undefined
+    session: Session | undefined,
   ) {
     const req = ctx
       .switchToHttp()
@@ -84,7 +90,13 @@ export class ShopifyAuthGuard implements CanActivate {
     let session: Session | undefined;
 
     try {
-      const sessionId = await this.shopifyApi.session.getCurrentId({
+      /**
+       * decode jwt -> dont care instance
+       * @returns `day-la-shop-test-1.myshopify.com_103420526893`
+       */
+      const sessionId = await (
+        this.shopifyFactory.getInstance() as Shopify
+      ).session.getCurrentId({
         rawRequest: req,
         rawResponse: res,
         isOnline,

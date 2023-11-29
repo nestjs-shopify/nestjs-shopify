@@ -7,8 +7,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
-import type { IncomingMessage } from 'http';
 import { FastifyRequest } from 'fastify';
+import type { IncomingMessage } from 'node:http';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthExceptionFilter } from './auth.filter';
 import { ShopifyAuthGuard } from './auth.guard';
@@ -18,7 +18,7 @@ export const UseShopifyAuth = (mode = AccessMode.Online) =>
   applyDecorators(
     SetMetadata(AUTH_MODE_KEY, mode),
     UseGuards(ShopifyAuthGuard),
-    UseFilters(ShopifyAuthExceptionFilter)
+    UseFilters(ShopifyAuthExceptionFilter),
   );
 
 export const CurrentSession = createParamDecorator<

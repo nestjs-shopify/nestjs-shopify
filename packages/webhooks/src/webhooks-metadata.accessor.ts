@@ -17,7 +17,7 @@ export class ShopifyWebhooksMetadataAccessor {
   }
 
   public getShopifyWebhooksHandlerMetadata(
-    target: Type<unknown> | Function
+    target: Type<unknown> | Function,
   ): ShopifyWebhookHandlerOptions | undefined {
     return this.reflector.get(SHOPIFY_WEBHOOKS_METADATA, target);
   }

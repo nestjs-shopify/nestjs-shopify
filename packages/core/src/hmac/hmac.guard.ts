@@ -15,17 +15,18 @@ import {
   ShopifyHeader,
 } from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
-import { IncomingMessage } from 'http';
+import { IncomingMessage } from 'node:http';
 import { FastifyRequest } from 'fastify';
 import { InjectShopify } from '../core.decorators';
 import { SHOPIFY_HMAC_KEY } from './hmac.constants';
 import { ShopifyHmacType } from './hmac.enums';
+import { ShopifyFactory } from '../shopify-factory';
 
 @Injectable()
 export class ShopifyHmacGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    @InjectShopify() private readonly shopifyApi: Shopify
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -47,19 +48,21 @@ export class ShopifyHmacGuard implements CanActivate {
   }
 
   private validateHmacHeader(
-    req: RawBodyRequest<IncomingMessage | FastifyRequest>
+    req: RawBodyRequest<IncomingMessage | FastifyRequest>,
   ) {
     const expectedHmac = this.getHmacFromHeaders(req);
 
     if (!req.rawBody) {
       throw new InternalServerErrorException(
-        `Missing raw body in request. Ensure that 'rawBody' option is set when initializing Nest application.`
+        `Missing raw body in request. Ensure that 'rawBody' option is set when initializing Nest application.`,
       );
     }
 
+    const shopifyInstance = this.shopifyFactory.getInstance() as Shopify;
+
     const generatedHash = createHmac(
       'sha256',
-      this.shopifyApi.config.apiSecretKey
+      shopifyInstance.config.apiSecretKey,
     )
       .update(req.rawBody)
       .digest('base64');
@@ -79,9 +82,9 @@ export class ShopifyHmacGuard implements CanActivate {
 
   private async validateHmacQuery(req: IncomingMessage | FastifyRequest) {
     const query = (req as unknown as { query: AuthQuery }).query;
-
+    const shopifyInstance = this.shopifyFactory.getInstance() as Shopify;
     try {
-      if (await this.shopifyApi.utils.validateHmac(query)) {
+      if (await shopifyInstance.utils.validateHmac(query)) {
         return true;
       }
 
@@ -98,13 +101,13 @@ export class ShopifyHmacGuard implements CanActivate {
 
     if (!hmacHeader) {
       throw new BadRequestException(
-        `Missing required HTTP header: ${ShopifyHeader.Hmac}`
+        `Missing required HTTP header: ${ShopifyHeader.Hmac}`,
       );
     }
 
     if (typeof hmacHeader !== 'string') {
       throw new BadRequestException(
-        `Malformed '${ShopifyHeader.Hmac}' provided: ${hmacHeader}`
+        `Malformed '${ShopifyHeader.Hmac}' provided: ${hmacHeader}`,
       );
     }
 
@@ -112,11 +115,11 @@ export class ShopifyHmacGuard implements CanActivate {
   }
 
   private getShopifyHmacTypeFromContext(
-    ctx: ExecutionContext
+    ctx: ExecutionContext,
   ): ShopifyHmacType | undefined {
     return this.reflector.getAllAndOverride<ShopifyHmacType | undefined>(
       SHOPIFY_HMAC_KEY,
-      [ctx.getHandler(), ctx.getClass()]
+      [ctx.getHandler(), ctx.getClass()],
     );
   }
 }

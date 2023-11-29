@@ -1,15 +1,18 @@
-import { InjectShopify } from '@rh-nestjs-shopify/core';
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectShopify, ShopifyFactory } from '@rh-nestjs-shopify/core';
 import { Session, Shopify } from '@shopify/shopify-api';
 
 @Injectable()
 export class ShopifyWebhooksService {
   private readonly logger = new Logger(ShopifyWebhooksService.name);
 
-  constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
+  constructor(
+    @InjectShopify() private readonly shopifyFactory: ShopifyFactory,
+  ) {}
 
   async registerWebhooks(session: Session) {
-    const responsesByTopic = await this.shopifyApi.webhooks.register({
+    const shopifyInstance = this.shopifyFactory.getInstance() as Shopify;
+    const responsesByTopic = await shopifyInstance.webhooks.register({
       session,
     });
 
@@ -19,7 +22,7 @@ export class ShopifyWebhooksService {
           this.logger.log(`Registered webhook ${topic} successfully.`);
         } else {
           this.logger.warn(
-            `Failed to register webhook ${topic}: ${response['result']}`
+            `Failed to register webhook ${topic}: ${response['result']}`,
           );
         }
       });

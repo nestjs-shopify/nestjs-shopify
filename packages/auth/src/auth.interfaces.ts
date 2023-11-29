@@ -1,7 +1,8 @@
 import { ModuleMetadata, Type } from '@nestjs/common';
 import type { Session } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import { FastifyRequest, FastifyReply } from 'fastify';
+import { Request, Response } from 'express';
 
 export enum AccessMode {
   Online = 'online',
@@ -26,8 +27,14 @@ export type ShopifySessionRequest<T> = T & {
 };
 
 export interface ShopifyAuthAfterHandler<
-  T extends IncomingMessage | FastifyRequest = IncomingMessage | FastifyRequest,
-  R extends ServerResponse | FastifyReply = ServerResponse | FastifyReply
+  T extends IncomingMessage | FastifyRequest =
+    | Request
+    | IncomingMessage
+    | FastifyRequest,
+  R extends ServerResponse | FastifyReply =
+    | Response
+    | ServerResponse
+    | FastifyReply,
 > {
   afterAuth(req: T, res: R, session: Session): Promise<void>;
 }

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { shopifyApi } from '@shopify/shopify-api';
 import {
   SHOPIFY_API_CONTEXT,
   SHOPIFY_API_SESSION_STORAGE,
@@ -9,12 +8,15 @@ import {
   ConfigurableModuleClass,
   SHOPIFY_CORE_OPTIONS,
 } from './core.module-builder';
+import { ShopifyFactory } from './shopify-factory';
 
 @Module({
   providers: [
     {
       provide: SHOPIFY_API_CONTEXT,
-      useFactory: (options: ShopifyCoreOptions) => shopifyApi(options),
+      useFactory: (options: ShopifyCoreOptions) => {
+        return new ShopifyFactory(options);
+      },
       inject: [SHOPIFY_CORE_OPTIONS],
     },
     {

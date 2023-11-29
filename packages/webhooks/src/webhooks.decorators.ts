@@ -5,10 +5,10 @@ import { ShopifyWebhookHandlerOptions } from './webhooks.interfaces';
 
 export function WebhookHandler(topic: string): ClassDecorator;
 export function WebhookHandler(
-  options: ShopifyWebhookHandlerOptions
+  options: ShopifyWebhookHandlerOptions,
 ): ClassDecorator;
 export function WebhookHandler(
-  topicOrOptions: string | ShopifyWebhookHandlerOptions
+  topicOrOptions: string | ShopifyWebhookHandlerOptions,
 ): ClassDecorator {
   let options: ShopifyWebhookHandlerOptions;
   if (typeof topicOrOptions === 'string') {
