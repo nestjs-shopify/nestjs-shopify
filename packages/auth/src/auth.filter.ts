@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import {
+  DEFAULT_INSTANCE,
   InjectShopify,
   InjectShopifyCoreOptions,
   InjectShopifySessionStorage,
@@ -93,7 +94,7 @@ export class ShopifyAuthExceptionFilter
     const options = this.getShopifyOptionsFor(exception.accessMode);
     res.statusCode = exception.getStatus();
 
-    let keyShopifyInstance = 'DEFAULT';
+    let keyShopifyInstance = DEFAULT_INSTANCE;
     let shopifyInstance = this.shopifyFactory.getInstance(
       keyShopifyInstance,
     ) as Shopify;

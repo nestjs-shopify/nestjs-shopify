@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Shopify, shopifyApi } from '@shopify/shopify-api';
 
+import { DEFAULT_INSTANCE } from './core.constants';
 import { ShopifyCoreOptions } from './core.interfaces';
 
 const logger = new Logger('ShopifyFactory');
@@ -18,7 +19,7 @@ export class ShopifyFactory {
       }
     } else {
       this.instances.set(
-        'DEFAULT',
+        DEFAULT_INSTANCE,
         shopifyApi({ ...option, scopes: option.scopes }),
       );
     }
@@ -28,7 +29,7 @@ export class ShopifyFactory {
     return this.instances;
   }
 
-  getInstance(key = 'DEFAULT') {
+  getInstance(key = DEFAULT_INSTANCE) {
     logger.log(`[getInstance] : ${key}`);
 
     if (this.instances.has(key)) {

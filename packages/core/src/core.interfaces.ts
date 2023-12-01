@@ -13,7 +13,7 @@ export type SessionStorage = ShopifySessionStorage & {
 };
 
 export type MultiScopes = {
-  key: 'DEFAULT' | string;
+  key: 'default' | string;
   scopes: string[] | AuthScopes;
 };
 
