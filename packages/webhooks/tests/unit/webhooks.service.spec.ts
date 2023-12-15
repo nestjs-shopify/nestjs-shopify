@@ -72,7 +72,7 @@ describe('ShopifyWebhooksService', () => {
       await service.registerWebhooks(session);
 
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Failed to register webhook products/create: Forced error in tests'
+        'Failed to register webhook products/create: "Forced error in tests"'
       );
     });
 

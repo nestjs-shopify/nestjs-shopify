@@ -19,7 +19,9 @@ export class ShopifyWebhooksService {
           this.logger.log(`Registered webhook ${topic} successfully.`);
         } else {
           this.logger.warn(
-            `Failed to register webhook ${topic}: ${response['result']}`
+            `Failed to register webhook ${topic}: ${JSON.stringify(
+              response['result'],
+            )}`,
           );
         }
       });
