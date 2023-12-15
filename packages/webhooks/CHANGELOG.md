@@ -1,5 +1,11 @@
 # @nestjs-shopify/webhooks
 
+## 3.1.1
+
+### Patch Changes
+
+- ea7e6d5: fix: stringify webhook registration error response
+
 ## 3.1.0
 
 ### Minor Changes
