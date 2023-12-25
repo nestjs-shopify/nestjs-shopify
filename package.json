@@ -13,7 +13,7 @@
   },
   "private": true,
   "dependencies": {
-    "@changesets/cli": "2.26.2",
+    "@changesets/cli": "2.27.1",
     "@nrwl/cli": "15.9.3",
     "@nrwl/eslint-plugin-nx": "16.10.0",
     "@nrwl/jest": "16.10.0",
