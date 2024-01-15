@@ -1,5 +1,11 @@
 # @nestjs-shopify/core
 
+## 3.3.0
+
+### Minor Changes
+
+- 2b99147: update dependencies @shopify/shopify-api to 9.0.1 and @shopify/shopify-app-session-storage to 2.0.3, also allow those versions in peerDependencies
+
 ## 3.2.0
 
 ### Minor Changes
@@ -65,8 +71,8 @@
   The Shopify API context now lives inside the Nest DI container. You can access it by doing the following in your injectable providers:
 
   ```ts
-  import { InjectShopify } from '@nestjs-shopify/core';
-  import { Shopify } from '@shopify/shopify-api';
+  import { InjectShopify } from "@nestjs-shopify/core";
+  import { Shopify } from "@shopify/shopify-api";
 
   @Injectable()
   export class MyProvider {
@@ -77,8 +83,8 @@
   Or if you need references while registering a provider:
 
   ```ts
-  import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
-  import { Shopify } from '@shopify/shopify-api';
+  import { SHOPIFY_API_CONTEXT } from "@nestjs-shopify/core";
+  import { Shopify } from "@shopify/shopify-api";
 
   @Module({
     providers: [
