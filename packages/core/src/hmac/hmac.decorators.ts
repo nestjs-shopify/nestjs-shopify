@@ -6,5 +6,5 @@ import { ShopifyHmacGuard } from './hmac.guard';
 export const ShopifyHmac = (hmacType: ShopifyHmacType) =>
   applyDecorators(
     SetMetadata(SHOPIFY_HMAC_KEY, hmacType),
-    UseGuards(ShopifyHmacGuard)
+    UseGuards(ShopifyHmacGuard),
   );

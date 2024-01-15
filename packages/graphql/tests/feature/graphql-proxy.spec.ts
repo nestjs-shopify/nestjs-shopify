@@ -89,7 +89,7 @@ describe('GraphQL proxy', () => {
       expect(graphqlProxySpy).toHaveBeenCalledWith(
         expect.objectContaining({
           rawBody: { operation, query },
-        })
+        }),
       );
     });
   });

@@ -17,5 +17,5 @@ export const mockedShopifyCoreOptions = {
 };
 
 export const MockShopifyCoreModule = ShopifyCoreModule.forRoot(
-  mockedShopifyCoreOptions
+  mockedShopifyCoreOptions,
 );

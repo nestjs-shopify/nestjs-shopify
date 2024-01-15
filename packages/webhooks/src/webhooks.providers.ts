@@ -13,7 +13,7 @@ export const shopifyWebhooksControllerPathHackProvider: Provider = {
     Reflect.defineMetadata(
       PATH_METADATA,
       options.path,
-      ShopifyWebhooksController
+      ShopifyWebhooksController,
     );
   },
   inject: [SHOPIFY_WEBHOOKS_OPTIONS],

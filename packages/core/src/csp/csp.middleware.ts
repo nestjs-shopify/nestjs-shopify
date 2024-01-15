@@ -22,8 +22,8 @@ export class ShopifyCspMiddleware implements NestMiddleware {
       res.setHeader(
         'Content-Security-Policy',
         `frame-ancestors https://${encodeURIComponent(
-          sanitizedShop
-        )} https://admin.shopify.com;`
+          sanitizedShop,
+        )} https://admin.shopify.com;`,
       );
     } else {
       res.setHeader('Content-Security-Policy', 'frame-ancestors none');

@@ -1,7 +1,12 @@
 import '@shopify/shopify-api/adapters/node';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { Test } from '@nestjs/testing';
-import { DeliveryMethod, Session, Shopify, WebhookOperation } from '@shopify/shopify-api';
+import {
+  DeliveryMethod,
+  Session,
+  Shopify,
+  WebhookOperation,
+} from '@shopify/shopify-api';
 import { ShopifyWebhooksModule } from '../../src/webhooks.module';
 import { ShopifyWebhooksService } from '../../src/webhooks.service';
 import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
@@ -38,7 +43,7 @@ describe('ShopifyWebhooksService', () => {
             deliveryMethod: DeliveryMethod.Http,
             result: 'Forced error in tests',
             success: false,
-            operation: WebhookOperation.Create
+            operation: WebhookOperation.Create,
           },
         ],
         'products/update': [
@@ -46,7 +51,7 @@ describe('ShopifyWebhooksService', () => {
             deliveryMethod: DeliveryMethod.EventBridge,
             result: { data: { webhookSubscriptionCreate: {} } },
             success: true,
-            operation: WebhookOperation.Update
+            operation: WebhookOperation.Update,
           },
         ],
       });
@@ -72,7 +77,7 @@ describe('ShopifyWebhooksService', () => {
       await service.registerWebhooks(session);
 
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Failed to register webhook products/create: "Forced error in tests"'
+        'Failed to register webhook products/create: "Forced error in tests"',
       );
     });
 
@@ -80,7 +85,7 @@ describe('ShopifyWebhooksService', () => {
       await service.registerWebhooks(session);
 
       expect(mockLogger.log).toHaveBeenCalledWith(
-        'Registered webhook products/update successfully.'
+        'Registered webhook products/update successfully.',
       );
     });
   });

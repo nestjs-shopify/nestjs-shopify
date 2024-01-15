@@ -26,7 +26,7 @@ export type ShopifySessionRequest<T> = T & {
 
 export interface ShopifyAuthAfterHandler<
   T extends IncomingMessage = IncomingMessage,
-  R extends ServerResponse = ServerResponse
+  R extends ServerResponse = ServerResponse,
 > {
   afterAuth(req: T, res: R, session: Session): Promise<void>;
 }

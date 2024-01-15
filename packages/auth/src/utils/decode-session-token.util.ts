@@ -7,7 +7,7 @@ export const decodeSessionToken = (token: string): JwtPayload => {
     payload = jwt.decode(token) as JwtPayload;
   } catch (error: unknown) {
     throw new InvalidJwtError(
-      `Failed to parse session token '${token}': ${(error as Error).message}`
+      `Failed to parse session token '${token}': ${(error as Error).message}`,
     );
   }
 
