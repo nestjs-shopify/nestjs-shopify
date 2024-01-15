@@ -1,5 +1,11 @@
 # @nestjs-shopify/webhooks
 
+## 3.2.0
+
+### Minor Changes
+
+- 2b99147: update dependencies @shopify/shopify-api to 9.0.1 and @shopify/shopify-app-session-storage to 2.0.3, also allow those versions in peerDependencies
+
 ## 3.1.1
 
 ### Patch Changes
@@ -51,14 +57,14 @@
   import {
     ShopifyWebhookHandler,
     WebhookHandler,
-  } from '@nestjs-shopify/webhooks';
+  } from "@nestjs-shopify/webhooks";
 
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
 
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler2 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
@@ -79,7 +85,7 @@
   before:
 
   ```ts
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
@@ -88,7 +94,7 @@
   after:
 
   ```ts
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown, webhookId: string) {}
   }

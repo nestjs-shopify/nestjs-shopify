@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 4.2.0
+
+### Minor Changes
+
+- 2b99147: update dependencies @shopify/shopify-api to 9.0.1 and @shopify/shopify-app-session-storage to 2.0.3, also allow those versions in peerDependencies
+
 ## 4.1.0
 
 ### Minor Changes
@@ -100,9 +106,9 @@
   Install `@nestjs-shopify/graphql` and use it as following:
 
   ```ts
-  import { ShopifyCoreModule } from '@nestjs-shopify/core';
-  import { ShopifyAuthModule } from '@nestjs-shopify/auth';
-  import { ShopifyGraphqlProxyModule } from '@nestjs-shopify/graphql';
+  import { ShopifyCoreModule } from "@nestjs-shopify/core";
+  import { ShopifyAuthModule } from "@nestjs-shopify/auth";
+  import { ShopifyGraphqlProxyModule } from "@nestjs-shopify/graphql";
 
   @Module({
     imports: [
