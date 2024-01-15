@@ -35,19 +35,19 @@ export class ShopifyWebhooksController {
     const { rawBody } = req;
     if (!rawBody) {
       throw new InternalServerErrorException(
-        'Enable `rawBody` option when creating Nest application.'
+        'Enable `rawBody` option when creating Nest application.',
       );
     }
 
     const { domain, topic, webhookId } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
     const webhookEntries = this.shopifyApi.webhooks.getHandlers(
-      graphqlTopic
+      graphqlTopic,
     ) as HttpWebhookHandlerWithCallback[];
 
     if (webhookEntries.length === 0) {
       throw new NotFoundException(
-        `No webhook is registered for topic ${topic}`
+        `No webhook is registered for topic ${topic}`,
       );
     }
 
@@ -59,9 +59,9 @@ export class ShopifyWebhooksController {
           graphqlTopic,
           domain as string,
           rawBody.toString(),
-          webhookId as string
-        )
-      )
+          webhookId as string,
+        ),
+      ),
     );
   }
 
@@ -97,8 +97,8 @@ export class ShopifyWebhooksController {
     if (missingHeaders.length) {
       throw new BadRequestException(
         `Missing one or more of the required HTTP headers to process webhooks: [${missingHeaders.join(
-          ', '
-        )}]`
+          ', ',
+        )}]`,
       );
     }
 

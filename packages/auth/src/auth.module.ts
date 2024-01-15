@@ -22,7 +22,7 @@ export class ShopifyAuthModule {
         },
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Online),
-          ShopifyAuthOnlineController
+          ShopifyAuthOnlineController,
         ),
       ],
       controllers: [ShopifyAuthOnlineController],
@@ -40,7 +40,7 @@ export class ShopifyAuthModule {
         },
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Offline),
-          ShopifyAuthOfflineController
+          ShopifyAuthOfflineController,
         ),
       ],
       controllers: [ShopifyAuthOfflineController],
@@ -48,7 +48,7 @@ export class ShopifyAuthModule {
   }
 
   static forRootAsyncOnline(
-    options: ShopifyAuthModuleAsyncOptions
+    options: ShopifyAuthModuleAsyncOptions,
   ): DynamicModule {
     return {
       module: class ShopifyAuthOnlineModule {},
@@ -58,7 +58,7 @@ export class ShopifyAuthModule {
         ...buildProvidersForToken(options, getOptionsToken(AccessMode.Online)),
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Online),
-          ShopifyAuthOnlineController
+          ShopifyAuthOnlineController,
         ),
       ],
       controllers: [ShopifyAuthOnlineController],
@@ -66,7 +66,7 @@ export class ShopifyAuthModule {
   }
 
   static forRootAsyncOffline(
-    options: ShopifyAuthModuleAsyncOptions
+    options: ShopifyAuthModuleAsyncOptions,
   ): DynamicModule {
     return {
       module: class ShopifyAuthOfflineModule {},
@@ -76,7 +76,7 @@ export class ShopifyAuthModule {
         ...buildProvidersForToken(options, getOptionsToken(AccessMode.Offline)),
         buildControllerHackForToken(
           getOptionsToken(AccessMode.Offline),
-          ShopifyAuthOfflineController
+          ShopifyAuthOfflineController,
         ),
       ],
       controllers: [ShopifyAuthOfflineController],

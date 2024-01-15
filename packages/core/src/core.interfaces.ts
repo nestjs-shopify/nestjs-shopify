@@ -6,7 +6,7 @@ export type SessionStorage = ShopifySessionStorage;
 
 export interface ShopifyCoreOptions<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  T extends ShopifyRestResources = any
+  T extends ShopifyRestResources = any,
 > extends ConfigParams<T> {
   sessionStorage: SessionStorage;
 }

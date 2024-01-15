@@ -17,7 +17,7 @@ export class ShopifyAuthOnlineController extends ShopifyAuthBaseController {
     @Inject(getOptionsToken(AccessMode.Online))
     options: ShopifyAuthModuleOptions,
     @InjectShopifySessionStorage() sessionStorage: SessionStorage,
-    appConfig: ApplicationConfig
+    appConfig: ApplicationConfig,
   ) {
     super(shopifyApi, AccessMode.Online, options, appConfig, sessionStorage);
   }

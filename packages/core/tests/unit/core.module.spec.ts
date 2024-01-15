@@ -30,7 +30,7 @@ describe('ShopifyCoreModule', () => {
 
     it('should provide session storage', () => {
       const sessionStorage = moduleRef.get<SessionStorage>(
-        SHOPIFY_API_SESSION_STORAGE
+        SHOPIFY_API_SESSION_STORAGE,
       );
 
       expect(sessionStorage).toBeDefined();
@@ -56,7 +56,7 @@ describe('ShopifyCoreModule', () => {
 
     it('should provide session storage', () => {
       const sessionStorage = moduleRef.get<SessionStorage>(
-        SHOPIFY_API_SESSION_STORAGE
+        SHOPIFY_API_SESSION_STORAGE,
       );
 
       expect(sessionStorage).toBeDefined();

@@ -29,7 +29,7 @@ export class ShopifyAuthGuard implements CanActivate {
     private readonly shopifyApi: Shopify,
     @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -50,7 +50,7 @@ export class ShopifyAuthGuard implements CanActivate {
       throw new ShopifyAuthException(
         'Reauthorization Required',
         shop,
-        accessMode
+        accessMode,
       );
     }
 
@@ -59,7 +59,7 @@ export class ShopifyAuthGuard implements CanActivate {
 
   private assignSessionToRequest(
     ctx: ExecutionContext,
-    session: Session | undefined
+    session: Session | undefined,
   ) {
     const req = ctx
       .switchToHttp()

@@ -13,14 +13,14 @@ export abstract class ShopifyAuthBaseController {
     protected readonly accessMode: AccessMode,
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
-    protected readonly sessionStorage: SessionStorage
+    protected readonly sessionStorage: SessionStorage,
   ) {}
 
   @Get('auth')
   async auth(
     @Query('shop') domain: string,
     @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Res() res: ServerResponse,
   ) {
     let globalPrefix = '';
     const { basePath = '', useGlobalPrefix } = this.options;
@@ -45,7 +45,7 @@ export abstract class ShopifyAuthBaseController {
   async callback(
     @Query('host') host: string,
     @Req() req: IncomingMessage,
-    @Res() res: ServerResponse
+    @Res() res: ServerResponse,
   ) {
     const { headers = {}, session } = await this.shopifyApi.auth.callback({
       rawRequest: req,

@@ -16,7 +16,7 @@ export class ShopifyAuthExceptionFilter
     private readonly moduleRef: ModuleRef,
     private readonly appConfig: ApplicationConfig,
     @InjectShopify()
-    private readonly shopifyApi: Shopify
+    private readonly shopifyApi: Shopify,
   ) {}
 
   async catch(exception: ShopifyAuthException, host: ArgumentsHost) {
@@ -51,7 +51,7 @@ export class ShopifyAuthExceptionFilter
             message: exception.message,
             statusCode: exception.getStatus(),
             timestamp: new Date().toISOString(),
-          })
+          }),
         );
     }
   }
@@ -72,7 +72,7 @@ export class ShopifyAuthExceptionFilter
   private getShopifyOptionsFor(accessMode: AccessMode) {
     return this.moduleRef.get<ShopifyAuthModuleOptions>(
       getOptionsToken(accessMode),
-      { strict: false }
+      { strict: false },
     );
   }
 }

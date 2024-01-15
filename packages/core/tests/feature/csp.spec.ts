@@ -60,7 +60,7 @@ describe('ShopifyCspMiddleware', () => {
         .get('/?shop=shop1.myshopify.com')
         .expect(
           'Content-Security-Policy',
-          'frame-ancestors https://shop1.myshopify.com https://admin.shopify.com;'
+          'frame-ancestors https://shop1.myshopify.com https://admin.shopify.com;',
         )
         .expect(200);
     });

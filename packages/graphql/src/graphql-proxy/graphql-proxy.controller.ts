@@ -16,7 +16,7 @@ export class ShopifyGraphqlProxyController {
   @Post()
   async proxy(
     @Req() req: ShopifySessionRequest<IncomingMessage> & { body: string },
-    @Res() res: ServerResponse
+    @Res() res: ServerResponse,
   ) {
     const session = req.shopifySession;
     if (!session) {

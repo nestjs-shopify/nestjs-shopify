@@ -6,7 +6,7 @@ export class ShopifyAuthException extends Error {
   constructor(
     message = 'Unauthorized',
     public readonly shop: string,
-    public readonly accessMode: AccessMode
+    public readonly accessMode: AccessMode,
   ) {
     super(message);
     this.status = 403;
