@@ -3,6 +3,7 @@ import { shopifyApi } from '@shopify/shopify-api';
 import {
   SHOPIFY_API_CONTEXT,
   SHOPIFY_API_SESSION_STORAGE,
+  SHOPIFY_PRIVATE_APP_SHARED_SECRET,
 } from './core.constants';
 import { ShopifyCoreOptions } from './core.interfaces';
 import {
@@ -22,11 +23,17 @@ import {
       useFactory: (options: ShopifyCoreOptions) => options.sessionStorage,
       inject: [SHOPIFY_CORE_OPTIONS],
     },
+    {
+      provide: SHOPIFY_PRIVATE_APP_SHARED_SECRET,
+      useFactory: (options: ShopifyCoreOptions) => options.getSharedSecret ?? ((domain: string) => undefined),
+      inject: [SHOPIFY_CORE_OPTIONS],
+    },
   ],
   exports: [
     SHOPIFY_API_CONTEXT,
     SHOPIFY_CORE_OPTIONS,
     SHOPIFY_API_SESSION_STORAGE,
+    SHOPIFY_PRIVATE_APP_SHARED_SECRET
   ],
 })
 export class ShopifyCoreModule extends ConfigurableModuleClass {}

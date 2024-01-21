@@ -16,15 +16,17 @@ import {
 } from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { IncomingMessage } from 'http';
-import { InjectShopify } from '../core.decorators';
+import { InjectGetSharedSecret, InjectShopify } from '../core.decorators';
 import { SHOPIFY_HMAC_KEY } from './hmac.constants';
 import { ShopifyHmacType } from './hmac.enums';
+import { SharedSecretGetter } from "../core.interfaces";
 
 @Injectable()
 export class ShopifyHmacGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     @InjectShopify() private readonly shopifyApi: Shopify,
+    @InjectGetSharedSecret() private readonly getSharedSecret: SharedSecretGetter,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -45,7 +47,9 @@ export class ShopifyHmacGuard implements CanActivate {
     }
   }
 
-  private validateHmacHeader(req: RawBodyRequest<IncomingMessage>) {
+  private async validateHmacHeader(req: RawBodyRequest<IncomingMessage>) {
+    let authenticated: boolean = false;
+
     const expectedHmac = this.getHmacFromHeaders(req);
 
     if (!req.rawBody) {
@@ -53,6 +57,7 @@ export class ShopifyHmacGuard implements CanActivate {
         `Missing raw body in request. Ensure that 'rawBody' option is set when initializing Nest application.`,
       );
     }
+    const hmacBuffer = Buffer.from(expectedHmac);
 
     const generatedHash = createHmac(
       'sha256',
@@ -61,17 +66,29 @@ export class ShopifyHmacGuard implements CanActivate {
       .update(req.rawBody)
       .digest('base64');
     const generatedHashBuffer = Buffer.from(generatedHash);
-    const hmacBuffer = Buffer.from(expectedHmac);
 
-    if (generatedHashBuffer.length !== hmacBuffer.length) {
-      throw new UnauthorizedException('Webhook HMAC validation failed.');
+    if (generatedHashBuffer.length === hmacBuffer.length && timingSafeEqual(generatedHashBuffer, hmacBuffer)) {
+      authenticated = true;
+    } else {
+      const domainFromHeader = this.getDomainFromHeaders(req);
+
+      const sharedSecret = await this.getSharedSecret(domainFromHeader);
+      if (sharedSecret) {
+        const sharedSecretGeneratedHash = createHmac(
+          'sha256',
+          sharedSecret,
+        )
+          .update(req.rawBody)
+          .digest('base64');
+
+        const sharedSecretGeneratedHashBuffer = Buffer.from(sharedSecretGeneratedHash);
+        if (sharedSecretGeneratedHashBuffer.length === hmacBuffer.length && timingSafeEqual(sharedSecretGeneratedHashBuffer, hmacBuffer)) {
+          authenticated = true;
+        }
+      }
     }
 
-    if (!timingSafeEqual(generatedHashBuffer, hmacBuffer)) {
-      throw new UnauthorizedException('Webhook HMAC validation failed.');
-    }
-
-    return true;
+    return authenticated;
   }
 
   private async validateHmacQuery(req: IncomingMessage) {
@@ -86,6 +103,26 @@ export class ShopifyHmacGuard implements CanActivate {
     } catch (err) {
       throw new UnauthorizedException(err);
     }
+  }
+
+  private getDomainFromHeaders(req: IncomingMessage): string {
+    const domainHeader =
+      req.headers[ShopifyHeader.Domain] ||
+      req.headers[ShopifyHeader.Domain.toLowerCase()];
+
+    if (!domainHeader) {
+      throw new BadRequestException(
+        `Missing required HTTP header: ${ShopifyHeader.Domain}`,
+      );
+    }
+
+    if (typeof domainHeader !== 'string') {
+      throw new BadRequestException(
+        `Malformed '${ShopifyHeader.Domain}' provided: ${domainHeader}`,
+      );
+    }
+
+    return domainHeader;
   }
 
   private getHmacFromHeaders(req: IncomingMessage): string {
