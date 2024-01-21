@@ -1,5 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
+import { ShopifyHmacModule } from '@nestjs-shopify/core';
 import { ShopifyWebhooksMetadataAccessor } from './webhooks-metadata.accessor';
 import { SHOPIFY_WEBHOOKS_OPTIONS } from './webhooks.constants';
 import { ShopifyWebhooksController } from './webhooks.controller';
@@ -13,7 +14,7 @@ import { shopifyWebhooksControllerPathHackProvider } from './webhooks.providers'
 import { ShopifyWebhooksService } from './webhooks.service';
 
 @Module({
-  imports: [DiscoveryModule],
+  imports: [DiscoveryModule, ShopifyHmacModule],
   controllers: [ShopifyWebhooksController],
   providers: [
     ShopifyWebhooksService,
