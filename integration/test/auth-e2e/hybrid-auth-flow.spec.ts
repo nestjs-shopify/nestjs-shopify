@@ -68,7 +68,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
         })
         .expect(302);
 
-      expect(res.headers.location).toEqual(authRedirectUrl);
+      expect(res.headers['location']).toEqual(authRedirectUrl);
     });
   });
 
@@ -116,7 +116,9 @@ describe('Hybrid Auth Flow (e2e)', () => {
         .query(query)
         .expect(302);
 
-      expect(res.headers.location).toEqual(`/?shop=${TEST_SHOP}&host=${HOST}`);
+      expect(res.headers['location']).toEqual(
+        `/?shop=${TEST_SHOP}&host=${HOST}`,
+      );
     });
   });
 
@@ -147,7 +149,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
         })
         .expect(302);
 
-      expect(res.headers.location).toEqual(authRedirectUrl);
+      expect(res.headers['location']).toEqual(authRedirectUrl);
     });
   });
 
@@ -195,7 +197,9 @@ describe('Hybrid Auth Flow (e2e)', () => {
         .query(query)
         .expect(302);
 
-      expect(res.headers.location).toEqual(`/?shop=${TEST_SHOP}&host=${HOST}`);
+      expect(res.headers['location']).toEqual(
+        `/?shop=${TEST_SHOP}&host=${HOST}`,
+      );
     });
   });
 });
