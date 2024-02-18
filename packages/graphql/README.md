@@ -7,14 +7,18 @@ A NestJS module for exposing a Shopify GraphQL Admin API proxy. The `ShopifyGrap
 Install required dependencies and this package using NPM:
 
 ```
-npm i @shopify/shopify-api @nestjs-shopify/core @nestjs-shopify/auth @nestjs-shopify/graphql
+npm i @shopify/shopify-api @nestjs-shopify/core @shopify-nestjs/express @nestjs-shopify/auth @nestjs-shopify/graphql
 ```
 
 or using Yarn:
 
 ```
-yarn add @shopify/shopify-api @nestjs-shopify/core @nestjs-shopify/auth @nestjs-shopify/graphql
+yarn add @shopify/shopify-api @nestjs-shopify/core @shopify-nestjs/fastify @nestjs-shopify/auth @nestjs-shopify/graphql
 ```
+
+> **Note**
+>
+> Install `@nestjs-shopify/express` if you are using Express, or `@nestjs-shopify/fastify` if you are using Fastify.
 
 # Usage
 
@@ -23,12 +27,12 @@ From your application root module, import the `ShopifyGraphqlProxyModule`:
 ```ts
 // app.module.ts
 import { ShopifyAuthModule } from '@nestjs-shopify/auth';
-import { ShopifyCoreModule } from '@nestjs-shopify/core';
+import { ShopifyExpressModule } from '@nestjs-shopify/express';
 import { ShopifyGraphqlProxyModule } from '@nestjs-shopify/graphql';
 
 @Module({
   imports: [
-    ShopifyCoreModule.forRoot({
+    ShopifyExpressModule.forRoot({
       apiKey: 'foo',
       apiSecret: 'bar',
       apiVersion: ApiVersion.Unstable,
