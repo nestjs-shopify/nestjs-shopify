@@ -19,8 +19,7 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "packages/fastify/**/*.ts",
-          "packages/fastify/package.json"
+          "packages/fastify/**/*.ts"
         ]
       }
     },
