@@ -8,7 +8,7 @@ import { Test } from '@nestjs/testing';
 import { Session, Shopify } from '@shopify/shopify-api';
 import * as jwt from 'jsonwebtoken';
 import * as request from 'supertest';
-import { AppModule } from '../../src/with-hybrid-auth/app.module';
+import { ExpressAppModule } from '../../src/with-hybrid-auth/express-app.module';
 import { MemorySessionStorage } from '../../src/shopify-initializer/session-storage/memory.session-storage';
 
 const TEST_SHOP = 'test.myshopify.io';
@@ -20,7 +20,7 @@ describe('Hybrid Authz (e2e)', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [ExpressAppModule],
     })
       .overrideProvider(MemorySessionStorage)
       .useValue({

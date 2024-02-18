@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 import { AuthQuery, Shopify } from '@shopify/shopify-api';
 import { IncomingMessage, ServerResponse } from 'http';
 import * as request from 'supertest';
-import { AppModule } from '../../src/with-hybrid-auth/app.module';
+import { ExpressAppModule } from '../../src/with-hybrid-auth/express-app.module';
 
 const randomBytes = new Uint8Array(Buffer.from('random-bytes'));
 const nonce = '470019581615';
@@ -24,7 +24,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [ExpressAppModule],
     }).compile();
 
     app = await module.createNestApplication().init();

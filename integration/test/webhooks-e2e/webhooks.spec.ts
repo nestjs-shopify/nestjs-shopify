@@ -5,7 +5,7 @@ import { Test } from '@nestjs/testing';
 import { ShopifyHeader } from '@shopify/shopify-api';
 import { createHmac } from 'crypto';
 import * as request from 'supertest';
-import { AppModule } from '../../src/with-webhooks/app.module';
+import { ExpressAppModule } from '../../src/with-webhooks/express-app.module';
 
 function hmac(secret: string, body: string) {
   return createHmac('sha256', secret).update(body, 'utf8').digest('base64');
@@ -18,7 +18,7 @@ describe('Webhooks (e2e)', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [ExpressAppModule],
     }).compile();
 
     app = module.createNestApplication({ rawBody: true });

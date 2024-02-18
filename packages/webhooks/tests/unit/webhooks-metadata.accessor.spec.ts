@@ -1,10 +1,10 @@
 import '@shopify/shopify-api/adapters/node';
+import { Scope } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { WebhookHandler } from '../../src/webhooks.decorators';
 import { ShopifyWebhooksMetadataAccessor } from '../../src/webhooks-metadata.accessor';
 import { ShopifyWebhooksModule } from '../../src/webhooks.module';
 import { MockShopifyCoreModule } from '../helpers/mock-shopify-core-module';
-import { Scope } from '@nestjs/common';
 
 @WebhookHandler('PRODUCTS_CREATE')
 class Handler1 {}

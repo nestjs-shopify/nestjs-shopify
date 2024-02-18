@@ -9,29 +9,28 @@ import {
   RawBodyRequest,
   Req,
 } from '@nestjs/common';
-import {
-  InjectShopify,
-  ShopifyHmac,
-  ShopifyHmacType,
-} from '@nestjs-shopify/core';
+import { InjectShopify, ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import {
   HttpWebhookHandlerWithCallback,
   Shopify,
   ShopifyHeader,
 } from '@shopify/shopify-api';
-import type { IncomingMessage } from 'http';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
+import { ShopifyHmac, ShopifyHmacType } from '@nestjs-shopify/common';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
   private readonly logger = new Logger('Webhook');
 
-  constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
+  constructor(
+    @InjectShopify() private readonly shopifyApi: Shopify,
+    private readonly shopifyHttpAdapter: ShopifyHttpAdapter,
+  ) {}
 
   @Post()
   @HttpCode(200)
   @ShopifyHmac(ShopifyHmacType.Header)
-  async handle(@Req() req: RawBodyRequest<IncomingMessage>) {
+  async handle(@Req() req: RawBodyRequest<unknown>) {
     const { rawBody } = req;
     if (!rawBody) {
       throw new InternalServerErrorException(
@@ -65,11 +64,13 @@ export class ShopifyWebhooksController {
     );
   }
 
-  private getHeaders(req: IncomingMessage) {
+  private getHeaders(req: unknown) {
     let topic: string | string[] | undefined;
     let domain: string | string[] | undefined;
     let webhookId: string | string[] | undefined;
-    Object.entries(req.headers).map(([header, value]) => {
+    const headers = this.shopifyHttpAdapter.getHeaders(req);
+
+    Object.entries(headers).map(([header, value]) => {
       switch (header.toLowerCase()) {
         case ShopifyHeader.Topic.toLowerCase():
           topic = value;

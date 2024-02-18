@@ -7,7 +7,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
-import type { IncomingMessage } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthExceptionFilter } from './auth.filter';
 import { ShopifyAuthGuard } from './auth.guard';
@@ -25,9 +24,7 @@ export const CurrentSession = createParamDecorator<
   ExecutionContext,
   Session | undefined
 >((_data: unknown, ctx: ExecutionContext) => {
-  const req = ctx
-    .switchToHttp()
-    .getRequest<ShopifySessionRequest<IncomingMessage>>();
+  const req = ctx.switchToHttp().getRequest<ShopifySessionRequest<unknown>>();
 
   return req.shopifySession;
 });

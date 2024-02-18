@@ -3,36 +3,33 @@ import {
   ShopifySessionRequest,
   UseShopifyAuth,
 } from '@nestjs-shopify/auth';
-import { InjectShopify } from '@nestjs-shopify/core';
-import { Controller, ForbiddenException, Post, Req, Res } from '@nestjs/common';
-import { Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
+import { ShopifyHttpAdapter } from '@nestjs-shopify/core';
+import {
+  Controller,
+  ForbiddenException,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 
 @Controller('graphql')
 @UseShopifyAuth(AccessMode.Online)
 export class ShopifyGraphqlProxyController {
-  constructor(@InjectShopify() private readonly shopifyApi: Shopify) {}
+  constructor(private readonly shopifyHttpAdapter: ShopifyHttpAdapter) {}
 
   @Post()
+  @HttpCode(HttpStatus.OK)
   async proxy(
-    @Req() req: ShopifySessionRequest<IncomingMessage> & { body: string },
-    @Res() res: ServerResponse,
+    @Req() req: ShopifySessionRequest<unknown>,
+    @Res({ passthrough: true }) res: unknown,
   ) {
     const session = req.shopifySession;
     if (!session) {
       throw new ForbiddenException('No session found');
     }
 
-    const { body, headers } = await this.shopifyApi.clients.graphqlProxy({
-      rawBody: req.body,
-      session,
-    });
-
-    // NOTE: the Shopify GraphQL client returns gzip encoding header. Which we do not
-    // use. Remove it otherwise the apps cannot parse the JSON response.
-    delete headers['Content-Encoding'];
-
-    res.writeHead(200, headers);
-    res.end(JSON.stringify(body));
+    return this.shopifyHttpAdapter.graphqlProxy(req, res, session);
   }
 }

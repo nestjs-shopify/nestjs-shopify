@@ -16,7 +16,10 @@
     "baseUrl": ".",
     "paths": {
       "@nestjs-shopify/auth": ["packages/auth/src/index.ts"],
+      "@nestjs-shopify/common": ["packages/common/src/index.ts"],
       "@nestjs-shopify/core": ["packages/core/src/index.ts"],
+      "@nestjs-shopify/express": ["packages/express/src/index.ts"],
+      "@nestjs-shopify/fastify": ["packages/fastify/src/index.ts"],
       "@nestjs-shopify/graphql": ["packages/graphql/src/index.ts"],
       "@nestjs-shopify/webhooks": ["packages/webhooks/src/index.ts"]
     }

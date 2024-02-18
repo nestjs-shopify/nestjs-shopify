@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ShopifyInitializerModule } from '../shopify-initializer/shopify-initializer.module';
 import { ShopifyOfflineModule } from '../shopify-offline/shopify-offline.module';
 import { ShopifyOnlineModule } from '../shopify-online/shopify-online.module';
 import { HybridController } from './hybrid.controller';
+import { FastifyInitializerModule } from '../shopify-initializer/fastify-initializer.module';
 
 @Module({
   imports: [
-    ShopifyInitializerModule,
+    FastifyInitializerModule,
     ShopifyOfflineModule,
     ShopifyOnlineModule,
   ],
   controllers: [HybridController],
 })
-export class AppModule {}
+export class FastifyAppModule {}

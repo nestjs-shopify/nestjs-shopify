@@ -5,13 +5,12 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import { AuthQuery, shopifyApi, ShopifyHeader } from '@shopify/shopify-api';
-import { SHOPIFY_API_CONTEXT } from '../../src/core.constants';
 import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
 import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';
-import { ShopifyHmacModule } from '../../src/hmac/hmac.module';
 import {
   mockedShopifyCoreOptions,
   MockShopifyCoreModule,
@@ -30,7 +29,8 @@ describe('ShopifyHmacGuard', () => {
     jest.setSystemTime(fakedTime);
 
     const module = await Test.createTestingModule({
-      imports: [MockShopifyCoreModule, ShopifyHmacModule],
+      imports: [MockShopifyCoreModule],
+      providers: [ShopifyHmacGuard],
     })
       .overrideProvider(Reflector)
       .useValue({
