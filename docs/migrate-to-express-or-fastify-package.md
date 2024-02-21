@@ -1,4 +1,4 @@
-# Migrating to `@nestjs-shopify/express`
+# Migrating to `@nestjs-shopify/express` or `@nestjs-shopify/fastify`
 
 The `@nestjs-shopify/core` package has been deprecated in favor of `@nestjs-shopify/express` or `@nestjs-shopify/fastify`. The new packages are designed to work with the respective web frameworks and provide a more flexible and powerful API.
 
@@ -55,7 +55,7 @@ or using Yarn:
 yarn add @nestjs-shopify/fastify
 ```
 
-You will have to replace all occurences to `ShopifyFastifyModule` with `ShopifyExpressModule` in your application root module:
+You will have to replace all occurences to `ShopifyCoreModule` with `ShopifyFastifyModule` in your application root module:
 
 ```patch
 // app.module.ts

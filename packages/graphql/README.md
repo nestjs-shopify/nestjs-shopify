@@ -13,7 +13,7 @@ npm i @shopify/shopify-api @nestjs-shopify/core @shopify-nestjs/express @nestjs-
 or using Yarn:
 
 ```
-yarn add @shopify/shopify-api @nestjs-shopify/core @shopify-nestjs/fastify @nestjs-shopify/auth @nestjs-shopify/graphql
+yarn add @shopify/shopify-api @nestjs-shopify/core @shopify-nestjs/express @nestjs-shopify/auth @nestjs-shopify/graphql
 ```
 
 > **Note**
