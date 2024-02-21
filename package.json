@@ -57,8 +57,11 @@
   },
   "workspaces": [
     "packages/core",
+    "packages/common",
     "packages/auth",
     "packages/webhooks",
-    "packages/graphql"
+    "packages/graphql",
+    "packages/fastify",
+    "packages/express"
   ]
 }
