@@ -1,5 +1,11 @@
 # @nestjs-shopify/core
 
+## 4.0.0
+
+### Major Changes
+
+- 71d76a0: Rewrite core to allow Express and Fastify specific modules. See [upgrade guide](/docs/migrate-to-express-package.md)
+
 ## 3.3.0
 
 ### Minor Changes
