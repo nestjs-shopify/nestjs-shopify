@@ -9,6 +9,7 @@ import {
   RawBodyRequest,
   Req,
 } from '@nestjs/common';
+import { ShopifyHmac, ShopifyHmacType } from '@nestjs-shopify/common';
 import { InjectShopify, ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import {
   HttpWebhookHandlerWithCallback,
@@ -16,7 +17,6 @@ import {
   ShopifyHeader,
 } from '@shopify/shopify-api';
 import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
-import { ShopifyHmac, ShopifyHmacType } from '@nestjs-shopify/common';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
