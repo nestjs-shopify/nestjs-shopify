@@ -6,7 +6,9 @@ export const {
   OPTIONS_TYPE,
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN: SHOPIFY_CORE_OPTIONS,
-} = new ConfigurableModuleBuilder<ShopifyCoreOptions, 'forRoot'>()
+} = new ConfigurableModuleBuilder<ShopifyCoreOptions, 'forRoot'>({
+  moduleName: 'ShopifyCore',
+})
   .setClassMethodName('forRoot')
   .setExtras({}, (definition) => ({
     ...definition,

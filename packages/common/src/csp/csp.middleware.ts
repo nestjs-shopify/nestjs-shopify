@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import { InjectShopify } from '../core.decorators';
+import { InjectShopify } from '@nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
 
 interface RequestLike {

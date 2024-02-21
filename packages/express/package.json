@@ -1,0 +1,26 @@
+{
+  "name": "@nestjs-shopify/express",
+  "version": "1.0.0",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^9.0.0 || ^10.0.0",
+    "@nestjs-shopify/core": "^3.0.0",
+    "express": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@nestjs/common": {
+      "optional": false
+    },
+    "@nestjs-shopify/core": {
+      "optional": false
+    },
+    "express": {
+      "optional": false
+    }
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts"
+}

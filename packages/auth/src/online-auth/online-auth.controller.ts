@@ -4,6 +4,7 @@ import {
   InjectShopify,
   InjectShopifySessionStorage,
   SessionStorage,
+  ShopifyHttpAdapter,
 } from '@nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
 import { AccessMode, ShopifyAuthModuleOptions } from '../auth.interfaces';
@@ -18,7 +19,15 @@ export class ShopifyAuthOnlineController extends ShopifyAuthBaseController {
     options: ShopifyAuthModuleOptions,
     @InjectShopifySessionStorage() sessionStorage: SessionStorage,
     appConfig: ApplicationConfig,
+    shopifyHttpAdapter: ShopifyHttpAdapter,
   ) {
-    super(shopifyApi, AccessMode.Online, options, appConfig, sessionStorage);
+    super(
+      shopifyApi,
+      AccessMode.Online,
+      options,
+      appConfig,
+      sessionStorage,
+      shopifyHttpAdapter,
+    );
   }
 }

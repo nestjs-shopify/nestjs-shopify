@@ -1,5 +1,7 @@
 # @nestjs-shopify/core
 
+## THIS PACKAGE SHOULD NOT BE USED DIRECTLY. Use `@nestjs-shopify/express` or `@nestjs-shopify/fastify` instead.
+
 A wrapper for [@shopify/shopify-node-api](https://github.com/Shopify/shopify-node-api) to setup your Shopify context in a NestJS application.
 
 # Installation
@@ -120,35 +122,6 @@ export class MyRedisSessionStorage implements SessionStorage {
 
   async findSessionsByShop(shop: string): Promise<Session[]> {
     // ... implement your redis multi-find logic
-  }
-}
-```
-
-# CSP middleware
-
-The library provides a CSP middleware that you can use to protect your application from XSS attacks. The middleware is not applied by default. To make use of this middleware, add the following to your application root module:
-
-```ts
-// app.module.ts
-import { ShopifyCoreModule, ShopifyCspMiddleware } from '@nestjs-shopify/core';
-import { Module, NestModule } from '@nestjs/common';
-
-@Module({
-  imports: [
-    ShopifyCoreModule.forRoot({ ... }),
-    // ...
-  ],
-})
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // Apply the middleware to all routes
-    consumer.apply(ShopifyCspMiddleware).forRoutes('*');
-
-    // Or apply the middleware to specific routes
-    consumer
-      .apply(ShopifyCspMiddleware)
-      .exclude('cats')
-      .forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
   }
 }
 ```

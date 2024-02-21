@@ -4,10 +4,10 @@ import {
   ExecutionContext,
   Injectable,
   InternalServerErrorException,
-  RawBodyRequest,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { InjectShopify, ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import {
   AuthQuery,
   InvalidHmacError,
@@ -15,8 +15,6 @@ import {
   ShopifyHeader,
 } from '@shopify/shopify-api';
 import { createHmac, timingSafeEqual } from 'crypto';
-import { IncomingMessage } from 'http';
-import { InjectShopify } from '../core.decorators';
 import { SHOPIFY_HMAC_KEY } from './hmac.constants';
 import { ShopifyHmacType } from './hmac.enums';
 
@@ -25,6 +23,7 @@ export class ShopifyHmacGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     @InjectShopify() private readonly shopifyApi: Shopify,
+    private readonly shopifyHttpAdapter: ShopifyHttpAdapter,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -33,22 +32,20 @@ export class ShopifyHmacGuard implements CanActivate {
       return true;
     }
 
-    const req: RawBodyRequest<IncomingMessage> = context
-      .switchToHttp()
-      .getRequest();
-
     switch (hmacType) {
       case ShopifyHmacType.Query:
-        return this.validateHmacQuery(req);
+        return this.validateHmacQuery(context);
       case ShopifyHmacType.Header:
-        return this.validateHmacHeader(req);
+        return this.validateHmacHeader(context);
     }
   }
 
-  private validateHmacHeader(req: RawBodyRequest<IncomingMessage>) {
-    const expectedHmac = this.getHmacFromHeaders(req);
+  private validateHmacHeader(context: ExecutionContext) {
+    const rawBody =
+      this.shopifyHttpAdapter.getRawBodyFromExecutionContext(context);
+    const expectedHmac = this.getHmacFromHeaders(context);
 
-    if (!req.rawBody) {
+    if (!rawBody) {
       throw new InternalServerErrorException(
         `Missing raw body in request. Ensure that 'rawBody' option is set when initializing Nest application.`,
       );
@@ -58,7 +55,7 @@ export class ShopifyHmacGuard implements CanActivate {
       'sha256',
       this.shopifyApi.config.apiSecretKey,
     )
-      .update(req.rawBody)
+      .update(rawBody)
       .digest('base64');
     const generatedHashBuffer = Buffer.from(generatedHash);
     const hmacBuffer = Buffer.from(expectedHmac);
@@ -74,8 +71,11 @@ export class ShopifyHmacGuard implements CanActivate {
     return true;
   }
 
-  private async validateHmacQuery(req: IncomingMessage) {
-    const query = (req as unknown as { query: AuthQuery }).query;
+  private async validateHmacQuery(context: ExecutionContext) {
+    const query =
+      this.shopifyHttpAdapter.getQueryParamsFromExecutionContext<AuthQuery>(
+        context,
+      );
 
     try {
       if (await this.shopifyApi.utils.validateHmac(query)) {
@@ -88,10 +88,11 @@ export class ShopifyHmacGuard implements CanActivate {
     }
   }
 
-  private getHmacFromHeaders(req: IncomingMessage): string {
+  private getHmacFromHeaders(context: ExecutionContext): string {
+    const headers =
+      this.shopifyHttpAdapter.getHeadersFromExecutionContext(context);
     const hmacHeader =
-      req.headers[ShopifyHeader.Hmac] ||
-      req.headers[ShopifyHeader.Hmac.toLowerCase()];
+      headers[ShopifyHeader.Hmac] || headers[ShopifyHeader.Hmac.toLowerCase()];
 
     if (!hmacHeader) {
       throw new BadRequestException(
@@ -109,11 +110,11 @@ export class ShopifyHmacGuard implements CanActivate {
   }
 
   private getShopifyHmacTypeFromContext(
-    ctx: ExecutionContext,
+    context: ExecutionContext,
   ): ShopifyHmacType | undefined {
     return this.reflector.getAllAndOverride<ShopifyHmacType | undefined>(
       SHOPIFY_HMAC_KEY,
-      [ctx.getHandler(), ctx.getClass()],
+      [context.getHandler(), context.getClass()],
     );
   }
 }

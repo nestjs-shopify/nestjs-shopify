@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 *.sqlite
+/.nx
 
 # dependencies
 node_modules

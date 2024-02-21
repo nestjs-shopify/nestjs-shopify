@@ -2,6 +2,7 @@ import {
   InjectShopify,
   InjectShopifySessionStorage,
   SessionStorage,
+  ShopifyHttpAdapter,
 } from '@nestjs-shopify/core';
 import {
   CanActivate,
@@ -11,14 +12,10 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
 import { AUTH_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
-import {
-  getShopFromRequest,
-  RequestLike,
-} from './utils/get-shop-from-request.util';
+import { getShopFromRequest } from './utils/get-shop-from-request.util';
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -30,6 +27,7 @@ export class ShopifyAuthGuard implements CanActivate {
     @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
     private readonly reflector: Reflector,
+    private readonly shopifyHttpAdapter: ShopifyHttpAdapter,
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -43,8 +41,7 @@ export class ShopifyAuthGuard implements CanActivate {
       return true;
     }
 
-    const req = ctx.switchToHttp().getRequest<IncomingMessage>();
-    const shop = getShopFromRequest(req as RequestLike, session);
+    const shop = getShopFromRequest(ctx, this.shopifyHttpAdapter, session);
 
     if (shop) {
       throw new ShopifyAuthException(
@@ -61,28 +58,21 @@ export class ShopifyAuthGuard implements CanActivate {
     ctx: ExecutionContext,
     session: Session | undefined,
   ) {
-    const req = ctx
-      .switchToHttp()
-      .getRequest<ShopifySessionRequest<IncomingMessage>>();
+    const req = ctx.switchToHttp().getRequest<ShopifySessionRequest<unknown>>();
     req.shopifySession = session;
   }
 
   private async getSessionDataFromContext(ctx: ExecutionContext) {
     const accessMode = this.getAccessModeFromContext(ctx);
 
-    const http = ctx.switchToHttp();
-    const req = http.getRequest<IncomingMessage>();
-    const res = http.getResponse<ServerResponse>();
-
     const isOnline = accessMode === AccessMode.Online;
     let session: Session | undefined;
 
     try {
-      const sessionId = await this.shopifyApi.session.getCurrentId({
-        rawRequest: req,
-        rawResponse: res,
+      const sessionId = await this.shopifyHttpAdapter.getCurrentId(
+        ctx,
         isOnline,
-      });
+      );
 
       if (!sessionId) {
         throw new InvalidSession('No session found');

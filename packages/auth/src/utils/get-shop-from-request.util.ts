@@ -1,30 +1,44 @@
-import { Logger } from '@nestjs/common';
+import { ExecutionContext, Logger } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
 import { decodeSessionToken } from './decode-session-token.util';
-
-export interface RequestLike {
-  headers: Record<string, string | undefined>;
-  url: string | undefined;
-}
+import { ShopifyHttpAdapter } from '@nestjs-shopify/core';
 
 export const getShopFromRequest = (
-  req: RequestLike,
+  ctx: ExecutionContext,
+  shopifyHttpAdapter: ShopifyHttpAdapter,
   session: Session | undefined,
-): string | undefined =>
-  session?.shop || getShopFromAuthHeader(req) || getShopFromQuery(req);
-
-function getShopFromQuery(req: RequestLike): string | undefined {
-  const query = Object.fromEntries(
-    new URLSearchParams(req.url?.split('?')?.[1] || '').entries(),
+): string | undefined => {
+  return (
+    session?.shop ||
+    getShopFromAuthHeader(ctx, shopifyHttpAdapter) ||
+    getShopFromQuery(ctx, shopifyHttpAdapter)
   );
+};
 
-  return query['shop'];
+function getShopFromQuery(
+  ctx: ExecutionContext,
+  shopifyHttpAdapter: ShopifyHttpAdapter,
+): string | undefined {
+  return shopifyHttpAdapter.getQueryParamFromExecutionContext(
+    ctx,
+    'shop',
+  ) as string;
 }
 
-function getShopFromAuthHeader(req: RequestLike): string | undefined {
-  const authHeader = req.headers['authorization'];
+function getShopFromAuthHeader(
+  ctx: ExecutionContext,
+  shopifyHttpAdapter: ShopifyHttpAdapter,
+): string | undefined {
+  let authHeader = shopifyHttpAdapter.getHeaderFromExecutionContext(
+    ctx,
+    'authorization',
+  );
   if (!authHeader) {
     return;
+  }
+
+  if (Array.isArray(authHeader)) {
+    authHeader = authHeader[0];
   }
 
   const matches = authHeader?.match(/Bearer (.*)/);

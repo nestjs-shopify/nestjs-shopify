@@ -1,7 +1,7 @@
-import { ShopifyCoreModule } from '@nestjs-shopify/core';
 import { ApiVersion } from '@shopify/shopify-api';
 import { mockLogger } from './mock-logger';
 import { mockSessionStorage } from './mock-session-storage';
+import { ShopifyExpressModule } from '@nestjs-shopify/express';
 
 export const mockedShopifyCoreOptions = {
   apiKey: 'foo',
@@ -11,11 +11,11 @@ export const mockedShopifyCoreOptions = {
   hostName: 'localhost:3001',
   hostScheme: 'http' as const,
   isEmbeddedApp: true,
-  isPrivateApp: false,
+  isCustomStoreApp: false,
   sessionStorage: mockSessionStorage,
   logger: mockLogger,
 };
 
-export const MockShopifyCoreModule = ShopifyCoreModule.forRoot(
+export const MockShopifyCoreModule = ShopifyExpressModule.forRoot(
   mockedShopifyCoreOptions,
 );

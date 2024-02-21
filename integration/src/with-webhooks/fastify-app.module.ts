@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ShopifyWebhooksModule } from '@nestjs-shopify/webhooks';
-import { ShopifyInitializerModule } from '../shopify-initializer/shopify-initializer.module';
+import { FastifyInitializerModule } from '../shopify-initializer/fastify-initializer.module';
 import { handlers } from './handlers';
 
 @Module({
   imports: [
-    ShopifyInitializerModule,
+    FastifyInitializerModule,
     ShopifyWebhooksModule.forRootAsync({
       useFactory: () => ({
         path: 'webhooks',
@@ -14,4 +14,4 @@ import { handlers } from './handlers';
   ],
   providers: [...handlers],
 })
-export class AppModule {}
+export class FastifyAppModule {}

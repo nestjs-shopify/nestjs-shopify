@@ -1,8 +1,7 @@
-import { SessionStorage } from '@nestjs-shopify/core';
+import { SessionStorage, ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import type { IncomingMessage, ServerResponse } from 'http';
 import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
@@ -14,13 +13,14 @@ export abstract class ShopifyAuthBaseController {
     protected readonly options: ShopifyAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
     protected readonly sessionStorage: SessionStorage,
+    protected readonly shopifyHttpAdapter: ShopifyHttpAdapter,
   ) {}
 
   @Get('auth')
   async auth(
     @Query('shop') domain: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
+    @Req() req: unknown,
+    @Res() res: unknown,
   ) {
     let globalPrefix = '';
     const { basePath = '', useGlobalPrefix } = this.options;
@@ -32,11 +32,9 @@ export abstract class ShopifyAuthBaseController {
 
     const callbackPath = joinUrl(globalPrefix, basePath, 'callback');
 
-    await this.shopifyApi.auth.begin({
+    await this.shopifyHttpAdapter.beginAuth(req, res, {
       callbackPath,
       isOnline,
-      rawRequest: req,
-      rawResponse: res,
       shop: domain,
     });
   }
@@ -44,26 +42,31 @@ export abstract class ShopifyAuthBaseController {
   @Get('callback')
   async callback(
     @Query('host') host: string,
-    @Req() req: IncomingMessage,
-    @Res() res: ServerResponse,
+    @Req() req: unknown,
+    @Res() res: unknown,
   ) {
-    const { headers = {}, session } = await this.shopifyApi.auth.callback({
-      rawRequest: req,
-      rawResponse: res,
-    });
+    const rawRequest = this.shopifyHttpAdapter.getRawRequest(req);
+    const rawResponse = this.shopifyHttpAdapter.getRawResponse(res);
+
+    const { headers = {}, session } =
+      await this.shopifyHttpAdapter.beginCallback(req, res);
 
     if (session) {
       await this.sessionStorage.storeSession(session);
 
       if (this.options.afterAuthHandler) {
-        await this.options.afterAuthHandler.afterAuth(req, res, session);
+        await this.options.afterAuthHandler.afterAuth(
+          rawRequest,
+          rawResponse,
+          session,
+        );
         return;
       }
 
       const { shop } = session;
 
       const redirectUrl = `/?shop=${shop}&host=${host}`;
-      res
+      rawResponse
         .writeHead(302, {
           ...headers,
           location: redirectUrl,
@@ -72,6 +75,6 @@ export abstract class ShopifyAuthBaseController {
       return;
     }
 
-    res.writeHead(401).end('Invalid session');
+    rawResponse.writeHead(401).end('Invalid session');
   }
 }

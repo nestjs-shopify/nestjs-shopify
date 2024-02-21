@@ -7,14 +7,21 @@
 </p>
 <br />
 
+## Upgrade to `@nestjs-shopify/express` or `@nestjs-shopify/fastify`
+
+See upgrade guide [here](docs/migrate-to-express-package.md).
+
 ## Packages
 
-| Package                                       | Description                                                                                                             |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| [@nestjs-shopify/core](packages/core)         | Use to initialize the `@shopify/shopify-api` package with your Shopify app credentials. Required for webhooks and auth. |
-| [@nestjs-shopify/webhooks](packages/webhooks) | Register and process Shopify webhooks.                                                                                  |
-| [@nestjs-shopify/auth](packages/auth)         | Setup online and/or offline auth and protected your NestJS API with Shopify JWT session tokens.                         |
-| [@nestjs-shopify/graphql](packages/graphql)   | Setup a Shopify GraphQL Admin API proxy that is automatically setup to use online session tokens.                       |
+| Package                                       | Description                                                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [@nestjs-shopify/express](packages/express)   | Initialize the `@shopify/shopify-api` package with your Express NestJS app.                       |
+| [@nestjs-shopify/fastify](packages/fastify)   | Initialize the `@shopify/shopify-api` package with your Fastify NestJS app.                       |
+| [@nestjs-shopify/common](packages/common)     | Common utilities (like HMAC validation, applying CSP headers, etc.)                               |
+| [@nestjs-shopify/webhooks](packages/webhooks) | Register and process Shopify webhooks.                                                            |
+| [@nestjs-shopify/auth](packages/auth)         | Setup online and/or offline auth and protected your NestJS API with Shopify JWT session tokens.   |
+| [@nestjs-shopify/graphql](packages/graphql)   | Setup a Shopify GraphQL Admin API proxy that is automatically setup to use online session tokens. |
+| [@nestjs-shopify/core](packages/core)         | Private module to be used by `@nestjs-shopify/express` or `@nestjs-shopify/fastify`               |
 
 ## Example app
 
