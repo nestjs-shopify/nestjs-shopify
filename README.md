@@ -9,7 +9,7 @@
 
 ## Upgrade to `@nestjs-shopify/express` or `@nestjs-shopify/fastify`
 
-See upgrade guide [here](docs/migrate-to-express-package.md).
+See upgrade guide [here](docs/migrate-to-express-or-fastify-package.md).
 
 ## Packages
 
