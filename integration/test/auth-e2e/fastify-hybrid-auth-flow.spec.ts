@@ -17,7 +17,7 @@ jest.mock('crypto', () => ({
 }));
 
 jest.mock('isbot', () => ({
-  default: jest.fn().mockReturnValue(false),
+  isbot: jest.fn().mockReturnValue(false),
   __esModule: true,
 }));
 
