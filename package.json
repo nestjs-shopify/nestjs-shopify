@@ -33,7 +33,7 @@
     "@nestjs/platform-express": "10.3.8",
     "@nestjs/platform-fastify": "10.3.8",
     "@nestjs/testing": "10.3.8",
-    "@shopify/shopify-api": "9.7.2",
+    "@shopify/shopify-api": "10.0.0",
     "@shopify/shopify-app-session-storage": "2.1.5",
     "@types/express": "4.17.21",
     "@types/jest": "29.5.12",
