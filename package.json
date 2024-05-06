@@ -42,7 +42,7 @@
     "@types/supertest": "6.0.2",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
-    "eslint": "8.57.0",
+    "eslint": "9.2.0",
     "eslint-config-prettier": "9.1.0",
     "express": "4.19.2",
     "fastify": "^4.26.1",
