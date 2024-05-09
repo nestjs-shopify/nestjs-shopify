@@ -1,5 +1,11 @@
 # @nestjs-shopify/graphql
 
+## 5.0.1
+
+### Patch Changes
+
+- 46810b8: chore(deps): update dependency @shopify/shopify-api to v10
+
 ## 5.0.0
 
 ### Major Changes
