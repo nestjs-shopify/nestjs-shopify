@@ -1,5 +1,11 @@
 # @nestjs-shopify/webhooks
 
+## 4.0.1
+
+### Patch Changes
+
+- 46810b8: chore(deps): update dependency @shopify/shopify-api to v10
+
 ## 4.0.0
 
 ### Major Changes
@@ -66,14 +72,17 @@
   With the upgrade to v6 of `@shopify/shopify-api`, multiple handlers for a single Shopify webhook is allowed:
 
   ```ts
-  import { ShopifyWebhookHandler, WebhookHandler } from '@nestjs-shopify/webhooks';
+  import {
+    ShopifyWebhookHandler,
+    WebhookHandler,
+  } from "@nestjs-shopify/webhooks";
 
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
 
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler2 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
@@ -94,7 +103,7 @@
   before:
 
   ```ts
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
@@ -103,7 +112,7 @@
   after:
 
   ```ts
-  @WebhookHandler('PRODUCTS_CREATE')
+  @WebhookHandler("PRODUCTS_CREATE")
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown, webhookId: string) {}
   }
