@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
-import { AUTH_MODE_KEY } from './auth.constants';
+import { ACCESS_MODE_KEY } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
 import { getShopFromRequest } from './utils/get-shop-from-request.util';
@@ -91,7 +91,7 @@ export class ShopifyAuthGuard implements CanActivate {
   }
 
   private getAccessModeFromContext(ctx: ExecutionContext) {
-    return this.reflector.getAllAndOverride<AccessMode>(AUTH_MODE_KEY, [
+    return this.reflector.getAllAndOverride<AccessMode>(ACCESS_MODE_KEY, [
       ctx.getHandler(),
       ctx.getClass(),
     ]);

@@ -1,6 +1,6 @@
 import { AccessMode } from './auth.interfaces';
 
-export const AUTH_MODE_KEY = 'shopify:authMode';
+export const ACCESS_MODE_KEY = 'shopify:accessMode';
 
 export const getOptionsToken = (mode: AccessMode) =>
   `ShopifyAuthModuleOptions(${mode})`;

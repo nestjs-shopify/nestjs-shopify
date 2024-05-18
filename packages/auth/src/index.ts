@@ -1,4 +1,4 @@
-export { AUTH_MODE_KEY, getOptionsToken } from './auth.constants';
+export { ACCESS_MODE_KEY, getOptionsToken } from './auth.constants';
 
 export * from './auth.decorators';
 export * from './auth.errors';
