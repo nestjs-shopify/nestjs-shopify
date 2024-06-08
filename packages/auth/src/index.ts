@@ -10,3 +10,5 @@ export * from './auth.module';
 export * from './online-auth/online-auth.controller';
 
 export * from './offline-auth/offline-auth.controller';
+
+export * from './token-exchange/token-exchange.service';

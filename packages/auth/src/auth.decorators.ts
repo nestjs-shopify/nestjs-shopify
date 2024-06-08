@@ -11,12 +11,16 @@ import { ACCESS_MODE_KEY } from './auth.constants';
 import { ShopifyAuthExceptionFilter } from './auth.filter';
 import { ShopifyAuthGuard } from './auth.guard';
 import { AccessMode, ShopifySessionRequest } from './auth.interfaces';
+import { ShopifyAuthTokenExchangeExceptionFilter } from './auth.token-exchange.filter';
 
 export const UseShopifyAuth = (mode = AccessMode.Online) =>
   applyDecorators(
     SetMetadata(ACCESS_MODE_KEY, mode),
     UseGuards(ShopifyAuthGuard),
-    UseFilters(ShopifyAuthExceptionFilter),
+    UseFilters(
+      ShopifyAuthExceptionFilter,
+      ShopifyAuthTokenExchangeExceptionFilter,
+    ),
   );
 
 export const CurrentSession = createParamDecorator<
