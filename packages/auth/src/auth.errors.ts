@@ -21,3 +21,13 @@ export class ShopifyAuthException extends Error {
     return this.status;
   }
 }
+
+export class ShopifyAuthTokenExchangeException extends Error {
+  constructor(
+    message = 'Invalid token',
+    public readonly shop: string,
+    public readonly accessMode: AccessMode,
+  ) {
+    super(message);
+  }
+}

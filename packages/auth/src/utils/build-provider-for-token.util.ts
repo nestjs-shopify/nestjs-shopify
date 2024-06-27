@@ -1,11 +1,11 @@
 import { Provider, Type } from '@nestjs/common';
 import {
-  ShopifyAuthModuleAsyncOptions,
+  GenericShopifyAuthModuleAsyncOptions,
   ShopifyAuthOptionsFactory,
 } from '../auth.interfaces';
 
-export function buildProvidersForToken(
-  asyncOptions: ShopifyAuthModuleAsyncOptions,
+export function buildProvidersForToken<Options>(
+  asyncOptions: GenericShopifyAuthModuleAsyncOptions<Options>,
   token: string,
 ): Provider[] {
   if (asyncOptions.useExisting || asyncOptions.useFactory) {
@@ -25,8 +25,8 @@ export function buildProvidersForToken(
   return [];
 }
 
-export function createAsyncOptionsProvider(
-  options: ShopifyAuthModuleAsyncOptions,
+export function createAsyncOptionsProvider<Options>(
+  options: GenericShopifyAuthModuleAsyncOptions<Options>,
   token: string,
 ): Provider {
   if (options.useFactory) {
@@ -39,11 +39,12 @@ export function createAsyncOptionsProvider(
 
   return {
     provide: token,
-    useFactory: (optionsFactory: ShopifyAuthOptionsFactory) =>
+    useFactory: (optionsFactory: ShopifyAuthOptionsFactory<Options>) =>
       optionsFactory.createShopifyAuthOptions(),
     inject: [
-      (options.useExisting ||
-        options.useClass) as Type<ShopifyAuthOptionsFactory>,
+      (options.useExisting || options.useClass) as Type<
+        ShopifyAuthOptionsFactory<Options>
+      >,
     ],
   };
 }

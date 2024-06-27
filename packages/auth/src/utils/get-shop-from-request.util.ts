@@ -2,6 +2,7 @@ import { ExecutionContext, Logger } from '@nestjs/common';
 import { Session } from '@shopify/shopify-api';
 import { decodeSessionToken } from './decode-session-token.util';
 import { ShopifyHttpAdapter } from '@nestjs-shopify/core';
+import { getSessionTokenFromRequest } from './get-session-token-from-request.util';
 
 export const getShopFromRequest = (
   ctx: ExecutionContext,
@@ -10,7 +11,7 @@ export const getShopFromRequest = (
 ): string | undefined => {
   return (
     session?.shop ||
-    getShopFromAuthHeader(ctx, shopifyHttpAdapter) ||
+    getShopFromSessionToken(ctx, shopifyHttpAdapter) ||
     getShopFromQuery(ctx, shopifyHttpAdapter)
   );
 };
@@ -25,32 +26,21 @@ function getShopFromQuery(
   ) as string;
 }
 
-function getShopFromAuthHeader(
+function getShopFromSessionToken(
   ctx: ExecutionContext,
   shopifyHttpAdapter: ShopifyHttpAdapter,
 ): string | undefined {
-  let authHeader = shopifyHttpAdapter.getHeaderFromExecutionContext(
-    ctx,
-    'authorization',
-  );
-  if (!authHeader) {
-    return;
-  }
-
-  if (Array.isArray(authHeader)) {
-    authHeader = authHeader[0];
-  }
-
-  const matches = authHeader?.match(/Bearer (.*)/);
-  if (matches) {
+  const token = getSessionTokenFromRequest(ctx, shopifyHttpAdapter);
+  if (token !== undefined) {
     try {
-      const payload = decodeSessionToken(matches[1]);
-      return payload.dest.replace('https://', '');
+      const payload = decodeSessionToken(token);
+      const dest = new URL(payload.dest);
+      const shop = dest.hostname;
+      return shop;
     } catch (error) {
       Logger.error(error);
       // do nothing
     }
   }
-
   return;
 }

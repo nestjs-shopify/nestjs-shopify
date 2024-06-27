@@ -1,4 +1,4 @@
-import { ModuleMetadata, Type } from '@nestjs/common';
+import { ExecutionContext, ModuleMetadata, Type } from '@nestjs/common';
 import type { Session } from '@shopify/shopify-api';
 import type { IncomingMessage, ServerResponse } from 'http';
 
@@ -14,10 +14,13 @@ export interface ShopifyAuthModuleOptions {
   afterAuthHandler?: ShopifyAuthAfterHandler;
 }
 
-export interface ShopifyAuthOptionsFactory {
-  createShopifyAuthOptions():
-    | Promise<ShopifyAuthModuleOptions>
-    | ShopifyAuthModuleOptions;
+export interface ShopifyAuthModuleTokenExchangeOptions {
+  returnHeaders?: boolean;
+  afterAuthHandler?: ShopifyAuthTokenExchangeAfterHandler;
+}
+
+export interface ShopifyAuthOptionsFactory<Options> {
+  createShopifyAuthOptions(): Promise<Options> | Options;
 }
 
 export type ShopifySessionRequest<T> = T & {
@@ -31,14 +34,42 @@ export interface ShopifyAuthAfterHandler<
   afterAuth(req: T, res: R, session: Session): Promise<void>;
 }
 
-export interface ShopifyAuthModuleAsyncOptions
+export interface ShopifyAuthTokenExchangeAfterHandlerParams<
+  T extends IncomingMessage = IncomingMessage,
+  R extends ServerResponse = ServerResponse,
+> {
+  req: T;
+  res: R;
+  session: Session;
+  sessionToken: string;
+}
+export interface ShopifyAuthTokenExchangeAfterHandler<
+  T extends IncomingMessage = IncomingMessage,
+  R extends ServerResponse = ServerResponse,
+> {
+  afterAuth(
+    params: ShopifyAuthTokenExchangeAfterHandlerParams<T, R>,
+  ): Promise<void>;
+}
+
+export interface GenericShopifyAuthModuleAsyncOptions<Options>
   extends Pick<ModuleMetadata, 'imports'> {
-  useExisting?: Type<ShopifyAuthOptionsFactory>;
-  useClass?: Type<ShopifyAuthOptionsFactory>;
+  useExisting?: Type<ShopifyAuthOptionsFactory<Options>>;
+  useClass?: Type<ShopifyAuthOptionsFactory<Options>>;
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  useFactory?: (
-    ...args: any[]
-  ) => Promise<ShopifyAuthModuleOptions> | ShopifyAuthModuleOptions;
+  useFactory?: (...args: any[]) => Promise<Options> | Options;
   inject?: any[];
   /* eslint-enable @typescript-eslint/no-explicit-any */
+}
+export type ShopifyAuthModuleAsyncOptions =
+  GenericShopifyAuthModuleAsyncOptions<ShopifyAuthModuleOptions>;
+export type ShopifyAuthModuleTokenExchangeAsyncOptions =
+  GenericShopifyAuthModuleAsyncOptions<ShopifyAuthModuleTokenExchangeOptions>;
+
+export interface ShopifyAuthStrategyService {
+  authenticate(
+    context: ExecutionContext,
+    shop: string,
+    accessMode: AccessMode,
+  ): Promise<Session> | void;
 }

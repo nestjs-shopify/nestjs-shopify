@@ -30,6 +30,100 @@ See `@nestjs-shopify/express` usage: https://github.com/nestjs-shopify/nestjs-sh
 
 ## Usage
 
+`@nestjs-shopify/auth` supports both **Token Exchange** and **Authorization Code Grant Flow**, but only one of it can be used at a time. 
+
+### Token Exchange
+
+❗In order to use Token Exchange based auth you must at least use version 9.2.0 of `@shopify/shopify-api`.
+
+From any module, import the `ShopifyAuthModule` using `forRootTokenExchange` or `forRootAsyncTokenExchange`:
+
+```ts
+// app.module.ts
+import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+
+@Module({
+  imports: [
+    ShopifyAuthModule.forRootTokenExchange({
+      returnHeaders: true,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+Or using `useFactory`/`useClass`/`useExisting`:
+
+```ts
+// app.module.ts
+import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+
+@Module({
+  imports: [
+    ShopifyAuthModule.forRootAsyncTokenExchange({
+      useFactory: () => ({
+        returnHeaders: true,
+      }),
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+You can provide an injectable that will be called after a token exchange for an offline or online auth was successful:
+
+```ts
+// auth-handler/auth-handler.module.ts
+import { MyAuthHandler } from './my-auth.handler';
+
+@Module({
+  providers: [MyAuthHandler],
+  exports: [MyAuthHandler],
+})
+export class AuthHandlerModule {}
+```
+
+```ts
+// auth-handler/my-auth.handler.ts
+@Injectable()
+export class MyAuthHandler implements ShopifyAuthTokenExchangeAfterHandler {
+  constructor(private readonly tokenExchangeService: ShopifyTokenExchangeService){}
+  async afterAuth({session, sessionToken} : ShopifyAuthTokenExchangeAfterHandlerParams) {
+    if (session.isOnline) {
+        try {
+            const offlineSession = await this.tokenExchangeService.exchangeToken(sessionToken, session.shop, AccessMode.Offline)
+            // store session
+        } catch(e) { /* empty */ }
+    }
+  }
+}
+```
+
+and provide and inject it to your `ShopifyAuthModule`:
+
+```ts
+// app.module.ts
+import { AuthHandlerModule } from './auth-handler/auth-handler.module';
+import { MyAuthHandler } from './auth-handler/my-auth.handler';
+
+@Module({
+  imports: [
+    ShopifyAuthModule.forRootAsyncTokenExchange({
+      imports: [AuthHandlerModule],
+      useFactory: (afterAuthHandler: MyAuthHandler) => ({
+        returnHeaders: true,
+        afterAuthHandler,
+      }),
+      inject: [MyAuthHandler],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+
+### Authorization Code Grant Flow
+
 From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline`:
 
 ```ts
@@ -81,7 +175,7 @@ export class AuthHandlerModule {}
 // auth-handler/my-auth.handler.ts
 @Injectable()
 export class MyAuthHandler implements ShopifyAuthAfterHandler {
-  async afterAuth(req: Request, res: Response, session: SessionInterface) {
+  async afterAuth(req: Request, res: Response, session: Session) {
     // implement your logic after a successful auth.
     // you can check `session.isOnline` to see if it was an online auth or offline auth.
   }
@@ -123,7 +217,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
   imports: [
     ShopifyAuthModule.forRootAsyncOnline({
       imports: [AuthHandlerModule],
-      useFactory: (afterAuthHandler: MyShopifyAuthHandler) => ({
+      useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'user',
         afterAuthHandler,
       }),
@@ -131,7 +225,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
     }),
     ShopifyAuthModule.forRootAsyncOffline({
       imports: [AuthHandlerModule],
-      useFactory: (afterAuthHandler: MyShopifyAuthHandler) => ({
+      useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'shop',
         afterAuthHandler,
       }),
