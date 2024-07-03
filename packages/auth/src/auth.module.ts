@@ -21,10 +21,7 @@ import { ShopifyTokenExchangeAuthStrategyOfflineService } from './token-exchange
 
 export class ShopifyAuthModule {
   static forRootOnline(options: ShopifyAuthModuleOptions): DynamicModule {
-    if (
-      'authStrategy' in options &&
-      options.authStrategy === 'TOKEN_EXCHANGE'
-    ) {
+    if (options.authStrategy === 'TOKEN_EXCHANGE') {
       return {
         module: class ShopifyAuthTokenExchangeModule {},
         global: true,
@@ -66,10 +63,7 @@ export class ShopifyAuthModule {
   }
 
   static forRootOffline(options: ShopifyAuthModuleOptions): DynamicModule {
-    if (
-      'authStrategy' in options &&
-      options.authStrategy === 'TOKEN_EXCHANGE'
-    ) {
+    if (options.authStrategy === 'TOKEN_EXCHANGE') {
       return {
         module: class ShopifyAuthTokenExchangeModule {},
         global: true,
@@ -113,10 +107,7 @@ export class ShopifyAuthModule {
   static forRootAsyncOnline<A extends AuthStrategy = 'AUTHORIZATION_CODE_FLOW'>(
     options: ShopifyAuthModuleAsyncOptions<A>,
   ): DynamicModule {
-    if (
-      'authStrategy' in options &&
-      options.authStrategy === 'TOKEN_EXCHANGE'
-    ) {
+    if (options.authStrategy === 'TOKEN_EXCHANGE') {
       return {
         module: class ShopifyAuthTokenExchangeModule {},
         global: true,
@@ -162,10 +153,7 @@ export class ShopifyAuthModule {
   static forRootAsyncOffline<
     A extends AuthStrategy = 'AUTHORIZATION_CODE_FLOW',
   >(options: ShopifyAuthModuleAsyncOptions<A>): DynamicModule {
-    if (
-      'authStrategy' in options &&
-      options.authStrategy === 'TOKEN_EXCHANGE'
-    ) {
+    if (options.authStrategy === 'TOKEN_EXCHANGE') {
       return {
         module: class ShopifyAuthTokenExchangeModule {},
         global: true,
