@@ -30,13 +30,14 @@ See `@nestjs-shopify/express` usage: https://github.com/nestjs-shopify/nestjs-sh
 
 ## Usage
 
-`@nestjs-shopify/auth` supports both **Token Exchange** and **Authorization Code Grant Flow**, but only one of it can be used at a time. 
+`@nestjs-shopify/auth` supports either **Token Exchange** or **Authorization Code Grant Flow**.
+The choice of auth strategy is configured by setting the `authStrategy` property to either `TOKEN_EXCHANGE` or `AUTHORIZATION_CODE_FLOW`. If not set, this property defaults to `AUTHORIZATION_CODE_FLOW` due to backwards compatibility.
 
 ### Token Exchange
 
 ❗In order to use Token Exchange based auth you must at least use version 9.2.0 of `@shopify/shopify-api`.
 
-From any module, import the `ShopifyAuthModule` using `forRootTokenExchange` or `forRootAsyncTokenExchange`:
+From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline` and set the `authStrategy` to `TOKEN_EXCHANGE`:
 
 ```ts
 // app.module.ts
@@ -44,7 +45,8 @@ import { ShopifyAuthModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootTokenExchange({
+    ShopifyAuthModule.forRootOnline({
+      authStrategy: 'TOKEN_EXCHANGE',
       returnHeaders: true,
     }),
   ],
@@ -60,7 +62,8 @@ import { ShopifyAuthModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncTokenExchange({
+    ShopifyAuthModule.forRootAsyncOnline({
+      authStrategy: 'TOKEN_EXCHANGE',
       useFactory: () => ({
         returnHeaders: true,
       }),
@@ -108,8 +111,9 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncTokenExchange({
+    ShopifyAuthModule.forRootAsyncOnline({
       imports: [AuthHandlerModule],
+      authStrategy: 'TOKEN_EXCHANGE',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         returnHeaders: true,
         afterAuthHandler,
@@ -124,7 +128,7 @@ export class AppModule {}
 
 ### Authorization Code Grant Flow
 
-From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline`:
+From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline` and set the `authStrategy` to `AUTHORIZATION_CODE_FLOW`:
 
 ```ts
 // app.module.ts
@@ -133,6 +137,7 @@ import { ShopifyAuthModule } from '@nestjs-shopify/auth';
 @Module({
   imports: [
     ShopifyAuthModule.forRootOnline({
+      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       basePath: 'user',
     }),
   ],
@@ -149,6 +154,7 @@ import { ShopifyAuthModule } from '@nestjs-shopify/auth';
 @Module({
   imports: [
     ShopifyAuthModule.forRootAsyncOnline({
+      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       useFactory: () => ({
         basePath: 'user',
       }),
@@ -193,6 +199,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
   imports: [
     ShopifyAuthModule.forRootAsyncOnline({
       imports: [AuthHandlerModule],
+      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'user',
         afterAuthHandler,
@@ -217,6 +224,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
   imports: [
     ShopifyAuthModule.forRootAsyncOnline({
       imports: [AuthHandlerModule],
+      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'user',
         afterAuthHandler,
@@ -225,6 +233,7 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
     }),
     ShopifyAuthModule.forRootAsyncOffline({
       imports: [AuthHandlerModule],
+      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'shop',
         afterAuthHandler,

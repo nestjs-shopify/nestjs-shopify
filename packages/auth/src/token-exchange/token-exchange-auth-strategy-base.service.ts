@@ -1,33 +1,20 @@
-import {
-  InjectShopifySessionStorage,
-  SessionStorage,
-  ShopifyHttpAdapter,
-} from '@nestjs-shopify/core';
-import {
-  ExecutionContext,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { SessionStorage, ShopifyHttpAdapter } from '@nestjs-shopify/core';
+import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import {
   AccessMode,
   ShopifyAuthModuleTokenExchangeOptions,
   ShopifyAuthStrategyService,
 } from '../auth.interfaces';
 import { getSessionTokenFromRequest } from '../utils/get-session-token-from-request.util';
-import { TOKEN_EXCHANGE_OPTIONS_TOKEN } from '../auth.constants';
 import { ShopifyTokenExchangeService } from './token-exchange.service';
 
-@Injectable()
-export class ShopifyTokenExchangeAuthStrategyService
+export class ShopifyTokenExchangeAuthStrategyBaseService
   implements ShopifyAuthStrategyService
 {
   constructor(
-    @Inject(TOKEN_EXCHANGE_OPTIONS_TOKEN)
     private readonly options: ShopifyAuthModuleTokenExchangeOptions,
     private readonly tokenExchangeService: ShopifyTokenExchangeService,
     private readonly shopifyHttpAdapter: ShopifyHttpAdapter,
-    @InjectShopifySessionStorage()
     private readonly sessionStorage: SessionStorage,
   ) {}
 

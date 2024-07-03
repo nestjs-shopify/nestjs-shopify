@@ -1,9 +1,12 @@
 import { ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { TOKEN_EXCHANGE_OPTIONS_TOKEN } from './auth.constants';
+import { getTokenExchangeOptionsToken } from './auth.constants';
 import { ShopifyAuthTokenExchangeException } from './auth.errors';
-import { ShopifyAuthModuleTokenExchangeOptions } from './auth.interfaces';
+import {
+  AccessMode,
+  ShopifyAuthModuleTokenExchangeOptions,
+} from './auth.interfaces';
 
 @Catch(ShopifyAuthTokenExchangeException)
 export class ShopifyAuthTokenExchangeExceptionFilter
@@ -18,7 +21,7 @@ export class ShopifyAuthTokenExchangeExceptionFilter
     exception: ShopifyAuthTokenExchangeException,
     host: ArgumentsHost,
   ) {
-    const options = this.getTokenExchangeOptions();
+    const options = this.getTokenExchangeOptionsFor(exception.accessMode);
     const context = host.switchToHttp();
 
     const res = context.getResponse();
@@ -36,9 +39,9 @@ export class ShopifyAuthTokenExchangeExceptionFilter
     );
   }
 
-  private getTokenExchangeOptions() {
+  private getTokenExchangeOptionsFor(accessMode: AccessMode) {
     return this.moduleRef.get<ShopifyAuthModuleTokenExchangeOptions>(
-      TOKEN_EXCHANGE_OPTIONS_TOKEN,
+      getTokenExchangeOptionsToken(accessMode),
       { strict: false },
     );
   }

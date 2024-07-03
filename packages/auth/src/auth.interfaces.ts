@@ -7,17 +7,31 @@ export enum AccessMode {
   Offline = 'offline',
 }
 
-export interface ShopifyAuthModuleOptions {
+export type ShopifyAuthModuleAuthorizationCodeFlowBaseOptions = {
   basePath?: string;
   returnHeaders?: boolean;
   useGlobalPrefix?: boolean;
   afterAuthHandler?: ShopifyAuthAfterHandler;
-}
+};
 
-export interface ShopifyAuthModuleTokenExchangeOptions {
+export type ShopifyAuthModuleAuthorizationCodeFlowOptions =
+  ShopifyAuthModuleAuthorizationCodeFlowBaseOptions & {
+    authStrategy?: 'AUTHORIZATION_CODE_FLOW';
+  };
+
+export type ShopifyAuthModuleTokenExchangeBaseOptions = {
   returnHeaders?: boolean;
   afterAuthHandler?: ShopifyAuthTokenExchangeAfterHandler;
-}
+};
+
+export type ShopifyAuthModuleTokenExchangeOptions =
+  ShopifyAuthModuleTokenExchangeBaseOptions & {
+    authStrategy: 'TOKEN_EXCHANGE';
+  };
+
+export type ShopifyAuthModuleOptions =
+  | ShopifyAuthModuleAuthorizationCodeFlowOptions
+  | ShopifyAuthModuleTokenExchangeOptions;
 
 export interface ShopifyAuthOptionsFactory<Options> {
   createShopifyAuthOptions(): Promise<Options> | Options;
@@ -39,24 +53,24 @@ export interface ShopifyAuthTokenExchangeAfterHandlerParams {
   sessionToken: string;
 }
 export interface ShopifyAuthTokenExchangeAfterHandler {
-  afterAuth(
-    params: ShopifyAuthTokenExchangeAfterHandlerParams
-  ): Promise<void>;
+  afterAuth(params: ShopifyAuthTokenExchangeAfterHandlerParams): Promise<void>;
 }
 
-export interface GenericShopifyAuthModuleAsyncOptions<Options>
-  extends Pick<ModuleMetadata, 'imports'> {
-  useExisting?: Type<ShopifyAuthOptionsFactory<Options>>;
-  useClass?: Type<ShopifyAuthOptionsFactory<Options>>;
+export type AuthStrategy = 'TOKEN_EXCHANGE' | 'AUTHORIZATION_CODE_FLOW';
+export type ShopifyAuthModuleAsyncOptions<
+  A extends AuthStrategy,
+  O = A extends 'AUTHORIZATION_CODE_FLOW'
+    ? ShopifyAuthModuleAuthorizationCodeFlowBaseOptions
+    : ShopifyAuthModuleTokenExchangeBaseOptions,
+> = Pick<ModuleMetadata, 'imports'> & {
+  authStrategy?: A;
+  useExisting?: Type<ShopifyAuthOptionsFactory<O>>;
+  useClass?: Type<ShopifyAuthOptionsFactory<O>>;
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  useFactory?: (...args: any[]) => Promise<Options> | Options;
+  useFactory?: (...args: any[]) => Promise<O> | O;
   inject?: any[];
   /* eslint-enable @typescript-eslint/no-explicit-any */
-}
-export type ShopifyAuthModuleAsyncOptions =
-  GenericShopifyAuthModuleAsyncOptions<ShopifyAuthModuleOptions>;
-export type ShopifyAuthModuleTokenExchangeAsyncOptions =
-  GenericShopifyAuthModuleAsyncOptions<ShopifyAuthModuleTokenExchangeOptions>;
+};
 
 export interface ShopifyAuthStrategyService {
   authenticate(

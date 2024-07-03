@@ -2,7 +2,10 @@ import { SessionStorage, ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import { Controller, Get, Query, Req, Res } from '@nestjs/common';
 import { ApplicationConfig } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
+import {
+  AccessMode,
+  ShopifyAuthModuleAuthorizationCodeFlowOptions,
+} from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
 @Controller('shopify')
@@ -10,7 +13,7 @@ export abstract class ShopifyAuthBaseController {
   constructor(
     protected readonly shopifyApi: Shopify,
     protected readonly accessMode: AccessMode,
-    protected readonly options: ShopifyAuthModuleOptions,
+    protected readonly options: ShopifyAuthModuleAuthorizationCodeFlowOptions,
     protected readonly appConfig: ApplicationConfig,
     protected readonly sessionStorage: SessionStorage,
     protected readonly shopifyHttpAdapter: ShopifyHttpAdapter,

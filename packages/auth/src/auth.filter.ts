@@ -2,9 +2,12 @@ import { InjectShopify, ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import { getOptionsToken } from './auth.constants';
+import { getAuthorizationCodeFlowOptionsToken } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
-import { AccessMode, ShopifyAuthModuleOptions } from './auth.interfaces';
+import {
+  AccessMode,
+  ShopifyAuthModuleAuthorizationCodeFlowOptions,
+} from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
 @Catch(ShopifyAuthException)
@@ -58,7 +61,10 @@ export class ShopifyAuthExceptionFilter
     }
   }
 
-  private buildRedirectPath(shop: string, options: ShopifyAuthModuleOptions) {
+  private buildRedirectPath(
+    shop: string,
+    options: ShopifyAuthModuleAuthorizationCodeFlowOptions,
+  ) {
     let prefix = '';
     if (options.useGlobalPrefix) {
       prefix = this.appConfig.getGlobalPrefix();
@@ -72,8 +78,8 @@ export class ShopifyAuthExceptionFilter
   }
 
   private getShopifyOptionsFor(accessMode: AccessMode) {
-    return this.moduleRef.get<ShopifyAuthModuleOptions>(
-      getOptionsToken(accessMode),
+    return this.moduleRef.get<ShopifyAuthModuleAuthorizationCodeFlowOptions>(
+      getAuthorizationCodeFlowOptionsToken(accessMode),
       { strict: false },
     );
   }

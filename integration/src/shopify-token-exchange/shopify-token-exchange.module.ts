@@ -5,9 +5,19 @@ import { MyAuthModule } from './my-auth.module';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncTokenExchange({
+    ShopifyAuthModule.forRootAsyncOnline({
       imports: [MyAuthModule],
-      useFactory: (myAuthHandler) => ({
+      authStrategy: 'TOKEN_EXCHANGE',
+      useFactory: (myAuthHandler: MyAfterAuthHandler) => ({
+        returnHeaders: true,
+        afterAuthHandler: myAuthHandler,
+      }),
+      inject: [MyAfterAuthHandler],
+    }),
+    ShopifyAuthModule.forRootAsyncOffline({
+      imports: [MyAuthModule],
+      authStrategy: 'TOKEN_EXCHANGE',
+      useFactory: (myAuthHandler: MyAfterAuthHandler) => ({
         returnHeaders: true,
         afterAuthHandler: myAuthHandler,
       }),

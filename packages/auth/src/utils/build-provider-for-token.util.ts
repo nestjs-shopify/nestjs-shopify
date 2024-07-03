@@ -1,11 +1,14 @@
 import { Provider, Type } from '@nestjs/common';
 import {
-  GenericShopifyAuthModuleAsyncOptions,
+  AuthStrategy,
+  ShopifyAuthModuleAsyncOptions,
+  ShopifyAuthModuleAuthorizationCodeFlowBaseOptions,
+  ShopifyAuthModuleTokenExchangeBaseOptions,
   ShopifyAuthOptionsFactory,
 } from '../auth.interfaces';
 
-export function buildProvidersForToken<Options>(
-  asyncOptions: GenericShopifyAuthModuleAsyncOptions<Options>,
+export function buildProvidersForToken<A extends AuthStrategy>(
+  asyncOptions: ShopifyAuthModuleAsyncOptions<A>,
   token: string,
 ): Provider[] {
   if (asyncOptions.useExisting || asyncOptions.useFactory) {
@@ -25,10 +28,12 @@ export function buildProvidersForToken<Options>(
   return [];
 }
 
-export function createAsyncOptionsProvider<Options>(
-  options: GenericShopifyAuthModuleAsyncOptions<Options>,
-  token: string,
-): Provider {
+export function createAsyncOptionsProvider<
+  A extends AuthStrategy,
+  O = A extends 'AUTHORIZATION_CODE_FLOW'
+    ? ShopifyAuthModuleAuthorizationCodeFlowBaseOptions
+    : ShopifyAuthModuleTokenExchangeBaseOptions,
+>(options: ShopifyAuthModuleAsyncOptions<A>, token: string): Provider {
   if (options.useFactory) {
     return {
       provide: token,
@@ -39,11 +44,11 @@ export function createAsyncOptionsProvider<Options>(
 
   return {
     provide: token,
-    useFactory: (optionsFactory: ShopifyAuthOptionsFactory<Options>) =>
+    useFactory: (optionsFactory: ShopifyAuthOptionsFactory<O>) =>
       optionsFactory.createShopifyAuthOptions(),
     inject: [
       (options.useExisting || options.useClass) as Type<
-        ShopifyAuthOptionsFactory<Options>
+        ShopifyAuthOptionsFactory<O>
       >,
     ],
   };

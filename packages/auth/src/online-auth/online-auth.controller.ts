@@ -7,16 +7,19 @@ import {
   ShopifyHttpAdapter,
 } from '@nestjs-shopify/core';
 import { Shopify } from '@shopify/shopify-api';
-import { AccessMode, ShopifyAuthModuleOptions } from '../auth.interfaces';
+import {
+  AccessMode,
+  ShopifyAuthModuleAuthorizationCodeFlowOptions,
+} from '../auth.interfaces';
 import { ShopifyAuthBaseController } from '../auth-base.controller';
-import { getOptionsToken } from '../auth.constants';
+import { getAuthorizationCodeFlowOptionsToken } from '../auth.constants';
 
 @Controller('shopify/online')
 export class ShopifyAuthOnlineController extends ShopifyAuthBaseController {
   constructor(
     @InjectShopify() shopifyApi: Shopify,
-    @Inject(getOptionsToken(AccessMode.Online))
-    options: ShopifyAuthModuleOptions,
+    @Inject(getAuthorizationCodeFlowOptionsToken(AccessMode.Online))
+    options: ShopifyAuthModuleAuthorizationCodeFlowOptions,
     @InjectShopifySessionStorage() sessionStorage: SessionStorage,
     appConfig: ApplicationConfig,
     shopifyHttpAdapter: ShopifyHttpAdapter,
