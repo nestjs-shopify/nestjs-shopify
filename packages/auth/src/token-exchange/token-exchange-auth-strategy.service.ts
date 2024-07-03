@@ -53,12 +53,6 @@ export class ShopifyTokenExchangeAuthStrategyService
 
     if (this.options.afterAuthHandler) {
       await this.options.afterAuthHandler.afterAuth({
-        req: this.shopifyHttpAdapter.getRawRequest(
-          ctx.switchToHttp().getRequest(),
-        ),
-        res: this.shopifyHttpAdapter.getRawResponse(
-          ctx.switchToHttp().getResponse(),
-        ),
         session: newSession,
         sessionToken,
       });

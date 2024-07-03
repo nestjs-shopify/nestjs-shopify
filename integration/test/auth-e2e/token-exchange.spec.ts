@@ -221,8 +221,6 @@ describe.each(testCases)(
 
         expect(sessionStorage.storeSession).toHaveBeenCalledWith(newSession);
         expect(afterAuthHandler.afterAuth).toHaveBeenCalledWith({
-          res: expect.anything(),
-          req: expect.anything(),
           session: newSession,
           sessionToken: token,
         });

@@ -34,21 +34,13 @@ export interface ShopifyAuthAfterHandler<
   afterAuth(req: T, res: R, session: Session): Promise<void>;
 }
 
-export interface ShopifyAuthTokenExchangeAfterHandlerParams<
-  T extends IncomingMessage = IncomingMessage,
-  R extends ServerResponse = ServerResponse,
-> {
-  req: T;
-  res: R;
+export interface ShopifyAuthTokenExchangeAfterHandlerParams {
   session: Session;
   sessionToken: string;
 }
-export interface ShopifyAuthTokenExchangeAfterHandler<
-  T extends IncomingMessage = IncomingMessage,
-  R extends ServerResponse = ServerResponse,
-> {
+export interface ShopifyAuthTokenExchangeAfterHandler {
   afterAuth(
-    params: ShopifyAuthTokenExchangeAfterHandlerParams<T, R>,
+    params: ShopifyAuthTokenExchangeAfterHandlerParams
   ): Promise<void>;
 }
 
