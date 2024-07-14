@@ -31,22 +31,21 @@ See `@nestjs-shopify/express` usage: https://github.com/nestjs-shopify/nestjs-sh
 ## Usage
 
 `@nestjs-shopify/auth` supports either **Token Exchange** or **Authorization Code Grant Flow**.
-The choice of auth strategy is configured by setting the `authStrategy` property to either `TOKEN_EXCHANGE` or `AUTHORIZATION_CODE_FLOW`. If not set, this property defaults to `AUTHORIZATION_CODE_FLOW` due to backwards compatibility.
+The choice of auth strategy is configured by setting the `authStrategy` argument to either `AuthStrategy.TokenExchange` or `AuthStrategy.AuthorizationCode`. If not set, this property defaults to `AuthStrategy.AuthorizationCode` due to backwards compatibility.
 
 ### Token Exchange
 
 ❗In order to use Token Exchange based auth you must at least use version 9.2.0 of `@shopify/shopify-api`.
 
-From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline` and set the `authStrategy` to `TOKEN_EXCHANGE`:
+From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline` and set the `authStrategy` argument to `AuthStrategy.TokenExchange`:
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { AuthStrategy, ShopifyAuthModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootOnline({
-      authStrategy: 'TOKEN_EXCHANGE',
+    ShopifyAuthModule.forRootOnline(AuthStrategy.TokenExchange, {
       returnHeaders: true,
     }),
   ],
@@ -58,12 +57,11 @@ Or using `useFactory`/`useClass`/`useExisting`:
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { AuthStrategy, ShopifyAuthModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncOnline({
-      authStrategy: 'TOKEN_EXCHANGE',
+    ShopifyAuthModule.forRootAsyncOnline(AuthStrategy.TokenExchange, {
       useFactory: () => ({
         returnHeaders: true,
       }),
@@ -90,13 +88,15 @@ export class AuthHandlerModule {}
 // auth-handler/my-auth.handler.ts
 @Injectable()
 export class MyAuthHandler implements ShopifyAuthTokenExchangeAfterHandler {
-  constructor(private readonly tokenExchangeService: ShopifyTokenExchangeService){}
-  async afterAuth({session, sessionToken} : ShopifyAuthTokenExchangeAfterHandlerParams) {
+  constructor(private readonly tokenExchangeService: ShopifyTokenExchangeService) {}
+  async afterAuth({ session, sessionToken }: ShopifyAuthTokenExchangeAfterHandlerParams) {
     if (session.isOnline) {
-        try {
-            const offlineSession = await this.tokenExchangeService.exchangeToken(sessionToken, session.shop, AccessMode.Offline)
-            // store session
-        } catch(e) { /* empty */ }
+      try {
+        const offlineSession = await this.tokenExchangeService.exchangeToken(sessionToken, session.shop, AccessMode.Offline);
+        // store session
+      } catch (e) {
+        /* empty */
+      }
     }
   }
 }
@@ -106,14 +106,14 @@ and provide and inject it to your `ShopifyAuthModule`:
 
 ```ts
 // app.module.ts
+import { AuthStrategy, ShopifyAuthModule } from '@nestjs-shopify/auth';
 import { AuthHandlerModule } from './auth-handler/auth-handler.module';
 import { MyAuthHandler } from './auth-handler/my-auth.handler';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncOnline({
+    ShopifyAuthModule.forRootAsyncOnline(AuthStrategy.TokenExchange, {
       imports: [AuthHandlerModule],
-      authStrategy: 'TOKEN_EXCHANGE',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         returnHeaders: true,
         afterAuthHandler,
@@ -125,19 +125,17 @@ import { MyAuthHandler } from './auth-handler/my-auth.handler';
 export class AppModule {}
 ```
 
-
 ### Authorization Code Grant Flow
 
 From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline` and set the `authStrategy` to `AUTHORIZATION_CODE_FLOW`:
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { AuthStrategy, ShopifyAuthModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootOnline({
-      authStrategy: 'AUTHORIZATION_CODE_FLOW',
+    ShopifyAuthModule.forRootOnline(AuthStrategy.AuthorizationCode, {
       basePath: 'user',
     }),
   ],
@@ -149,12 +147,11 @@ Or using `useFactory`/`useClass`/`useExisting`:
 
 ```ts
 // app.module.ts
-import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+import { AuthStrategy, ShopifyAuthModule } from '@nestjs-shopify/auth';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncOnline({
-      authStrategy: 'AUTHORIZATION_CODE_FLOW',
+    ShopifyAuthModule.forRootAsyncOnline(AuthStrategy.AuthorizationCode, {
       useFactory: () => ({
         basePath: 'user',
       }),
@@ -192,14 +189,14 @@ and provide and inject it to your `ShopifyAuthModule`:
 
 ```ts
 // app.module.ts
+import { AuthStrategy, ShopifyAuthModule } from '@nestjs-shopify/auth';
 import { AuthHandlerModule } from './auth-handler/auth-handler.module';
 import { MyAuthHandler } from './auth-handler/my-auth.handler';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncOnline({
+    ShopifyAuthModule.forRootAsyncOnline(AuthStrategy.AuthorizationCode, {
       imports: [AuthHandlerModule],
-      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'user',
         afterAuthHandler,
@@ -217,23 +214,22 @@ You can also register both auth modes using the same Module:
 
 ```ts
 // app.module.ts
+import { AuthStrategy, ShopifyAuthModule } from '@nestjs-shopify/auth';
 import { AuthHandlerModule } from './auth-handler/auth-handler.module';
 import { MyAuthHandler } from './auth-handler/my-auth.handler';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncOnline({
+    ShopifyAuthModule.forRootAsyncOnline(AuthStrategy.AuthorizationCode, {
       imports: [AuthHandlerModule],
-      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'user',
         afterAuthHandler,
       }),
       inject: [MyAuthHandler],
     }),
-    ShopifyAuthModule.forRootAsyncOffline({
+    ShopifyAuthModule.forRootAsyncOffline(AuthStrategy.AuthorizationCode, {
       imports: [AuthHandlerModule],
-      authStrategy: 'AUTHORIZATION_CODE_FLOW',
       useFactory: (afterAuthHandler: MyAuthHandler) => ({
         basePath: 'shop',
         afterAuthHandler,

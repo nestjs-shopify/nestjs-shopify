@@ -2,6 +2,7 @@ import { DynamicModule } from '@nestjs/common';
 import { getAuthOptionsToken } from '../auth.constants';
 import {
   AccessMode,
+  AuthStrategy,
   ShopifyAuthModuleAsyncOptions,
   ShopifyAuthStrategyService,
 } from '../auth.interfaces';
@@ -65,7 +66,7 @@ export class ShopifyAuthorizationCodeAuthModule {
 
   static forRootAsyncOnline(
     options: ShopifyAuthModuleAsyncOptions<
-      'AUTHORIZATION_CODE_FLOW',
+      AuthStrategy.AuthorizationCode,
       ShopifyAuthorizationCodeAuthModuleOptions
     >,
   ): DynamicModule {
@@ -94,7 +95,7 @@ export class ShopifyAuthorizationCodeAuthModule {
 
   static forRootAsyncOffline(
     options: ShopifyAuthModuleAsyncOptions<
-      'AUTHORIZATION_CODE_FLOW',
+      AuthStrategy.AuthorizationCode,
       ShopifyAuthorizationCodeAuthModuleOptions
     >,
   ): DynamicModule {

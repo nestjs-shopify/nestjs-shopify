@@ -7,6 +7,11 @@ export enum AccessMode {
   Offline = 'offline',
 }
 
+export enum AuthStrategy {
+  AuthorizationCode = 'AUTHORIZATION_CODE_FLOW',
+  TokenExchange = 'TOKEN_EXCHANGE',
+}
+
 export type ShopifyAuthorizationCodeAuthModuleOptions = {
   basePath?: string;
   returnHeaders?: boolean;
@@ -46,10 +51,9 @@ export interface ShopifyTokenExchangeAuthAfterHandler {
   afterAuth(params: ShopifyTokenExchangeAuthAfterHandlerParams): Promise<void>;
 }
 
-export type AuthStrategy = 'TOKEN_EXCHANGE' | 'AUTHORIZATION_CODE_FLOW';
 export type ShopifyAuthModuleAsyncOptions<
   A extends AuthStrategy,
-  O = A extends 'AUTHORIZATION_CODE_FLOW'
+  O = A extends AuthStrategy.AuthorizationCode
     ? ShopifyAuthorizationCodeAuthModuleOptions
     : ShopifyTokenExchangeAuthModuleOptions,
 > = Pick<ModuleMetadata, 'imports'> & {

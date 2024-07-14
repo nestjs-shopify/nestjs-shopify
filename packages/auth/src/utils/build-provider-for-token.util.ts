@@ -30,7 +30,7 @@ export function buildProvidersForToken<A extends AuthStrategy>(
 
 export function createAsyncOptionsProvider<
   A extends AuthStrategy,
-  O = A extends 'AUTHORIZATION_CODE_FLOW'
+  O = A extends AuthStrategy.AuthorizationCode
     ? ShopifyAuthorizationCodeAuthModuleOptions
     : ShopifyTokenExchangeAuthModuleOptions,
 >(options: ShopifyAuthModuleAsyncOptions<A>, token: string): Provider {
