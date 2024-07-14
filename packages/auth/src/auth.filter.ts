@@ -6,7 +6,7 @@ import { getAuthorizationCodeFlowOptionsToken } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import {
   AccessMode,
-  ShopifyAuthModuleAuthorizationCodeFlowOptions,
+  ShopifyAuthorizationCodeAuthModuleOptions,
 } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
@@ -63,7 +63,7 @@ export class ShopifyAuthExceptionFilter
 
   private buildRedirectPath(
     shop: string,
-    options: ShopifyAuthModuleAuthorizationCodeFlowOptions,
+    options: ShopifyAuthorizationCodeAuthModuleOptions,
   ) {
     let prefix = '';
     if (options.useGlobalPrefix) {
@@ -78,7 +78,7 @@ export class ShopifyAuthExceptionFilter
   }
 
   private getShopifyOptionsFor(accessMode: AccessMode) {
-    return this.moduleRef.get<ShopifyAuthModuleAuthorizationCodeFlowOptions>(
+    return this.moduleRef.get<ShopifyAuthorizationCodeAuthModuleOptions>(
       getAuthorizationCodeFlowOptionsToken(accessMode),
       { strict: false },
     );

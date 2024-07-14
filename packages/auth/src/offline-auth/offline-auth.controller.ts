@@ -9,7 +9,7 @@ import {
 import { Shopify } from '@shopify/shopify-api';
 import {
   AccessMode,
-  ShopifyAuthModuleAuthorizationCodeFlowOptions,
+  ShopifyAuthorizationCodeAuthModuleOptions,
 } from '../auth.interfaces';
 import { ShopifyAuthBaseController } from '../auth-base.controller';
 import { getAuthorizationCodeFlowOptionsToken } from '../auth.constants';
@@ -19,7 +19,7 @@ export class ShopifyAuthOfflineController extends ShopifyAuthBaseController {
   constructor(
     @InjectShopify() shopifyApi: Shopify,
     @Inject(getAuthorizationCodeFlowOptionsToken(AccessMode.Offline))
-    options: ShopifyAuthModuleAuthorizationCodeFlowOptions,
+    options: ShopifyAuthorizationCodeAuthModuleOptions,
     @InjectShopifySessionStorage() sessionStorage: SessionStorage,
     appConfig: ApplicationConfig,
     shopifyHttpAdapter: ShopifyHttpAdapter,

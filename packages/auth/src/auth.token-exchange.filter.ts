@@ -5,7 +5,7 @@ import { getTokenExchangeOptionsToken } from './auth.constants';
 import { ShopifyAuthTokenExchangeException } from './auth.errors';
 import {
   AccessMode,
-  ShopifyAuthModuleTokenExchangeOptions,
+  ShopifyTokenExchangeAuthModuleOptions,
 } from './auth.interfaces';
 
 @Catch(ShopifyAuthTokenExchangeException)
@@ -40,7 +40,7 @@ export class ShopifyAuthTokenExchangeExceptionFilter
   }
 
   private getTokenExchangeOptionsFor(accessMode: AccessMode) {
-    return this.moduleRef.get<ShopifyAuthModuleTokenExchangeOptions>(
+    return this.moduleRef.get<ShopifyTokenExchangeAuthModuleOptions>(
       getTokenExchangeOptionsToken(accessMode),
       { strict: false },
     );

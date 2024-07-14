@@ -5,24 +5,28 @@ import { MyAuthModule } from './my-auth.module';
 
 @Module({
   imports: [
-    ShopifyAuthModule.forRootAsyncOnline({
-      imports: [MyAuthModule],
-      authStrategy: 'TOKEN_EXCHANGE',
-      useFactory: (myAuthHandler: MyAfterAuthHandler) => ({
-        returnHeaders: true,
-        afterAuthHandler: myAuthHandler,
-      }),
-      inject: [MyAfterAuthHandler],
-    }),
-    ShopifyAuthModule.forRootAsyncOffline({
-      imports: [MyAuthModule],
-      authStrategy: 'TOKEN_EXCHANGE',
-      useFactory: (myAuthHandler: MyAfterAuthHandler) => ({
-        returnHeaders: true,
-        afterAuthHandler: myAuthHandler,
-      }),
-      inject: [MyAfterAuthHandler],
-    }),
+    ShopifyAuthModule.forRootAsyncOnline(
+      {
+        imports: [MyAuthModule],
+        useFactory: (myAuthHandler: MyAfterAuthHandler) => ({
+          returnHeaders: true,
+          afterAuthHandler: myAuthHandler,
+        }),
+        inject: [MyAfterAuthHandler],
+      },
+      'TOKEN_EXCHANGE',
+    ),
+    ShopifyAuthModule.forRootAsyncOffline(
+      {
+        imports: [MyAuthModule],
+        useFactory: (myAuthHandler: MyAfterAuthHandler) => ({
+          returnHeaders: true,
+          afterAuthHandler: myAuthHandler,
+        }),
+        inject: [MyAfterAuthHandler],
+      },
+      'TOKEN_EXCHANGE',
+    ),
   ],
 })
 export class ShopifyTokenExchangeModule {}

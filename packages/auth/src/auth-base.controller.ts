@@ -4,7 +4,7 @@ import { ApplicationConfig } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
 import {
   AccessMode,
-  ShopifyAuthModuleAuthorizationCodeFlowOptions,
+  ShopifyAuthorizationCodeAuthModuleOptions,
 } from './auth.interfaces';
 import { joinUrl } from './utils/join-url.util';
 
@@ -13,7 +13,7 @@ export abstract class ShopifyAuthBaseController {
   constructor(
     protected readonly shopifyApi: Shopify,
     protected readonly accessMode: AccessMode,
-    protected readonly options: ShopifyAuthModuleAuthorizationCodeFlowOptions,
+    protected readonly options: ShopifyAuthorizationCodeAuthModuleOptions,
     protected readonly appConfig: ApplicationConfig,
     protected readonly sessionStorage: SessionStorage,
     protected readonly shopifyHttpAdapter: ShopifyHttpAdapter,

@@ -1,14 +1,14 @@
 import {
   AccessMode,
-  ShopifyAuthTokenExchangeAfterHandler,
-  ShopifyAuthTokenExchangeAfterHandlerParams,
+  ShopifyTokenExchangeAuthAfterHandler,
+  ShopifyTokenExchangeAuthAfterHandlerParams,
   ShopifyTokenExchangeService,
 } from '@nestjs-shopify/auth';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MyAfterAuthHandler
-  implements ShopifyAuthTokenExchangeAfterHandler
+  implements ShopifyTokenExchangeAuthAfterHandler
 {
   constructor(
     private readonly tokenExchangeService: ShopifyTokenExchangeService,
@@ -16,7 +16,7 @@ export class MyAfterAuthHandler
   async afterAuth({
     session,
     sessionToken,
-  }: ShopifyAuthTokenExchangeAfterHandlerParams) {
+  }: ShopifyTokenExchangeAuthAfterHandlerParams) {
     if (session.isOnline) {
       try {
         const offlineSession = await this.tokenExchangeService.exchangeToken(

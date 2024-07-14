@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { Controller, Provider, Type } from '@nestjs/common';
 import { ShopifyAuthBaseController } from '../auth-base.controller';
-import { ShopifyAuthModuleAuthorizationCodeFlowOptions } from '../auth.interfaces';
+import { ShopifyAuthorizationCodeAuthModuleOptions } from '../auth.interfaces';
 
 /**
  * Used to dynamically override the auth controller's path
@@ -12,7 +12,7 @@ export function buildControllerHackForToken(
 ): Provider {
   return {
     provide: randomUUID(),
-    useFactory: (options: ShopifyAuthModuleAuthorizationCodeFlowOptions) => {
+    useFactory: (options: ShopifyAuthorizationCodeAuthModuleOptions) => {
       if (options.basePath) {
         Controller(options.basePath)(controller);
       }
