@@ -1,9 +1,9 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { ShopifyAuthException } from './auth.errors';
-import { AccessMode, ShopifyAuthStrategyService } from './auth.interfaces';
+import { ShopifyAuthException } from '../auth.errors';
+import { AccessMode, ShopifyAuthStrategyService } from '../auth.interfaces';
 
 @Injectable()
-export class ShopifyAuthorizationCodeFlowAuthStrategyService
+export class ShopifyAuthorizationCodeAuthStrategyService
   implements ShopifyAuthStrategyService
 {
   public authenticate(

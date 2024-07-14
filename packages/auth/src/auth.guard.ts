@@ -7,13 +7,12 @@ import {
 import {
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InvalidSession, Session, Shopify } from '@shopify/shopify-api';
-import { ACCESS_MODE_KEY, AUTH_STRATEGY_SERVICE_TOKEN } from './auth.constants';
+import { ACCESS_MODE_KEY } from './auth.constants';
 import {
   AccessMode,
   ShopifyAuthStrategyService,
@@ -32,7 +31,6 @@ export class ShopifyAuthGuard implements CanActivate {
     private readonly sessionStorage: SessionStorage,
     private readonly reflector: Reflector,
     private readonly shopifyHttpAdapter: ShopifyHttpAdapter,
-    @Inject(AUTH_STRATEGY_SERVICE_TOKEN)
     private readonly authStrategyService: ShopifyAuthStrategyService,
   ) {}
 

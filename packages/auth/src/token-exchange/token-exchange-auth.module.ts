@@ -1,11 +1,9 @@
 import { DynamicModule } from '@nestjs/common';
-import {
-  AUTH_STRATEGY_SERVICE_TOKEN,
-  getAuthOptionsToken,
-} from '../auth.constants';
+import { getAuthOptionsToken } from '../auth.constants';
 import {
   AccessMode,
   ShopifyAuthModuleAsyncOptions,
+  ShopifyAuthStrategyService,
   ShopifyTokenExchangeAuthModuleOptions,
 } from '../auth.interfaces';
 import { buildProvidersForToken } from '../utils/build-provider-for-token.util';
@@ -23,7 +21,7 @@ export class ShopifyTokenExchangeAuthModule {
       providers: [
         ShopifyTokenExchangeService,
         {
-          provide: AUTH_STRATEGY_SERVICE_TOKEN,
+          provide: ShopifyAuthStrategyService,
           useClass: ShopifyTokenExchangeAuthStrategyOnlineService,
         },
         {
@@ -31,7 +29,7 @@ export class ShopifyTokenExchangeAuthModule {
           useValue: options,
         },
       ],
-      exports: [AUTH_STRATEGY_SERVICE_TOKEN, ShopifyTokenExchangeService],
+      exports: [ShopifyAuthStrategyService, ShopifyTokenExchangeService],
     };
   }
 
@@ -44,7 +42,7 @@ export class ShopifyTokenExchangeAuthModule {
       providers: [
         ShopifyTokenExchangeService,
         {
-          provide: AUTH_STRATEGY_SERVICE_TOKEN,
+          provide: ShopifyAuthStrategyService,
           useClass: ShopifyTokenExchangeAuthStrategyOfflineService,
         },
         {
@@ -52,7 +50,7 @@ export class ShopifyTokenExchangeAuthModule {
           useValue: options,
         },
       ],
-      exports: [AUTH_STRATEGY_SERVICE_TOKEN, ShopifyTokenExchangeService],
+      exports: [ShopifyAuthStrategyService, ShopifyTokenExchangeService],
     };
   }
 
@@ -69,7 +67,7 @@ export class ShopifyTokenExchangeAuthModule {
       providers: [
         ShopifyTokenExchangeService,
         {
-          provide: AUTH_STRATEGY_SERVICE_TOKEN,
+          provide: ShopifyAuthStrategyService,
           useClass: ShopifyTokenExchangeAuthStrategyOnlineService,
         },
         ...buildProvidersForToken(
@@ -77,7 +75,7 @@ export class ShopifyTokenExchangeAuthModule {
           getAuthOptionsToken(AccessMode.Online),
         ),
       ],
-      exports: [AUTH_STRATEGY_SERVICE_TOKEN, ShopifyTokenExchangeService],
+      exports: [ShopifyAuthStrategyService, ShopifyTokenExchangeService],
     };
   }
 
@@ -94,7 +92,7 @@ export class ShopifyTokenExchangeAuthModule {
       providers: [
         ShopifyTokenExchangeService,
         {
-          provide: AUTH_STRATEGY_SERVICE_TOKEN,
+          provide: ShopifyAuthStrategyService,
           useClass: ShopifyTokenExchangeAuthStrategyOfflineService,
         },
         ...buildProvidersForToken(
@@ -102,7 +100,7 @@ export class ShopifyTokenExchangeAuthModule {
           getAuthOptionsToken(AccessMode.Offline),
         ),
       ],
-      exports: [AUTH_STRATEGY_SERVICE_TOKEN, ShopifyTokenExchangeService],
+      exports: [ShopifyAuthStrategyService, ShopifyTokenExchangeService],
     };
   }
 }

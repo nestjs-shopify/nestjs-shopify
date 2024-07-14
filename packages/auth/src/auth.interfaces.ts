@@ -61,8 +61,8 @@ export type ShopifyAuthModuleAsyncOptions<
   /* eslint-enable @typescript-eslint/no-explicit-any */
 };
 
-export interface ShopifyAuthStrategyService {
-  authenticate(
+export abstract class ShopifyAuthStrategyService {
+  abstract authenticate(
     context: ExecutionContext,
     shop: string,
     accessMode: AccessMode,
