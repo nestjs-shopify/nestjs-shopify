@@ -12,13 +12,13 @@ import {
   ShopifyAuthorizationCodeAuthModuleOptions,
 } from '../auth.interfaces';
 import { ShopifyAuthBaseController } from '../auth-base.controller';
-import { getAuthorizationCodeFlowOptionsToken } from '../auth.constants';
+import { getAuthOptionsToken } from '../auth.constants';
 
 @Controller('shopify/offline')
 export class ShopifyAuthOfflineController extends ShopifyAuthBaseController {
   constructor(
     @InjectShopify() shopifyApi: Shopify,
-    @Inject(getAuthorizationCodeFlowOptionsToken(AccessMode.Offline))
+    @Inject(getAuthOptionsToken(AccessMode.Offline))
     options: ShopifyAuthorizationCodeAuthModuleOptions,
     @InjectShopifySessionStorage() sessionStorage: SessionStorage,
     appConfig: ApplicationConfig,

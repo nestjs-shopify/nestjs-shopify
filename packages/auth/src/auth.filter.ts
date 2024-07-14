@@ -2,7 +2,7 @@ import { InjectShopify, ShopifyHttpAdapter } from '@nestjs-shopify/core';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { ApplicationConfig, ModuleRef } from '@nestjs/core';
 import { Shopify } from '@shopify/shopify-api';
-import { getAuthorizationCodeFlowOptionsToken } from './auth.constants';
+import { getAuthOptionsToken } from './auth.constants';
 import { ShopifyAuthException } from './auth.errors';
 import {
   AccessMode,
@@ -79,7 +79,7 @@ export class ShopifyAuthExceptionFilter
 
   private getShopifyOptionsFor(accessMode: AccessMode) {
     return this.moduleRef.get<ShopifyAuthorizationCodeAuthModuleOptions>(
-      getAuthorizationCodeFlowOptionsToken(accessMode),
+      getAuthOptionsToken(accessMode),
       { strict: false },
     );
   }

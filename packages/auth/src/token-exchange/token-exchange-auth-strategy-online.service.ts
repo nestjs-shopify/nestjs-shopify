@@ -10,11 +10,11 @@ import {
 } from '../auth.interfaces';
 import { ShopifyTokenExchangeService } from './token-exchange.service';
 import { ShopifyTokenExchangeAuthStrategyBaseService } from './token-exchange-auth-strategy-base.service';
-import { getTokenExchangeOptionsToken } from '../auth.constants';
+import { getAuthOptionsToken } from '../auth.constants';
 
 export class ShopifyTokenExchangeAuthStrategyOnlineService extends ShopifyTokenExchangeAuthStrategyBaseService {
   constructor(
-    @Inject(getTokenExchangeOptionsToken(AccessMode.Online))
+    @Inject(getAuthOptionsToken(AccessMode.Online))
     options: ShopifyTokenExchangeAuthModuleOptions,
     tokenExchangeService: ShopifyTokenExchangeService,
     shopifyHttpAdapter: ShopifyHttpAdapter,

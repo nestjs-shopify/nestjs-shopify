@@ -1,6 +1,6 @@
 export {
   ACCESS_MODE_KEY,
-  getAuthorizationCodeFlowOptionsToken as getOptionsToken,
+  getAuthOptionsToken as getOptionsToken,
 } from './auth.constants';
 
 export * from './auth.decorators';

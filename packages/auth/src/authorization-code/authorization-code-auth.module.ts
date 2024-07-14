@@ -1,7 +1,7 @@
 import { DynamicModule } from '@nestjs/common';
 import {
   AUTH_STRATEGY_SERVICE_TOKEN,
-  getAuthorizationCodeFlowOptionsToken,
+  getAuthOptionsToken,
 } from '../auth.constants';
 import { AccessMode, ShopifyAuthModuleAsyncOptions } from '../auth.interfaces';
 import { ShopifyAuthorizationCodeAuthModuleOptions } from '../auth.interfaces';
@@ -20,7 +20,7 @@ export class ShopifyAuthorizationCodeAuthModule {
       global: true,
       providers: [
         {
-          provide: getAuthorizationCodeFlowOptionsToken(AccessMode.Online),
+          provide: getAuthOptionsToken(AccessMode.Online),
           useValue: options,
         },
         {
@@ -28,7 +28,7 @@ export class ShopifyAuthorizationCodeAuthModule {
           useClass: ShopifyAuthorizationCodeFlowAuthStrategyService,
         },
         buildControllerHackForToken(
-          getAuthorizationCodeFlowOptionsToken(AccessMode.Online),
+          getAuthOptionsToken(AccessMode.Online),
           ShopifyAuthOnlineController,
         ),
       ],
@@ -45,7 +45,7 @@ export class ShopifyAuthorizationCodeAuthModule {
       global: true,
       providers: [
         {
-          provide: getAuthorizationCodeFlowOptionsToken(AccessMode.Offline),
+          provide: getAuthOptionsToken(AccessMode.Offline),
           useValue: options,
         },
         {
@@ -53,7 +53,7 @@ export class ShopifyAuthorizationCodeAuthModule {
           useClass: ShopifyAuthorizationCodeFlowAuthStrategyService,
         },
         buildControllerHackForToken(
-          getAuthorizationCodeFlowOptionsToken(AccessMode.Offline),
+          getAuthOptionsToken(AccessMode.Offline),
           ShopifyAuthOfflineController,
         ),
       ],
@@ -79,10 +79,10 @@ export class ShopifyAuthorizationCodeAuthModule {
         },
         ...buildProvidersForToken(
           options,
-          getAuthorizationCodeFlowOptionsToken(AccessMode.Online),
+          getAuthOptionsToken(AccessMode.Online),
         ),
         buildControllerHackForToken(
-          getAuthorizationCodeFlowOptionsToken(AccessMode.Online),
+          getAuthOptionsToken(AccessMode.Online),
           ShopifyAuthOnlineController,
         ),
       ],
@@ -108,10 +108,10 @@ export class ShopifyAuthorizationCodeAuthModule {
         },
         ...buildProvidersForToken(
           options,
-          getAuthorizationCodeFlowOptionsToken(AccessMode.Offline),
+          getAuthOptionsToken(AccessMode.Offline),
         ),
         buildControllerHackForToken(
-          getAuthorizationCodeFlowOptionsToken(AccessMode.Offline),
+          getAuthOptionsToken(AccessMode.Offline),
           ShopifyAuthOfflineController,
         ),
       ],

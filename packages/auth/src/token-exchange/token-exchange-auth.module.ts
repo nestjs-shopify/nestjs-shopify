@@ -1,7 +1,7 @@
 import { DynamicModule } from '@nestjs/common';
 import {
   AUTH_STRATEGY_SERVICE_TOKEN,
-  getTokenExchangeOptionsToken,
+  getAuthOptionsToken,
 } from '../auth.constants';
 import {
   AccessMode,
@@ -27,7 +27,7 @@ export class ShopifyTokenExchangeAuthModule {
           useClass: ShopifyTokenExchangeAuthStrategyOnlineService,
         },
         {
-          provide: getTokenExchangeOptionsToken(AccessMode.Online),
+          provide: getAuthOptionsToken(AccessMode.Online),
           useValue: options,
         },
       ],
@@ -48,7 +48,7 @@ export class ShopifyTokenExchangeAuthModule {
           useClass: ShopifyTokenExchangeAuthStrategyOfflineService,
         },
         {
-          provide: getTokenExchangeOptionsToken(AccessMode.Offline),
+          provide: getAuthOptionsToken(AccessMode.Offline),
           useValue: options,
         },
       ],
@@ -74,7 +74,7 @@ export class ShopifyTokenExchangeAuthModule {
         },
         ...buildProvidersForToken(
           options,
-          getTokenExchangeOptionsToken(AccessMode.Online),
+          getAuthOptionsToken(AccessMode.Online),
         ),
       ],
       exports: [AUTH_STRATEGY_SERVICE_TOKEN, ShopifyTokenExchangeService],
@@ -99,7 +99,7 @@ export class ShopifyTokenExchangeAuthModule {
         },
         ...buildProvidersForToken(
           options,
-          getTokenExchangeOptionsToken(AccessMode.Offline),
+          getAuthOptionsToken(AccessMode.Offline),
         ),
       ],
       exports: [AUTH_STRATEGY_SERVICE_TOKEN, ShopifyTokenExchangeService],
