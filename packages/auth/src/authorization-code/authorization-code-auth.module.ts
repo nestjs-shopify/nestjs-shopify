@@ -65,10 +65,7 @@ export class ShopifyAuthorizationCodeAuthModule {
   }
 
   static forRootAsyncOnline(
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.AuthorizationCode,
-      ShopifyAuthorizationCodeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
   ): DynamicModule {
     return {
       module: class ShopifyAuthorizationCodeAuthOnlineModule {},
@@ -94,10 +91,7 @@ export class ShopifyAuthorizationCodeAuthModule {
   }
 
   static forRootAsyncOffline(
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.AuthorizationCode,
-      ShopifyAuthorizationCodeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
   ): DynamicModule {
     return {
       module: class ShopifyAuthorizationCodeAuthOfflineModule {},

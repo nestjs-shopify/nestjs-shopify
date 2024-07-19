@@ -95,36 +95,21 @@ export class ShopifyAuthModule {
   }
 
   static forRootAsyncOnline(
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.AuthorizationCode,
-      ShopifyAuthorizationCodeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
   ): DynamicModule;
   static forRootAsyncOnline(
     authStrategy: AuthStrategy.AuthorizationCode,
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.AuthorizationCode,
-      ShopifyAuthorizationCodeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
   ): DynamicModule;
   static forRootAsyncOnline(
     authStrategy: AuthStrategy.TokenExchange,
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.TokenExchange,
-      ShopifyTokenExchangeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
   ): DynamicModule;
   static forRootAsyncOnline(
     optionsOrStrategy:
-      | ShopifyAuthModuleAsyncOptions<
-          AuthStrategy.AuthorizationCode,
-          ShopifyAuthorizationCodeAuthModuleOptions
-        >
+      | ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>
       | AuthStrategy,
-    optionalOptions?: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy,
-      ShopifyAuthModuleOptions
-    >,
+    optionalOptions?: ShopifyAuthModuleAsyncOptions<AuthStrategy>,
   ): DynamicModule {
     const authStrategy =
       typeof optionsOrStrategy === 'object'
@@ -139,16 +124,10 @@ export class ShopifyAuthModule {
     const authStrategyModule =
       authStrategy === AuthStrategy.TokenExchange
         ? ShopifyTokenExchangeAuthModule.forRootAsyncOnline(
-            options as ShopifyAuthModuleAsyncOptions<
-              AuthStrategy.TokenExchange,
-              ShopifyTokenExchangeAuthModuleOptions
-            >,
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
           )
         : ShopifyAuthorizationCodeAuthModule.forRootAsyncOnline(
-            options as ShopifyAuthModuleAsyncOptions<
-              AuthStrategy.AuthorizationCode,
-              ShopifyAuthorizationCodeAuthModuleOptions
-            >,
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
           );
 
     return {
@@ -160,36 +139,21 @@ export class ShopifyAuthModule {
   }
 
   static forRootAsyncOffline(
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.AuthorizationCode,
-      ShopifyAuthorizationCodeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
   ): DynamicModule;
   static forRootAsyncOffline(
     authStrategy: AuthStrategy.AuthorizationCode,
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.AuthorizationCode,
-      ShopifyAuthorizationCodeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
   ): DynamicModule;
   static forRootAsyncOffline(
     authStrategy: AuthStrategy.TokenExchange,
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.TokenExchange,
-      ShopifyTokenExchangeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
   ): DynamicModule;
   static forRootAsyncOffline(
     optionsOrStrategy:
-      | ShopifyAuthModuleAsyncOptions<
-          AuthStrategy.AuthorizationCode,
-          ShopifyAuthorizationCodeAuthModuleOptions
-        >
+      | ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>
       | AuthStrategy,
-    optionalOptions?: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy,
-      ShopifyAuthModuleOptions
-    >,
+    optionalOptions?: ShopifyAuthModuleAsyncOptions<AuthStrategy>,
   ): DynamicModule {
     const authStrategy =
       typeof optionsOrStrategy === 'object'
@@ -203,16 +167,10 @@ export class ShopifyAuthModule {
     const authStrategyModule =
       authStrategy === AuthStrategy.TokenExchange
         ? ShopifyTokenExchangeAuthModule.forRootAsyncOffline(
-            options as ShopifyAuthModuleAsyncOptions<
-              AuthStrategy.TokenExchange,
-              ShopifyTokenExchangeAuthModuleOptions
-            >,
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
           )
         : ShopifyAuthorizationCodeAuthModule.forRootAsyncOffline(
-            options as ShopifyAuthModuleAsyncOptions<
-              AuthStrategy.AuthorizationCode,
-              ShopifyAuthorizationCodeAuthModuleOptions
-            >,
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
           );
 
     return {

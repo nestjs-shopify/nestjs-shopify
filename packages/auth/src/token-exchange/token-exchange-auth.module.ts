@@ -56,10 +56,7 @@ export class ShopifyTokenExchangeAuthModule {
   }
 
   static forRootAsyncOnline(
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.TokenExchange,
-      ShopifyTokenExchangeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
   ): DynamicModule {
     return {
       module: class ShopifyTokenExchangeAuthOnlineModule {},
@@ -81,10 +78,7 @@ export class ShopifyTokenExchangeAuthModule {
   }
 
   static forRootAsyncOffline(
-    options: ShopifyAuthModuleAsyncOptions<
-      AuthStrategy.TokenExchange,
-      ShopifyTokenExchangeAuthModuleOptions
-    >,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
   ): DynamicModule {
     return {
       module: class ShopifyTokenExchangeAuthOfflineModule {},
