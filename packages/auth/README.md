@@ -35,8 +35,6 @@ The choice of auth strategy is configured by setting the `authStrategy` argument
 
 ### Token Exchange
 
-❗In order to use Token Exchange based auth you must at least use version 9.2.0 of `@shopify/shopify-api`.
-
 From any module, import the `ShopifyAuthModule` using `forRootOnline`, `forRootOffline`, `forRootAsyncOnline` or `forRootAsyncOffline` and set the `authStrategy` argument to `AuthStrategy.TokenExchange`:
 
 ```ts
