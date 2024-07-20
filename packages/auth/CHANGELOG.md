@@ -1,5 +1,16 @@
 # @nestjs-shopify/auth
 
+## 6.0.0
+
+### Major Changes
+
+- 958a0ce: support for token exchange auth
+
+### Patch Changes
+
+- Updated dependencies [958a0ce]
+  - @nestjs-shopify/core@5.0.0
+
 ## 5.0.1
 
 ### Patch Changes
