@@ -1,5 +1,12 @@
 # @nestjs-shopify/express
 
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [958a0ce]
+  - @nestjs-shopify/core@5.0.0
+
 ## 1.0.0
 
 ### Major Changes

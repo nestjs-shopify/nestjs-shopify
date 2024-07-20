@@ -1,5 +1,17 @@
 # @nestjs-shopify/webhooks
 
+## 5.0.0
+
+### Major Changes
+
+- 958a0ce: support for token exchange auth
+
+### Patch Changes
+
+- Updated dependencies [958a0ce]
+  - @nestjs-shopify/core@5.0.0
+  - @nestjs-shopify/common@2.0.0
+
 ## 4.0.1
 
 ### Patch Changes
