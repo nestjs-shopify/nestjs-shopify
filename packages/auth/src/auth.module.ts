@@ -1,85 +1,183 @@
 import { DynamicModule } from '@nestjs/common';
-import { getOptionsToken } from './auth.constants';
 import {
-  AccessMode,
+  AuthStrategy,
   ShopifyAuthModuleAsyncOptions,
+  ShopifyAuthorizationCodeAuthModuleOptions,
   ShopifyAuthModuleOptions,
+  ShopifyTokenExchangeAuthModuleOptions,
 } from './auth.interfaces';
-import { ShopifyAuthOfflineController } from './offline-auth/offline-auth.controller';
-import { ShopifyAuthOnlineController } from './online-auth/online-auth.controller';
-import { buildControllerHackForToken } from './utils/build-controller-hack-for-token.util';
-import { buildProvidersForToken } from './utils/build-provider-for-token.util';
+import { ShopifyAuthorizationCodeAuthModule } from './authorization-code/authorization-code-auth.module';
+import { ShopifyTokenExchangeAuthModule } from './token-exchange/token-exchange-auth.module';
 
 export class ShopifyAuthModule {
-  static forRootOnline(options: ShopifyAuthModuleOptions): DynamicModule {
+  static forRootOnline(
+    options: ShopifyAuthorizationCodeAuthModuleOptions,
+  ): DynamicModule;
+  static forRootOnline(
+    authStrategy: AuthStrategy.AuthorizationCode,
+    options: ShopifyAuthorizationCodeAuthModuleOptions,
+  ): DynamicModule;
+  static forRootOnline(
+    authStrategy: AuthStrategy.TokenExchange,
+    options: ShopifyTokenExchangeAuthModuleOptions,
+  ): DynamicModule;
+  static forRootOnline(
+    optionsOrStrategy: ShopifyAuthorizationCodeAuthModuleOptions | AuthStrategy,
+    optionalOptions?: ShopifyAuthModuleOptions,
+  ): DynamicModule {
+    const authStrategy =
+      typeof optionsOrStrategy === 'object'
+        ? AuthStrategy.AuthorizationCode
+        : optionsOrStrategy;
+
+    const options =
+      typeof optionsOrStrategy === 'object'
+        ? optionsOrStrategy
+        : optionalOptions;
+
+    const authStrategyModule =
+      authStrategy === AuthStrategy.TokenExchange
+        ? ShopifyTokenExchangeAuthModule.forRootOnline(
+            options as ShopifyTokenExchangeAuthModuleOptions,
+          )
+        : ShopifyAuthorizationCodeAuthModule.forRootOnline(
+            options as ShopifyAuthorizationCodeAuthModuleOptions,
+          );
+
     return {
       module: class ShopifyAuthOnlineModule {},
       global: true,
-      providers: [
-        {
-          provide: getOptionsToken(AccessMode.Online),
-          useValue: options,
-        },
-        buildControllerHackForToken(
-          getOptionsToken(AccessMode.Online),
-          ShopifyAuthOnlineController,
-        ),
-      ],
-      controllers: [ShopifyAuthOnlineController],
+      imports: [authStrategyModule],
+      exports: [authStrategyModule],
     };
   }
 
-  static forRootOffline(options: ShopifyAuthModuleOptions): DynamicModule {
+  static forRootOffline(
+    options: ShopifyAuthorizationCodeAuthModuleOptions,
+  ): DynamicModule;
+  static forRootOffline(
+    authStrategy: AuthStrategy.AuthorizationCode,
+    options: ShopifyAuthorizationCodeAuthModuleOptions,
+  ): DynamicModule;
+  static forRootOffline(
+    authStrategy: AuthStrategy.TokenExchange,
+    options: ShopifyTokenExchangeAuthModuleOptions,
+  ): DynamicModule;
+  static forRootOffline(
+    optionsOrStrategy: ShopifyAuthorizationCodeAuthModuleOptions | AuthStrategy,
+    optionalOptions?: ShopifyAuthModuleOptions,
+  ): DynamicModule {
+    const authStrategy =
+      typeof optionsOrStrategy === 'object'
+        ? AuthStrategy.AuthorizationCode
+        : optionsOrStrategy;
+
+    const options =
+      typeof optionsOrStrategy === 'object'
+        ? optionsOrStrategy
+        : optionalOptions;
+
+    const authStrategyModule =
+      authStrategy === AuthStrategy.TokenExchange
+        ? ShopifyTokenExchangeAuthModule.forRootOffline(
+            options as ShopifyTokenExchangeAuthModuleOptions,
+          )
+        : ShopifyAuthorizationCodeAuthModule.forRootOffline(
+            options as ShopifyAuthorizationCodeAuthModuleOptions,
+          );
+
     return {
       module: class ShopifyAuthOfflineModule {},
       global: true,
-      providers: [
-        {
-          provide: getOptionsToken(AccessMode.Offline),
-          useValue: options,
-        },
-        buildControllerHackForToken(
-          getOptionsToken(AccessMode.Offline),
-          ShopifyAuthOfflineController,
-        ),
-      ],
-      controllers: [ShopifyAuthOfflineController],
+      imports: [authStrategyModule],
+      exports: [authStrategyModule],
     };
   }
 
   static forRootAsyncOnline(
-    options: ShopifyAuthModuleAsyncOptions,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
+  ): DynamicModule;
+  static forRootAsyncOnline(
+    authStrategy: AuthStrategy.AuthorizationCode,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
+  ): DynamicModule;
+  static forRootAsyncOnline(
+    authStrategy: AuthStrategy.TokenExchange,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
+  ): DynamicModule;
+  static forRootAsyncOnline(
+    optionsOrStrategy:
+      | ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>
+      | AuthStrategy,
+    optionalOptions?: ShopifyAuthModuleAsyncOptions<AuthStrategy>,
   ): DynamicModule {
+    const authStrategy =
+      typeof optionsOrStrategy === 'object'
+        ? AuthStrategy.AuthorizationCode
+        : optionsOrStrategy;
+
+    const options =
+      typeof optionsOrStrategy === 'object'
+        ? optionsOrStrategy
+        : optionalOptions;
+
+    const authStrategyModule =
+      authStrategy === AuthStrategy.TokenExchange
+        ? ShopifyTokenExchangeAuthModule.forRootAsyncOnline(
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
+          )
+        : ShopifyAuthorizationCodeAuthModule.forRootAsyncOnline(
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
+          );
+
     return {
       module: class ShopifyAuthOnlineModule {},
       global: true,
-      imports: options.imports || [],
-      providers: [
-        ...buildProvidersForToken(options, getOptionsToken(AccessMode.Online)),
-        buildControllerHackForToken(
-          getOptionsToken(AccessMode.Online),
-          ShopifyAuthOnlineController,
-        ),
-      ],
-      controllers: [ShopifyAuthOnlineController],
+      imports: [authStrategyModule],
+      exports: [authStrategyModule],
     };
   }
 
   static forRootAsyncOffline(
-    options: ShopifyAuthModuleAsyncOptions,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
+  ): DynamicModule;
+  static forRootAsyncOffline(
+    authStrategy: AuthStrategy.AuthorizationCode,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
+  ): DynamicModule;
+  static forRootAsyncOffline(
+    authStrategy: AuthStrategy.TokenExchange,
+    options: ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
+  ): DynamicModule;
+  static forRootAsyncOffline(
+    optionsOrStrategy:
+      | ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>
+      | AuthStrategy,
+    optionalOptions?: ShopifyAuthModuleAsyncOptions<AuthStrategy>,
   ): DynamicModule {
+    const authStrategy =
+      typeof optionsOrStrategy === 'object'
+        ? AuthStrategy.AuthorizationCode
+        : optionsOrStrategy;
+    const options =
+      typeof optionsOrStrategy === 'object'
+        ? optionsOrStrategy
+        : optionalOptions;
+
+    const authStrategyModule =
+      authStrategy === AuthStrategy.TokenExchange
+        ? ShopifyTokenExchangeAuthModule.forRootAsyncOffline(
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.TokenExchange>,
+          )
+        : ShopifyAuthorizationCodeAuthModule.forRootAsyncOffline(
+            options as ShopifyAuthModuleAsyncOptions<AuthStrategy.AuthorizationCode>,
+          );
+
     return {
       module: class ShopifyAuthOfflineModule {},
       global: true,
-      imports: options.imports || [],
-      providers: [
-        ...buildProvidersForToken(options, getOptionsToken(AccessMode.Offline)),
-        buildControllerHackForToken(
-          getOptionsToken(AccessMode.Offline),
-          ShopifyAuthOfflineController,
-        ),
-      ],
-      controllers: [ShopifyAuthOfflineController],
+      imports: [authStrategyModule],
+      exports: [authStrategyModule],
     };
   }
 }
