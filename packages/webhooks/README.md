@@ -112,3 +112,7 @@ export class MyAuthHandler implements ShopifyAuthAfterHandler {
   }
 }
 ```
+
+## Registering webhooks on application start
+
+This module registers webhook handlers as providers. Due to the nature of providers being initialised asynchronious, the `ShopifyWebhooksService.registerWebhooks` might have no access to the registered handlers `onModuleInit`. If you want to ensure registration of webhooks on startup of the application, you should rely on the `OnApplicationBootstrap` interface instead even tho this could slow down your application start time.
