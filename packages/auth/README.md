@@ -85,9 +85,9 @@ export class AuthHandlerModule {}
 ```ts
 // auth-handler/my-auth.handler.ts
 @Injectable()
-export class MyAuthHandler implements ShopifyAuthTokenExchangeAfterHandler {
+export class MyAuthHandler implements ShopifyTokenExchangeAuthAfterHandler {
   constructor(private readonly tokenExchangeService: ShopifyTokenExchangeService) {}
-  async afterAuth({ session, sessionToken }: ShopifyAuthTokenExchangeAfterHandlerParams) {
+  async afterAuth({ session, sessionToken }: ShopifyTokenExchangeAuthAfterHandlerParams) {
     if (session.isOnline) {
       try {
         const offlineSession = await this.tokenExchangeService.exchangeToken(sessionToken, session.shop, AccessMode.Offline);
