@@ -45,7 +45,7 @@
     "combinate": "^1.1.11",
     "eslint": "8.57.1",
     "eslint-config-prettier": "9.1.0",
-    "express": "4.19.2",
+    "express": "4.21.1",
     "fastify": "^4.26.1",
     "jest": "29.7.0",
     "jest-environment-node": "29.7.0",
