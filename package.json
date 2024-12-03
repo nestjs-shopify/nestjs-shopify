@@ -24,7 +24,7 @@
     "nx": "16.10.0",
     "reflect-metadata": "0.1.13",
     "tslib": "2.6.2",
-    "typescript": "5.3.3"
+    "typescript": "5.7.2"
   },
   "devDependencies": {
     "@nestjs/cli": "10.4.5",
