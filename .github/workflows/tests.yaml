@@ -17,7 +17,7 @@ jobs:
         with:
           node-version-file: '.node-version'
           cache: npm
-      - uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v4
       - run: npm ci
       - run: npm run lint
 
@@ -34,7 +34,7 @@ jobs:
           node-version-file: '.node-version'
           cache: npm
 
-      - uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v4
       - run: npm ci
       # TODO: re-enable when it stops erroring constantly about package.json
       # - run: npx nx format:check
@@ -53,6 +53,6 @@ jobs:
           node-version-file: '.node-version'
           cache: npm
 
-      - uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v4
       - run: npm ci
       - run: npx nx affected:build
