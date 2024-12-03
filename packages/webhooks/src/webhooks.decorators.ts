@@ -17,8 +17,7 @@ export function WebhookHandler(
     options = topicOrOptions;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  return (target: Function) => {
+  return (target) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
     SetMetadata(SHOPIFY_WEBHOOKS_METADATA, options)(target);
   };

@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
 
       - name: Nx set SHAs
-        uses: nrwl/nx-set-shas@v3
+        uses: nrwl/nx-set-shas@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

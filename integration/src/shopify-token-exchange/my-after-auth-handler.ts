@@ -4,15 +4,18 @@ import {
   ShopifyTokenExchangeAuthAfterHandlerParams,
   ShopifyTokenExchangeService,
 } from '@nestjs-shopify/auth';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class MyAfterAuthHandler
   implements ShopifyTokenExchangeAuthAfterHandler
 {
+  private readonly logger = new Logger(MyAfterAuthHandler.name);
+
   constructor(
     private readonly tokenExchangeService: ShopifyTokenExchangeService,
   ) {}
+
   async afterAuth({
     session,
     sessionToken,
@@ -25,8 +28,8 @@ export class MyAfterAuthHandler
           AccessMode.Offline,
         );
         console.log('Offline session:', offlineSession);
-      } catch (e) {
-        /* empty */
+      } catch (error) {
+        this.logger.error(error);
       }
     }
   }
