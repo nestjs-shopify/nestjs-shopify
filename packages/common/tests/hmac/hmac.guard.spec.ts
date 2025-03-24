@@ -9,12 +9,19 @@ import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import { AuthQuery, shopifyApi, ShopifyHeader } from '@shopify/shopify-api';
-import { ShopifyHmacType } from '../../src/hmac/hmac.enums';
+import {
+  ShopifyHmacSignator,
+  ShopifyHmacType,
+} from '../../src/hmac/hmac.enums';
 import { ShopifyHmacGuard } from '../../src/hmac/hmac.guard';
 import {
   mockedShopifyCoreOptions,
   MockShopifyCoreModule,
 } from '../helpers/mock-shopify-core-module';
+import {
+  SHOPIFY_HMAC_KEY,
+  SHOPIFY_HMAC_SIGNATOR_KEY,
+} from 'packages/common/src/hmac/hmac.constants';
 
 describe('ShopifyHmacGuard', () => {
   let guard: ShopifyHmacGuard;
@@ -162,6 +169,70 @@ describe('ShopifyHmacGuard', () => {
           [ShopifyHeader.Hmac]: 'KXP0rjCPtfpj6NdrhOoXZUMaMV8qS9DQ25fY8rnjkxc=',
         },
         rawBody: Buffer.from(body),
+      });
+
+      await expect(guard.canActivate(ctx)).resolves.toBe(true);
+    });
+  });
+
+  describe('with app proxy and query param', () => {
+    beforeEach(() => {
+      reflector.getAllAndOverride.mockImplementation((key) => {
+        if (key === SHOPIFY_HMAC_KEY) {
+          return ShopifyHmacType.Query;
+        }
+
+        if (key === SHOPIFY_HMAC_SIGNATOR_KEY) {
+          return ShopifyHmacSignator.AppProxy;
+        }
+
+        return undefined;
+      });
+    });
+
+    it('should throw bad request if signature missing', async () => {
+      const ctx = createExecutionContext({
+        query: {
+          signature: undefined,
+          host: 'https://test.myshopify.io',
+          shop: 'test.myshopify.io',
+          state: '12345678',
+          timestamp,
+        },
+      });
+
+      await expect(guard.canActivate(ctx)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw bad request if signature is wrong', async () => {
+      const ctx = createExecutionContext({
+        query: {
+          signature: 'wrong',
+          host: 'https://test.myshopify.io',
+          shop: 'test.myshopify.io',
+          state: '12345678',
+          timestamp,
+        },
+      });
+
+      await expect(guard.canActivate(ctx)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should return true if signature is correct', async () => {
+      const ctx = createExecutionContext({
+        query: {
+          code: 'foo',
+          signature:
+            '5c8eb22d6cd3e200fdf49ef087677effe9c95d5c4903b0d947d954d626890dea',
+          host: 'https://test.myshopify.io',
+          shop: 'test.myshopify.io',
+          state: '12345678',
+          timestamp,
+        },
       });
 
       await expect(guard.canActivate(ctx)).resolves.toBe(true);
