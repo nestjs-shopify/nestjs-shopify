@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from 'crypto';
 import {
   BadRequestException,
   CanActivate,
@@ -14,9 +15,8 @@ import {
   Shopify,
   ShopifyHeader,
 } from '@shopify/shopify-api';
-import { createHmac, timingSafeEqual } from 'crypto';
-import { SHOPIFY_HMAC_KEY } from './hmac.constants';
-import { ShopifyHmacType } from './hmac.enums';
+import { SHOPIFY_HMAC_KEY, SHOPIFY_HMAC_SIGNATOR_KEY } from './hmac.constants';
+import { ShopifyHmacType, ShopifyHmacSignator } from './hmac.enums';
 
 @Injectable()
 export class ShopifyHmacGuard implements CanActivate {
@@ -72,13 +72,14 @@ export class ShopifyHmacGuard implements CanActivate {
   }
 
   private async validateHmacQuery(context: ExecutionContext) {
+    const signator = this.getShopifyHmacSignatorFromContext(context);
     const query =
       this.shopifyHttpAdapter.getQueryParamsFromExecutionContext<AuthQuery>(
         context,
       );
 
     try {
-      if (await this.shopifyApi.utils.validateHmac(query)) {
+      if (await this.shopifyApi.utils.validateHmac(query, { signator })) {
         return true;
       }
 
@@ -114,6 +115,15 @@ export class ShopifyHmacGuard implements CanActivate {
   ): ShopifyHmacType | undefined {
     return this.reflector.getAllAndOverride<ShopifyHmacType | undefined>(
       SHOPIFY_HMAC_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+  }
+
+  private getShopifyHmacSignatorFromContext(
+    context: ExecutionContext,
+  ): ShopifyHmacSignator {
+    return this.reflector.getAllAndOverride<ShopifyHmacSignator>(
+      SHOPIFY_HMAC_SIGNATOR_KEY,
       [context.getHandler(), context.getClass()],
     );
   }
