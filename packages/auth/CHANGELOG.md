@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 6.0.1
+
+### Patch Changes
+
+- 3789771: chore: bump peer dependencies for NestJS 11 support
+
 ## 6.0.0
 
 ### Major Changes
@@ -134,9 +140,9 @@
   Install `@nestjs-shopify/graphql` and use it as following:
 
   ```ts
-  import { ShopifyCoreModule } from "@nestjs-shopify/core";
-  import { ShopifyAuthModule } from "@nestjs-shopify/auth";
-  import { ShopifyGraphqlProxyModule } from "@nestjs-shopify/graphql";
+  import { ShopifyCoreModule } from '@nestjs-shopify/core';
+  import { ShopifyAuthModule } from '@nestjs-shopify/auth';
+  import { ShopifyGraphqlProxyModule } from '@nestjs-shopify/graphql';
 
   @Module({
     imports: [

@@ -1,5 +1,11 @@
 # @nestjs-shopify/core
 
+## 5.0.1
+
+### Patch Changes
+
+- 3789771: chore: bump peer dependencies for NestJS 11 support
+
 ## 5.0.0
 
 ### Major Changes
@@ -89,8 +95,8 @@
   The Shopify API context now lives inside the Nest DI container. You can access it by doing the following in your injectable providers:
 
   ```ts
-  import { InjectShopify } from "@nestjs-shopify/core";
-  import { Shopify } from "@shopify/shopify-api";
+  import { InjectShopify } from '@nestjs-shopify/core';
+  import { Shopify } from '@shopify/shopify-api';
 
   @Injectable()
   export class MyProvider {
@@ -101,8 +107,8 @@
   Or if you need references while registering a provider:
 
   ```ts
-  import { SHOPIFY_API_CONTEXT } from "@nestjs-shopify/core";
-  import { Shopify } from "@shopify/shopify-api";
+  import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
+  import { Shopify } from '@shopify/shopify-api';
 
   @Module({
     providers: [
