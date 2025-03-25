@@ -1,5 +1,11 @@
 # @nestjs-shopify/common
 
+## 2.1.0
+
+### Minor Changes
+
+- 810701c: Enhances the HMAC validation process by allowing configuration of the HMAC signator.
+
 ## 2.0.0
 
 ### Patch Changes

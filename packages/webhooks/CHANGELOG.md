@@ -1,5 +1,11 @@
 # @nestjs-shopify/webhooks
 
+## 5.0.1
+
+### Patch Changes
+
+- 3789771: chore: bump peer dependencies for NestJS 11 support
+
 ## 5.0.0
 
 ### Major Changes
@@ -87,14 +93,14 @@
   import {
     ShopifyWebhookHandler,
     WebhookHandler,
-  } from "@nestjs-shopify/webhooks";
+  } from '@nestjs-shopify/webhooks';
 
-  @WebhookHandler("PRODUCTS_CREATE")
+  @WebhookHandler('PRODUCTS_CREATE')
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
 
-  @WebhookHandler("PRODUCTS_CREATE")
+  @WebhookHandler('PRODUCTS_CREATE')
   export class Handler2 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
@@ -115,7 +121,7 @@
   before:
 
   ```ts
-  @WebhookHandler("PRODUCTS_CREATE")
+  @WebhookHandler('PRODUCTS_CREATE')
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown) {}
   }
@@ -124,7 +130,7 @@
   after:
 
   ```ts
-  @WebhookHandler("PRODUCTS_CREATE")
+  @WebhookHandler('PRODUCTS_CREATE')
   export class Handler1 extends ShopifyWebhookHandler {
     async handle(shop: string, data: unknown, webhookId: string) {}
   }

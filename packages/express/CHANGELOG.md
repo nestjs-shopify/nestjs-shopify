@@ -1,5 +1,11 @@
 # @nestjs-shopify/express
 
+## 2.0.1
+
+### Patch Changes
+
+- 3789771: chore: bump peer dependencies for NestJS 11 support
+
 ## 2.0.0
 
 ### Patch Changes

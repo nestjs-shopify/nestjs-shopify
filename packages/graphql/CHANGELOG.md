@@ -1,5 +1,11 @@
 # @nestjs-shopify/graphql
 
+## 6.0.1
+
+### Patch Changes
+
+- 3789771: chore: bump peer dependencies for NestJS 11 support
+
 ## 6.0.0
 
 ### Major Changes
