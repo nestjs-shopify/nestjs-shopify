@@ -21,7 +21,7 @@ import {
 import {
   SHOPIFY_HMAC_KEY,
   SHOPIFY_HMAC_SIGNATOR_KEY,
-} from 'packages/common/src/hmac/hmac.constants';
+} from '../../src/hmac/hmac.constants';
 
 describe('ShopifyHmacGuard', () => {
   let guard: ShopifyHmacGuard;
