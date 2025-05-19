@@ -50,7 +50,7 @@
     "jest-environment-node": "29.7.0",
     "jsonwebtoken": "9.0.2",
     "prettier": "3.5.3",
-    "supertest": "7.1.0",
+    "supertest": "7.1.1",
     "ts-jest": "29.3.2",
     "ts-node": "10.9.2"
   },
