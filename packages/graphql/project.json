@@ -3,46 +3,33 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/graphql/src",
   "projectType": "library",
+  "tags": [],
+  "implicitDependencies": ["auth", "core"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/graphql",
         "main": "packages/graphql/src/index.ts",
         "tsConfig": "packages/graphql/tsconfig.lib.json",
-        "assets": [
-          "packages/graphql/*.md"
-        ]
+        "assets": ["packages/graphql/*.md"]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "packages/graphql/**/*.ts"
-        ]
+        "lintFilePatterns": ["packages/graphql/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/packages/graphql"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/packages/graphql"],
       "options": {
         "jestConfig": "packages/graphql/jest.config.ts",
         "passWithNoTests": true
       }
     }
-  },
-  "implicitDependencies": [
-    "auth",
-    "core"
-  ],
-  "tags": []
+  }
 }

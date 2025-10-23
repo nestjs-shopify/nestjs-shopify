@@ -3,37 +3,28 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/express/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/express",
         "main": "packages/express/src/index.ts",
         "tsConfig": "packages/express/tsconfig.lib.json",
-        "assets": [
-          "packages/express/*.md"
-        ]
+        "assets": ["packages/express/*.md"]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "packages/express/**/*.ts"
-        ]
+        "lintFilePatterns": ["packages/express/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "packages/express/jest.config.ts",
         "passWithNoTests": true
@@ -45,6 +36,5 @@
         }
       }
     }
-  },
-  "tags": []
+  }
 }
