@@ -3,42 +3,32 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/webhooks/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/webhooks",
         "main": "packages/webhooks/src/index.ts",
         "tsConfig": "packages/webhooks/tsconfig.lib.json",
-        "assets": [
-          "packages/webhooks/*.md"
-        ]
+        "assets": ["packages/webhooks/*.md"]
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "packages/webhooks/**/*.ts"
-        ]
+        "lintFilePatterns": ["packages/webhooks/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/packages/webhooks"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/packages/webhooks"],
       "options": {
         "jestConfig": "packages/webhooks/jest.config.ts",
         "passWithNoTests": true
       }
     }
-  },
-  "tags": []
+  }
 }
