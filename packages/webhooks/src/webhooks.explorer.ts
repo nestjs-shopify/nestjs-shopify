@@ -117,7 +117,9 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         shop: string,
         body: string,
         webhookId: string,
-        eventId: string,
+        apiVersion?: string,
+        subTopic?: string,
+        context?: any,
       ) => {
         const contextId = ContextIdFactory.create();
 
@@ -128,12 +130,16 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
           contextId,
         );
         const data = JSON.parse(body);
+        const eventId = context?.eventId || '';
+
         return contextInstance[methodKey].call(
           contextInstance,
           shop,
           data,
           webhookId,
           eventId,
+          apiVersion,
+          subTopic,
         );
       };
     } else {
@@ -142,10 +148,22 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         shop: string,
         body: string,
         webhookId: string,
-        eventId: string,
+        apiVersion?: string,
+        subTopic?: string,
+        context?: any,
       ) => {
         const data = JSON.parse(body);
-        return instance[methodKey].call(instance, shop, data, webhookId, eventId);
+        const eventId = context?.eventId || '';
+
+        return instance[methodKey].call(
+          instance,
+          shop,
+          data,
+          webhookId,
+          eventId,
+          apiVersion,
+          subTopic,
+        );
       };
     }
 
