@@ -16,7 +16,7 @@ import {
   Shopify,
   ShopifyHeader,
 } from '@shopify/shopify-api';
-import { SHOPIFY_WEBHOOKS_DEFAULT_PATH } from './webhooks.constants';
+import { SHOPIFY_WEBHOOKS_DEFAULT_PATH, SHOPIFY_WEBHOOKS_HEADER_EVENT_ID } from './webhooks.constants';
 
 @Controller(SHOPIFY_WEBHOOKS_DEFAULT_PATH)
 export class ShopifyWebhooksController {
@@ -38,7 +38,7 @@ export class ShopifyWebhooksController {
       );
     }
 
-    const { domain, topic, webhookId } = this.getHeaders(req);
+    const { domain, topic, webhookId, eventId } = this.getHeaders(req);
     const graphqlTopic = (topic as string).toUpperCase().replace(/\//g, '_');
     const webhookEntries = this.shopifyApi.webhooks.getHandlers(
       graphqlTopic,
@@ -68,6 +68,7 @@ export class ShopifyWebhooksController {
     let topic: string | string[] | undefined;
     let domain: string | string[] | undefined;
     let webhookId: string | string[] | undefined;
+    let eventId: string | string[] | undefined;
     const headers = this.shopifyHttpAdapter.getHeaders(req);
 
     Object.entries(headers).map(([header, value]) => {
@@ -80,6 +81,9 @@ export class ShopifyWebhooksController {
           break;
         case ShopifyHeader.WebhookId.toLowerCase():
           webhookId = value;
+          break;
+        case SHOPIFY_WEBHOOKS_HEADER_EVENT_ID.toLowerCase():
+          eventId = value;
           break;
       }
     });
@@ -94,6 +98,9 @@ export class ShopifyWebhooksController {
     if (!webhookId) {
       missingHeaders.push(ShopifyHeader.WebhookId);
     }
+    if (!eventId) {
+      missingHeaders.push(SHOPIFY_WEBHOOKS_HEADER_EVENT_ID);
+    }
 
     if (missingHeaders.length) {
       throw new BadRequestException(
@@ -107,6 +114,7 @@ export class ShopifyWebhooksController {
       topic,
       domain,
       webhookId,
+      eventId,
     };
   }
 }

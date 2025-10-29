@@ -11,7 +11,7 @@ export interface ShopifyWebhookHandlerOptions {
 }
 
 export abstract class ShopifyWebhookHandler<T = unknown> {
-  abstract handle(shop: string, data: T, webhookId?: string): Promise<void>;
+  abstract handle(shop: string, data: T, webhookId?: string, eventId?: string): Promise<void>;
 }
 
 export type ShopifyWebhooksAsyncOptions = typeof ASYNC_OPTIONS_TYPE;

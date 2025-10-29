@@ -117,6 +117,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         shop: string,
         body: string,
         webhookId: string,
+        eventId: string,
       ) => {
         const contextId = ContextIdFactory.create();
 
@@ -132,6 +133,7 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
           shop,
           data,
           webhookId,
+          eventId,
         );
       };
     } else {
@@ -140,9 +142,10 @@ export class ShopifyWebhooksExplorer implements OnModuleInit {
         shop: string,
         body: string,
         webhookId: string,
+        eventId: string,
       ) => {
         const data = JSON.parse(body);
-        return instance[methodKey].call(instance, shop, data, webhookId);
+        return instance[methodKey].call(instance, shop, data, webhookId, eventId);
       };
     }
 
