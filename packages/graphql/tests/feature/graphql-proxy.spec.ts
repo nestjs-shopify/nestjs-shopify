@@ -2,7 +2,7 @@ import '@shopify/shopify-api/adapters/node';
 import { SHOPIFY_API_CONTEXT } from '@nestjs-shopify/core';
 import { INestApplication } from '@nestjs/common';
 import { Session, Shopify } from '@shopify/shopify-api';
-import * as request from 'supertest';
+import request from 'supertest';
 import { createTestApp } from '../helpers/app';
 import { mockSessionStorage } from '../helpers/mock-session-storage';
 

@@ -2,6 +2,10 @@
   "name": "nestjs-shopify",
   "version": "1.0.0",
   "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": "^18.19.0 || ^20.6.0 || >=21.0.0"
+  },
   "scripts": {
     "build": "nx affected:build",
     "benchmark": "nx affected:bench",
