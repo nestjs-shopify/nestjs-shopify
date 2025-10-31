@@ -1,6 +1,10 @@
 {
   "name": "@nestjs-shopify/express",
   "version": "2.0.1",
+  "type": "module",
+  "engines": {
+    "node": "^18.19.0 || ^20.6.0 || >=21.0.0"
+  },
   "dependencies": {
     "tslib": "^2.3.0"
   },
@@ -20,7 +24,6 @@
       "optional": false
     }
   },
-  "type": "commonjs",
   "main": "./src/index.js",
-  "typings": "./src/index.d.ts"
+  "types": "./src/index.d.ts"
 }
