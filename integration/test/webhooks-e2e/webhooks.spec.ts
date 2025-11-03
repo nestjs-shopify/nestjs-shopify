@@ -4,7 +4,7 @@ import { ContextIdFactory } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import { ShopifyHeader } from '@shopify/shopify-api';
 import { createHmac } from 'crypto';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ExpressAppModule } from '../../src/with-webhooks/express-app.module';
 
 function hmac(secret: string, body: string) {
