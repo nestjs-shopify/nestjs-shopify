@@ -11,7 +11,7 @@
     "url": "git+https://github.com/nestjs-shopify/nestjs-shopify.git"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.0"
+    "jose": "^5.0.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^9.0.0 || ^10.0.0 || ^11.0.0",
