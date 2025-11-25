@@ -12,7 +12,7 @@ import {
   Session,
   Shopify,
 } from '@shopify/shopify-api';
-import * as jwt from 'jsonwebtoken';
+import { SignJWT } from 'jose';
 import * as request from 'supertest';
 import {
   FastifyAdapter,
@@ -144,10 +144,10 @@ describe.each(testCases)(
         sub: jwtPayload.sub,
       });
 
-      token = jwt.sign(jwtPayload, shopifyApi.config.apiSecretKey, {
-        algorithm: 'HS256',
-        audience: shopifyApi.config.apiKey,
-      });
+      token = await new SignJWT(jwtPayload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setAudience(shopifyApi.config.apiKey)
+        .sign(new TextEncoder().encode(shopifyApi.config.apiSecretKey));
     });
 
     afterEach(async () => {

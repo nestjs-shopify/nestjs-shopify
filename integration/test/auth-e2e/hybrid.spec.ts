@@ -6,7 +6,7 @@ import {
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Session, Shopify } from '@shopify/shopify-api';
-import * as jwt from 'jsonwebtoken';
+import { SignJWT } from 'jose';
 import * as request from 'supertest';
 import { ExpressAppModule } from '../../src/with-hybrid-auth/express-app.module';
 import { MemorySessionStorage } from '../../src/shopify-initializer/session-storage/memory.session-storage';
@@ -68,10 +68,10 @@ describe('Hybrid Authz (e2e)', () => {
     beforeEach(async () => {
       sessionStorage.loadSession.mockResolvedValueOnce(session);
 
-      token = jwt.sign(jwtPayload, shopifyApi.config.apiSecretKey, {
-        algorithm: 'HS256',
-        audience: shopifyApi.config.apiKey,
-      });
+      token = await new SignJWT(jwtPayload)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setAudience(shopifyApi.config.apiKey)
+        .sign(new TextEncoder().encode(shopifyApi.config.apiSecretKey));
     });
 
     it('GET /message/online, 403 missing header', async () => {
