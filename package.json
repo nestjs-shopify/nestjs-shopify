@@ -13,7 +13,7 @@
   },
   "private": true,
   "dependencies": {
-    "@changesets/cli": "2.29.7",
+    "@changesets/cli": "2.29.8",
     "@nx/devkit": "21.6.6",
     "@nx/eslint": "21.6.6",
     "@nx/eslint-plugin": "21.6.6",
