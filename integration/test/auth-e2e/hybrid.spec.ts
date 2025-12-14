@@ -7,7 +7,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Session, Shopify } from '@shopify/shopify-api';
 import * as jwt from 'jsonwebtoken';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ExpressAppModule } from '../../src/with-hybrid-auth/express-app.module';
 import { MemorySessionStorage } from '../../src/shopify-initializer/session-storage/memory.session-storage';
 
