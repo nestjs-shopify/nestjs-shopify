@@ -1,7 +1,10 @@
 {
   "name": "@nestjs-shopify/core",
   "version": "5.0.1",
-  "type": "commonjs",
+  "type": "module",
+  "engines": {
+    "node": "^18.19.0 || ^20.6.0 || >=21.0.0"
+  },
   "homepage": "https://github.com/nestjs-shopify/nestjs-shopify",
   "bugs": {
     "url": "https://github.com/nestjs-shopify/nestjs-shopify/issues"
