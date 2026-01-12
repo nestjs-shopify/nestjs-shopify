@@ -4,7 +4,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AuthQuery, Shopify } from '@shopify/shopify-api';
 import { IncomingMessage, ServerResponse } from 'http';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ExpressAppModule } from '../../src/with-hybrid-auth/express-app.module';
 
 const randomBytes = new Uint8Array(Buffer.from('random-bytes'));

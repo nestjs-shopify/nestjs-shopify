@@ -13,7 +13,7 @@ import {
   Shopify,
 } from '@shopify/shopify-api';
 import * as jwt from 'jsonwebtoken';
-import * as request from 'supertest';
+import request from 'supertest';
 import {
   FastifyAdapter,
   NestFastifyApplication,
