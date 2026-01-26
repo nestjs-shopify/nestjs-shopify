@@ -6,14 +6,23 @@ import { AuthQuery, Shopify } from '@shopify/shopify-api';
 import { IncomingMessage, ServerResponse } from 'http';
 import * as request from 'supertest';
 import { ExpressAppModule } from '../../src/with-hybrid-auth/express-app.module';
+import { webcrypto as nodeCrypto } from 'crypto';
 
 const randomBytes = new Uint8Array(Buffer.from('random-bytes'));
 const nonce = '470019581615';
 
-jest.mock('crypto', () => ({
-  ...jest.requireActual('crypto'),
-  getRandomValues: () => randomBytes,
-}));
+beforeAll(() => {
+  const cryptoImpl = globalThis.crypto ?? nodeCrypto;
+  globalThis.crypto = cryptoImpl as Crypto;
+
+  jest
+    .spyOn(cryptoImpl, 'getRandomValues')
+    .mockImplementation(() => randomBytes);
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
 
 const TEST_SHOP = 'test.myshopify.io';
 const HOST = Buffer.from(`https://${TEST_SHOP}/admin`).toString('base64url');
