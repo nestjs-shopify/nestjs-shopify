@@ -11,4 +11,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
+  transformIgnorePatterns: ["node_modules/(?!jose)"],
 };
