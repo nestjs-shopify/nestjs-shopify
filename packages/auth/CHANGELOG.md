@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 6.0.2
+
+### Patch Changes
+
+- a1ba3fe: fix(auth): replace unmaintained `jsonwebtoken` with `jose`
+
 ## 6.0.1
 
 ### Patch Changes

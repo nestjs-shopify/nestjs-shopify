@@ -1,6 +1,6 @@
 {
   "name": "@nestjs-shopify/auth",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "type": "commonjs",
   "homepage": "https://github.com/nestjs-shopify/nestjs-shopify",
   "bugs": {
@@ -11,7 +11,7 @@
     "url": "git+https://github.com/nestjs-shopify/nestjs-shopify.git"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.0"
+    "jose": "^5.9.6"
   },
   "peerDependencies": {
     "@nestjs/common": "^9.0.0 || ^10.0.0 || ^11.0.0",
