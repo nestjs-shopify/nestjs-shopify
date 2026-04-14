@@ -1,5 +1,11 @@
 # @nestjs-shopify/auth
 
+## 6.0.3
+
+### Patch Changes
+
+- 7ab5241: Add support for `@shopify/shopify-api` v12 and v13.
+
 ## 6.0.2
 
 ### Patch Changes

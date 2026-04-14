@@ -1,5 +1,11 @@
 # @nestjs-shopify/webhooks
 
+## 5.0.2
+
+### Patch Changes
+
+- 7ab5241: Add support for `@shopify/shopify-api` v12 and v13.
+
 ## 5.0.1
 
 ### Patch Changes
