@@ -7,14 +7,23 @@ import {
 import { Test } from '@nestjs/testing';
 import { Shopify } from '@shopify/shopify-api';
 import { FastifyAppModule } from '../../src/with-hybrid-auth/fastify-app.module';
+import { webcrypto as nodeCrypto } from 'crypto';
 
 const randomBytes = new Uint8Array(Buffer.from('random-bytes'));
 const nonce = '470019581615';
 
-jest.mock('crypto', () => ({
-  ...jest.requireActual('crypto'),
-  getRandomValues: () => randomBytes,
-}));
+beforeAll(() => {
+  const cryptoImpl = globalThis.crypto ?? nodeCrypto;
+  globalThis.crypto = cryptoImpl as Crypto;
+
+  jest
+    .spyOn(cryptoImpl, 'getRandomValues')
+    .mockImplementation(() => randomBytes);
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
 
 jest.mock('isbot', () => ({
   isbot: jest.fn().mockReturnValue(false),
