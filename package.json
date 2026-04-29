@@ -44,7 +44,7 @@
     "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
     "express": "5.2.1",
-    "fastify": "^4.26.1",
+    "fastify": "^5.0.0",
     "jest": "30.3.0",
     "jest-environment-node": "30.3.0",
     "jest-util": "30.3.0",
