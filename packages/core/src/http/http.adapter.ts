@@ -30,6 +30,7 @@ export abstract class ShopifyHttpAdapter<
     return this.shopifyApi.auth.callback({
       rawRequest: this.getRawRequest(req),
       rawResponse: this.getRawResponse(res),
+      expiring: true,
     });
   }
 
