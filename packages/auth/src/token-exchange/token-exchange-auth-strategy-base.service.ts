@@ -35,6 +35,7 @@ export class ShopifyTokenExchangeAuthStrategyBaseService
       sessionToken,
       shop,
       accessMode,
+      this.options.useExpiringOfflineAccessTokens ?? false,
     );
     await this.sessionStorage.storeSession(newSession);
 
