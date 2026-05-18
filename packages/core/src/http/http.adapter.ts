@@ -26,11 +26,15 @@ export abstract class ShopifyHttpAdapter<
     });
   }
 
-  public async beginCallback(req: RequestType, res: ResponseType) {
+  public async beginCallback(
+    req: RequestType,
+    res: ResponseType,
+    expiring = false,
+  ) {
     return this.shopifyApi.auth.callback({
       rawRequest: this.getRawRequest(req),
       rawResponse: this.getRawResponse(res),
-      expiring: true,
+      expiring,
     });
   }
 

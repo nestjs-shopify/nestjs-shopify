@@ -17,6 +17,13 @@ export type ShopifyAuthorizationCodeAuthModuleOptions = {
   returnHeaders?: boolean;
   useGlobalPrefix?: boolean;
   afterAuthHandler?: ShopifyAuthAfterHandler;
+  /**
+   * Whether to request expiring offline access tokens during OAuth.
+   * Required for public apps as of Shopify's April 2026 mandate.
+   * Private/custom apps should leave this as `false` (default).
+   * @see https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/offline-access-tokens
+   */
+  useExpiringOfflineAccessTokens?: boolean;
 };
 
 export type ShopifyTokenExchangeAuthModuleOptions = {
