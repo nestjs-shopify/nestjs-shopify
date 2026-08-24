@@ -1,5 +1,11 @@
 # @nestjs-shopify/graphql
 
+## 6.0.3
+
+### Patch Changes
+
+- a4006d9: Add support for `@shopify/shopify-api` v14 and `@shopify/shopify-app-session-storage` v6. No code changes required; the v14 breaking changes (`subTopic` removal, GraphQL client type tightening, `@shopify/network` removal, App Proxy validation hardening) do not affect any API surface used by this library.
+
 ## 6.0.2
 
 ### Patch Changes
