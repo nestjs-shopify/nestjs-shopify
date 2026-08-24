@@ -23,6 +23,7 @@ export class ShopifyTokenExchangeService {
     sessionToken: string,
     shop: string,
     accessMode: AccessMode,
+    expiring = false,
   ) {
     this.logger.log(`Starting ${accessMode} token exchange for shop ${shop}`);
 
@@ -35,6 +36,7 @@ export class ShopifyTokenExchangeService {
         requestedTokenType,
         sessionToken,
         shop,
+        expiring,
       });
       this.logger.log(`Successfully exchanged token for shop ${shop}.`);
       return session;

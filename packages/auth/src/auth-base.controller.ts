@@ -52,7 +52,11 @@ export abstract class ShopifyAuthBaseController {
     const rawResponse = this.shopifyHttpAdapter.getRawResponse(res);
 
     const { headers = {}, session } =
-      await this.shopifyHttpAdapter.beginCallback(req, res);
+      await this.shopifyHttpAdapter.beginCallback(
+        req,
+        res,
+        this.options.useExpiringOfflineAccessTokens ?? false,
+      );
 
     if (session) {
       await this.sessionStorage.storeSession(session);
