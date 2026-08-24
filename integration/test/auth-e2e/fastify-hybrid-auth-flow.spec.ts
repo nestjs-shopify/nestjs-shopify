@@ -10,7 +10,7 @@ import { FastifyAppModule } from '../../src/with-hybrid-auth/fastify-app.module'
 import { webcrypto as nodeCrypto } from 'crypto';
 
 const randomBytes = new Uint8Array(Buffer.from('random-bytes'));
-const nonce = '470019581615';
+const nonce = Buffer.from(randomBytes).toString('hex');
 
 beforeAll(() => {
   const cryptoImpl = globalThis.crypto ?? nodeCrypto;
