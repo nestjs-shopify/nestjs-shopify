@@ -17,11 +17,13 @@ export type ShopifyAuthorizationCodeAuthModuleOptions = {
   returnHeaders?: boolean;
   useGlobalPrefix?: boolean;
   afterAuthHandler?: ShopifyAuthAfterHandler;
+  useExpiringOfflineAccessTokens?: boolean;
 };
 
 export type ShopifyTokenExchangeAuthModuleOptions = {
   returnHeaders?: boolean;
   afterAuthHandler?: ShopifyTokenExchangeAuthAfterHandler;
+  useExpiringOfflineAccessTokens?: boolean;
 };
 
 export type ShopifyAuthModuleOptions =

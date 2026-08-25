@@ -217,6 +217,7 @@ describe.each(testCases)(
           requestedTokenType: auth.tokenType,
           sessionToken: token,
           shop: TEST_SHOP,
+          ...(auth.type === 'offline' ? { expiring: false } : {}),
         });
 
         expect(sessionStorage.storeSession).toHaveBeenCalledWith(newSession);

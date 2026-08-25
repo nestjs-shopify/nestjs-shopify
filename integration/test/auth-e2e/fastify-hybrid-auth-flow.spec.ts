@@ -132,6 +132,7 @@ describe('Fastify: Hybrid Auth Flow (e2e)', () => {
       expect(callbackSpy).toHaveBeenCalledWith({
         rawRequest: expect.anything(),
         rawResponse: expect.anything(),
+        expiring: false,
       });
     });
 
@@ -223,6 +224,7 @@ describe('Fastify: Hybrid Auth Flow (e2e)', () => {
       expect(callbackSpy).toHaveBeenCalledWith({
         rawRequest: expect.anything(),
         rawResponse: expect.anything(),
+        expiring: false,
       });
     });
 

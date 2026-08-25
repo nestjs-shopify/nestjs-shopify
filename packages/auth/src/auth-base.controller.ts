@@ -51,8 +51,16 @@ export abstract class ShopifyAuthBaseController {
     const rawRequest = this.shopifyHttpAdapter.getRawRequest(req);
     const rawResponse = this.shopifyHttpAdapter.getRawResponse(res);
 
+    const isOffline = this.accessMode === AccessMode.Offline;
+    const useExpiringOfflineAccessTokens =
+      isOffline && (this.options.useExpiringOfflineAccessTokens ?? false);
+
     const { headers = {}, session } =
-      await this.shopifyHttpAdapter.beginCallback(req, res);
+      await this.shopifyHttpAdapter.beginCallback(
+        req,
+        res,
+        useExpiringOfflineAccessTokens,
+      );
 
     if (session) {
       await this.sessionStorage.storeSession(session);
