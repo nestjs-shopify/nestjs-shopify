@@ -116,6 +116,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
       expect(callbackSpy).toHaveBeenCalledWith({
         rawRequest: expect.any(IncomingMessage),
         rawResponse: expect.any(ServerResponse),
+        expiring: false,
       });
     });
 
@@ -197,6 +198,7 @@ describe('Hybrid Auth Flow (e2e)', () => {
       expect(callbackSpy).toHaveBeenCalledWith({
         rawRequest: expect.any(IncomingMessage),
         rawResponse: expect.any(ServerResponse),
+        expiring: false,
       });
     });
 
