@@ -4,3 +4,5 @@ export const SHOPIFY_WEBHOOKs_CONTROLLER_PATH_HACK =
   'SHOPIFY_WEBHOOKs_CONTROLLER_PATH_HACK';
 
 export const SHOPIFY_WEBHOOKS_DEFAULT_PATH = '/shopify/webhooks';
+
+export const SHOPIFY_WEBHOOKS_HEADER_EVENT_ID = 'X-Shopify-Event-Id';
